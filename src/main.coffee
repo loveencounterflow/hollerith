@@ -74,8 +74,12 @@ class @Hollerith
     @cfg    = freeze @cfg
     return undefined
 
+
+  #=========================================================================================================
+  #
   #---------------------------------------------------------------------------------------------------------
   encode: ( vnr ) ->
+    @types.validate.vnr vnr if @cfg.validate
     unless 0 < vnr.length <= @cfg.vnr_width
       throw new Error "^44798^ expected VNR to be between 1 and #{@cfg.vnr_width} elements long, got length #{vnr.length}"
     R       = Buffer.alloc @cfg.vnr_width * C.u32_width, 0x00 ### TAINT pre-compute constant ###
@@ -98,6 +102,9 @@ class @Hollerith
       R.push sign + ( ( Math.abs nr ).toString base ).padStart dpe, padder
     return R.join ','
 
+
+  #=========================================================================================================
+  #
   #---------------------------------------------------------------------------------------------------------
   create: ( source = null ) =>
     return [ 0, ] unless source?
