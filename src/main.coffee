@@ -108,7 +108,8 @@ class @Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   _encode_bcd: ( vnr ) =>
-    R           = []
+    @types.validate.vnr vnr if @cfg.validate
+    R = []
     for idx in [ 0 ... @cfg.vnr_width ]
       nr    = vnr[ idx ] ? 0
       sign  = if nr >= 0 then C.bcd_plus else C.bcd_minus
@@ -173,27 +174,39 @@ class @Hollerith
   #---------------------------------------------------------------------------------------------------------
   cmp_blobs: ( a, b ) => a.compare b
 
+  # #---------------------------------------------------------------------------------------------------------
+  # cmp: ( a, b ) =>
+  #   if @cfg.validate
+  #     @types.validate.vnr a
+  #     @types.validate.vnr b
+  #   a_length  = a.length
+  #   b_length  = b.length
+  #   min_idx   = ( Math.min a_length, b_length ) - 1
+  #   for idx in [ 0 .. min_idx ]
+  #     ai = a[ idx ]
+  #     bi = b[ idx ]
+  #     return -1 if ai < bi
+  #     return +1 if ai > bi
+  #   return  0 if a_length is b_length
+  #   if a_length < b_length
+  #     return 0  if @_only_zeroes_after          b, min_idx + 1
+  #     return +1 if @_first_nonzero_is_negative  b, min_idx + 1
+  #     return -1
+  #   return 0  if @_only_zeroes_after          a, min_idx + 1
+  #   return -1 if @_first_nonzero_is_negative  a, min_idx + 1
+  #   return +1
+
   #---------------------------------------------------------------------------------------------------------
   cmp: ( a, b ) =>
     if @cfg.validate
       @types.validate.vnr a
       @types.validate.vnr b
-    a_length  = a.length
-    b_length  = b.length
-    min_idx   = ( Math.min a_length, b_length ) - 1
-    for idx in [ 0 .. min_idx ]
-      ai = a[ idx ]
-      bi = b[ idx ]
+    for idx in [ 0 ... ( Math.max a.length, b.length ) ]
+      ai = a[ idx ] ? 0
+      bi = b[ idx ] ? 0
       return -1 if ai < bi
       return +1 if ai > bi
-    return  0 if a_length is b_length
-    if a_length < b_length
-      return 0  if @_only_zeroes_after          b, min_idx + 1
-      return +1 if @_first_nonzero_is_negative  b, min_idx + 1
-      return -1
-    return 0  if @_only_zeroes_after          a, min_idx + 1
-    return -1 if @_first_nonzero_is_negative  a, min_idx + 1
-    return +1
+    return 0
 
   #---------------------------------------------------------------------------------------------------------
   sort_blobs: ( vnr_blobs ) =>
