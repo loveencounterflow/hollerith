@@ -32,7 +32,7 @@ C = freeze
   defaults:
     hlr_constructor_cfg:
       vnr_width:    5           ### maximum elements in VNR vector ###
-      validate:     true
+      validate:     false
       # autoextend: false
 
 
