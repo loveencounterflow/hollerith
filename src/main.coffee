@@ -34,6 +34,8 @@ C = freeze
   bcd_plus:         '+'         ### plus symbol, should sort after bcd_minus                             ###
   bcd_minus:        '!'         ### minus symbol, should sort before bcd_plus                            ###
   bcd_padder:       '.'         ### used to pad empty fields                                             ###
+  bcd_nr_max:       parseInt '+zzzz', 36
+  bcd_nr_min:       parseInt '-zzzz', 36
   #.........................................................................................................
   defaults:
     hlr_constructor_cfg:
@@ -89,13 +91,19 @@ class @Hollerith
   #
   #---------------------------------------------------------------------------------------------------------
   _encode_u32: ( vnr ) =>
+    ### Observe that we limit all VNR elements to `[ u32_nr_max .. u32_nr_min ]` so numbers outside that
+    range will no longer cause an error. Clients will have to check for boundaries somewhere else if they
+    so wish. ###
     @types.validate.vnr vnr if @cfg.validate
     unless 0 < vnr.length <= @cfg.vnr_width
       throw new Error "^44798^ expected VNR to be between 1 and #{@cfg.vnr_width} elements long, got length #{vnr.length}"
     R       = Buffer.alloc @cfg.vnr_width * C.u32_width, 0x00 ### TAINT pre-compute constant ###
     offset  = -C.u32_width
     for idx in [ 0 ... @cfg.vnr_width ]
-      R.writeUInt32BE ( vnr[ idx ] ? 0 ) + C.u32_sign_delta, ( offset += C.u32_width )
+      nr = vnr[ idx ] ? 0
+      nr = Math.min nr, @constructor.C.u32_nr_max
+      nr = Math.max nr, @constructor.C.u32_nr_min
+      R.writeUInt32BE nr + C.u32_sign_delta, ( offset += C.u32_width )
     return R
 
   #---------------------------------------------------------------------------------------------------------
@@ -104,6 +112,8 @@ class @Hollerith
     for idx in [ 0 ... @cfg.vnr_width ]
       nr    = vnr[ idx ] ? 0
       sign  = if nr >= 0 then C.bcd_plus else C.bcd_minus
+      nr    = Math.min nr, @constructor.C.bcd_nr_max
+      nr    = Math.max nr, @constructor.C.bcd_nr_min
       R.push sign + ( ( Math.abs nr ).toString C.bcd_base ).padStart C.bcd_dpe, C.bcd_padder
     return R.join ','
 
