@@ -140,6 +140,16 @@ class @Hollerith
     R[ vnr.length - 1 ]  += delta
     return R
 
+
+  #=========================================================================================================
+  # SORTING
+  #---------------------------------------------------------------------------------------------------------
+  ### TAINT conflate _only_zeroes_after(), _first_nonzero_is_negative() ###
+  _only_zeroes_after: ( list, first_idx ) =>
+    for idx in [ first_idx ... list.length ]
+      return false  if list[ idx ] isnt 0
+    return true
+
   #---------------------------------------------------------------------------------------------------------
   _first_nonzero_is_negative: ( list, first_idx ) =>
     idx = first_idx
@@ -149,6 +159,9 @@ class @Hollerith
         continue
       return false if ( R is undefined ) or ( R > 0 )
       return true
+
+  #---------------------------------------------------------------------------------------------------------
+  cmp_blobs: ( a, b ) => a.compare b
 
   #---------------------------------------------------------------------------------------------------------
   cmp: ( a, b ) =>
@@ -165,10 +178,19 @@ class @Hollerith
       return +1 if ai > bi
     return  0 if a_length is b_length
     if a_length < b_length
-      return +1 if @_first_nonzero_is_negative b, min_idx + 1
+      return 0  if @_only_zeroes_after          b, min_idx + 1
+      return +1 if @_first_nonzero_is_negative  b, min_idx + 1
       return -1
-    return -1 if @_first_nonzero_is_negative a, min_idx + 1
+    return 0  if @_only_zeroes_after          a, min_idx + 1
+    return -1 if @_first_nonzero_is_negative  a, min_idx + 1
     return +1
+
+  #---------------------------------------------------------------------------------------------------------
+  sort_blobs: ( vnr_blobs ) =>
+    ### Given a list of VNRs, return a copy of the list with the VNRs lexicographically sorted. ###
+    if @cfg.validate
+      @types.validate.list vnr_blobs
+    return [ vnr_blobs..., ].sort ( a, b ) => a.compare b
 
   #---------------------------------------------------------------------------------------------------------
   sort: ( vnrs ) =>
