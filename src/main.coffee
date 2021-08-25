@@ -155,46 +155,7 @@ class @Hollerith
   #=========================================================================================================
   # SORTING
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT conflate _only_zeroes_after(), _first_nonzero_is_negative() ###
-  _only_zeroes_after: ( list, first_idx ) =>
-    for idx in [ first_idx ... list.length ]
-      return false  if list[ idx ] isnt 0
-    return true
-
-  #---------------------------------------------------------------------------------------------------------
-  _first_nonzero_is_negative: ( list, first_idx ) =>
-    idx = first_idx
-    loop
-      if ( R = list[ idx ] ) is 0
-        idx++
-        continue
-      return false if ( R is undefined ) or ( R > 0 )
-      return true
-
-  #---------------------------------------------------------------------------------------------------------
   cmp_blobs: ( a, b ) => a.compare b
-
-  # #---------------------------------------------------------------------------------------------------------
-  # cmp: ( a, b ) =>
-  #   if @cfg.validate
-  #     @types.validate.vnr a
-  #     @types.validate.vnr b
-  #   a_length  = a.length
-  #   b_length  = b.length
-  #   min_idx   = ( Math.min a_length, b_length ) - 1
-  #   for idx in [ 0 .. min_idx ]
-  #     ai = a[ idx ]
-  #     bi = b[ idx ]
-  #     return -1 if ai < bi
-  #     return +1 if ai > bi
-  #   return  0 if a_length is b_length
-  #   if a_length < b_length
-  #     return 0  if @_only_zeroes_after          b, min_idx + 1
-  #     return +1 if @_first_nonzero_is_negative  b, min_idx + 1
-  #     return -1
-  #   return 0  if @_only_zeroes_after          a, min_idx + 1
-  #   return -1 if @_first_nonzero_is_negative  a, min_idx + 1
-  #   return +1
 
   #---------------------------------------------------------------------------------------------------------
   cmp: ( a, b ) =>
