@@ -24,17 +24,23 @@ echo                      = CND.echo.bind CND
 #
 #-----------------------------------------------------------------------------------------------------------
 C = freeze
-  sign_delta:   0x80000000  ### used to lift negative numbers to non-negative ###
-  u32_width:    4           ### bytes per element ###
-  nr_min:       -0x80000000 ### smallest possible VNR element ###
-  nr_max:       +0x7fffffff ### largest possible VNR element ###
+  u32_sign_delta:   0x80000000  ### used to lift negative numbers to non-negative                        ###
+  u32_width:        4           ### bytes per element                                                    ###
+  u32_nr_min:       -0x80000000 ### smallest possible VNR element                                        ###
+  u32_nr_max:       +0x7fffffff ### largest possible VNR element                                         ###
+  #.........................................................................................................
+  bcd_dpe:          4           ### digits per element                                                   ###
+  bcd_base:         36          ### number base                                                          ###
+  bcd_plus:         '+'         ### plus symbol, should sort after bcd_minus                             ###
+  bcd_minus:        '!'         ### minus symbol, should sort before bcd_plus                            ###
+  bcd_padder:       '.'         ### used to pad empty fields                                             ###
   #.........................................................................................................
   defaults:
     hlr_constructor_cfg:
       vnr_width:    5           ### maximum elements in VNR vector ###
       validate:     false
       # autoextend: false
-
+      format:       'u32'
 
 #===========================================================================================================
 #
@@ -47,6 +53,7 @@ create_types = ( instance ) ->
     "x is a object":                    ( x ) -> @isa.object x
     "@isa.cardinal x.vnr_width":        ( x ) -> @isa.cardinal x.vnr_width
     "@isa.boolean x.validate":          ( x ) -> @isa.boolean x.validate
+    "x.format in [ 'u32', 'bcd', ]":    ( x ) -> x.format in [ 'u32', 'bcd', ]
   types.validate.hlr_constructor_cfg instance.cfg
 
   #-----------------------------------------------------------------------------------------------------------
@@ -72,34 +79,32 @@ class @Hollerith
     @cfg    = { C.defaults.hlr_constructor_cfg..., cfg..., }
     @types  = create_types @
     @cfg    = freeze @cfg
+    @encode = switch @cfg.format
+      when 'u32' then @_encode_u32
+      when 'bcd' then @_encode_bcd
     return undefined
 
 
   #=========================================================================================================
   #
   #---------------------------------------------------------------------------------------------------------
-  encode: ( vnr ) ->
+  _encode_u32: ( vnr ) =>
     @types.validate.vnr vnr if @cfg.validate
     unless 0 < vnr.length <= @cfg.vnr_width
       throw new Error "^44798^ expected VNR to be between 1 and #{@cfg.vnr_width} elements long, got length #{vnr.length}"
     R       = Buffer.alloc @cfg.vnr_width * C.u32_width, 0x00 ### TAINT pre-compute constant ###
     offset  = -C.u32_width
     for idx in [ 0 ... @cfg.vnr_width ]
-      R.writeUInt32BE ( vnr[ idx ] ? 0 ) + C.sign_delta, ( offset += C.u32_width )
+      R.writeUInt32BE ( vnr[ idx ] ? 0 ) + C.u32_sign_delta, ( offset += C.u32_width )
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  _encode_bcd: ( vnr ) ->
-    dpe         = 4           ### digits per element ###
-    base        = 36
-    plus        = '+'
-    minus       = '!'
-    padder      = '.'
+  _encode_bcd: ( vnr ) =>
     R           = []
     for idx in [ 0 ... @cfg.vnr_width ]
       nr    = vnr[ idx ] ? 0
-      sign  = if nr >= 0 then plus else minus
-      R.push sign + ( ( Math.abs nr ).toString base ).padStart dpe, padder
+      sign  = if nr >= 0 then C.bcd_plus else C.bcd_minus
+      R.push sign + ( ( Math.abs nr ).toString C.bcd_base ).padStart C.bcd_dpe, C.bcd_padder
     return R.join ','
 
 
