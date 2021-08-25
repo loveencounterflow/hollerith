@@ -1,0 +1,31 @@
+{
+  "name": "hollerith",
+  "version": "2.0.0",
+  "description": "vectorial numbers (VNRs) that allow for arbitrary many interstitial elements with a binary sortable representation",
+  "main": "lib/main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo see 'https://github.com/loveencounterflow/hengist/tree/master/dev/hollerith'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loveencounterflow/hollerith.git"
+  },
+  "keywords": [
+    "vectorial numbers",
+    "vnr"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loveencounterflow/hollerith/issues"
+  },
+  "homepage": "https://github.com/loveencounterflow/hollerith#readme",
+  "dependencies": {
+    "cnd": "^9.2.2",
+    "intertype": "^7.6.7",
+    "letsfreezethat": "^3.1.0"
+  }
+}
