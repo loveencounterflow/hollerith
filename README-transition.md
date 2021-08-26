@@ -62,9 +62,10 @@ picture:
     could order values by encoding them using lists of scalar values; to provide the binary representation
     of such lists,
 
-  * [`hollerith-codec`](https://github.com/loveencounterflow/hollerith-codec) was implemented after , which
-    contains the much faster, more restricted [`hollerith-codec/tng`
-    version](https://github.com/loveencounterflow/hollerith-codec/blob/master/src/tng.coffee)
+  * [`hollerith-codec`](https://github.com/loveencounterflow/hollerith-codec) was implemented after
+    techniques used in [`bytewise`](https://github.com/deanlandolt/bytewise). There's a much faster, more
+    restricted version in
+    [`hollerith-codec/tng`](https://github.com/loveencounterflow/hollerith-codec/blob/master/src/tng.coffee)
 
 * [`datom`](https://github.com/loveencounterflow/datom), which contains
 
