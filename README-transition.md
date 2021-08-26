@@ -67,14 +67,11 @@ picture:
     restricted version in
     [`hollerith-codec/tng`](https://github.com/loveencounterflow/hollerith-codec/blob/master/src/tng.coffee)
 
-* [`datom`](https://github.com/loveencounterflow/datom), which contains
+* [`datom`](https://github.com/loveencounterflow/datom), which contains a submodule
 
-  * [`vnr` submodule](https://github.com/loveencounterflow/datom/blob/master/src/vnr.coffee), which defines
-
-    * `class Vnr`
-
-    * does not use binary encoding for sorting but a JS `cmp a, b` method (which will presently not work in
-      SQLite)
+  * [`vnr`](https://github.com/loveencounterflow/datom/blob/master/src/vnr.coffee), containing a class `Vnr`
+    that does not use binary encoding for sorting but a JS `cmp a, b` method (a mthodology which will
+    presently not work in SQLite for lack of access from JS to the internal C collation methods).
 
 * [`icql-dba-vnr`](https://github.com/loveencounterflow/icql-dba-vnr)
 
