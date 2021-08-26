@@ -89,7 +89,7 @@ picture:
 * **[+]** rename `hollerith-codec` to `hollerith-codec-legacy`
 * **[+]** publish a salutory `hollerith-codec` version on npm that *includes the new repo URL*,
 * **[+]** move relevant tests, benchmarks from `hengist/dev/hollerith-codec` to `hengist/dev/hollerith-codec-legacy`
-* **[–]** deprecate `hollerith-codec` on npm, in docs
+* **[+]** deprecate `hollerith-codec` on npm, in docs
 
 ### [–] Init New Major Version of `hollerith`
 
