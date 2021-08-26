@@ -1,6 +1,6 @@
 {
   "name": "hollerith",
-  "version": "2.0.0",
+  "version": "10.0.0",
   "description": "vectorial numbers (VNRs) that allow for arbitrary many interstitial elements with a binary sortable representation",
   "main": "lib/main.js",
   "directories": {
