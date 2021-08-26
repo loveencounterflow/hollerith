@@ -93,20 +93,24 @@ picture:
 
 ### [–] Init New Major Version of `hollerith`
 
-* **[–]** move code from `datom/src/vnr` to `hollerith`
-* **[–]** publish new major version of `datom` to reflect breaking change
-* **[+]** move code from `hollerith-codec-legacy` to `hollerith`
-* **[–]** rewrite relevant tests, benchmarks, demos in `hengist/dev/hollerith` based on existing code
+* **[+]** move code from `datom/src/vnr` to `hollerith`
+* **[+]** move code from `hollerith-codec-legacy/tng` to `hollerith`
 * **[+]** publish initial version of `hollerith`
-* **[–]** deprecate versions prior to 10.0.0 of `hollerith` on npm, in docs (**Note** this keeps throwing
-  `422 Unprocessable Entity` which appears to be a bug with npm)
+
+* **[–]** publish new major version of `datom` to reflect breaking change
+* **[–]** rewrite relevant tests, benchmarks, demos in `hengist/dev/hollerith` based on existing code
+* **[–]** deprecate versions prior to 10.0.0 of `hollerith` on npm, in docs
+  * (**Note this keeps throwing `422 Unprocessable Entity` which appears to be a bug with npm**)
 
 ### [–] Re-Publish `icql-dba-vnr` as `icql-dba-hollerith`
 
-* **[–]** deprecate `icql-dba-vnr` on npm, in docs
-* **[–]** rename `icql-dba-vnr` to `icql-dba-vnr-legacy`
-* **[–]** in `hengist/apps`, remove `icql-dba-vnr`, add `icql-dba-hollerith`
-* **[–]** copy code, history to `icql-dba-hollerith`
+* <del>deprecate `icql-dba-vnr` on npm<del> never published on npm, so moot
+* **[+]** deprecate `icql-dba-vnr` in docs
+* **[+]** rename `icql-dba-vnr` to `icql-dba-vnr-legacy`
+* **[+]** publish preliminary version of `icql-dba-hollerith` on npm
+* **[+]** in `hengist/apps`, remove `icql-dba-vnr`, add `icql-dba-vnr-legacy`, `icql-dba-hollerith`
+* **[+]** copy code, history to `icql-dba-hollerith`
+
 * **[–]** relocate relevant test, benchmarks, demos in `hengist`
 * **[–]** adapt `icql-dba-hollerith` to replace dependency on `hollerith-codec`, `datom/lib/vnr` with dependency
   on `hollerith`
@@ -114,6 +118,7 @@ picture:
 ### Add benchmarks
 
 * **[+]** add benchmarks for Hollerith v2 with and without validation
+
 * **[–]** add benchmarks for Hollerith v2 with different sorting methods
 
 
