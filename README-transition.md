@@ -13,6 +13,7 @@
   - [[+] Retire `hollerith-codec`](#-retire-hollerith-codec)
   - [[–] Init New Major Version of `hollerith`](#-init-new-major-version-of-hollerith)
   - [[–] Re-Publish `icql-dba-vnr` as `icql-dba-hollerith`](#-re-publish-icql-dba-vnr-as-icql-dba-hollerith)
+  - [[–] Afterthoughts](#-afterthoughts)
   - [Add benchmarks](#add-benchmarks)
 - [Benchmarks](#benchmarks)
   - [`encode()`](#encode)
@@ -114,6 +115,12 @@ picture:
 * **[–]** relocate relevant test, benchmarks, demos in `hengist`
 * **[–]** adapt `icql-dba-hollerith` to replace dependency on `hollerith-codec`, `datom/lib/vnr` with dependency
   on `hollerith`
+
+### [–] Afterthoughts
+
+* **[–]** Class constructor `Hollerith` has been defined to embrace types as instance-specific (because some
+  type definitions will depend on instance `cfg` properties (a.k.a. settings)). How can it be made easier to
+  follow that pattern, apply it elsewhere?
 
 ### Add benchmarks
 
