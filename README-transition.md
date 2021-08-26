@@ -1,3 +1,4 @@
+
 # Future of VNR, Datom, Hollerith, Hollerith-Codec, ICQL-DBA-VNR
 
 
@@ -6,6 +7,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [Purpose](#purpose)
 - [Packages mentioned](#packages-mentioned)
 - [The Plan](#the-plan)
   - [[+] Retire `hollerith`](#-retire-hollerith)
@@ -14,13 +16,40 @@
   - [[–] Re-Publish `icql-dba-vnr` as `icql-dba-hollerith`](#-re-publish-icql-dba-vnr-as-icql-dba-hollerith)
   - [Add benchmarks](#add-benchmarks)
 - [Benchmarks](#benchmarks)
+  - [`encode()`](#encode)
+  - [`sorting`](#sorting)
 - [Related](#related)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
+## Purpose
 
+This is a To Do and protocol about the steps involved in refactoring various parts from `hollerith`,
+`hollerith-codec`, `datom/vnr`, and `icql-dba-vnr` / `icql-dba-hollerith` (see below for links). The big
+picture:
 
+* there's a way to do sequential numbering with integers referring to text file line numbers in such a way
+  that arbitrary amounts of new lines obtained from transforming existant lines can be stuffed 'between the
+  cracks' in such a way that reference to the original location as well as overall ordering is preserved.
+  This technique has been called 'vectorial numbers' (VNRs) and was first implemented as a submodule of
+  `datom` with which it is only tangentially related, `datoms` being used as a standard format for chunks of
+  data passed through a processing pipeline which would also carry VNRs.
+
+* there's a way to transform lists of integers such that a DB engine like SQLite which is per se not capable
+  of ordering lists of integers in a numerical way can deliver such a sorting (SQLite represents JSON values
+  as strings and will sort `[1],[10],[100],[2]` instead of `[1],[2],[10],[100]`). This was first implemented
+  in `hollerith-codec`.
+
+* `hollerith` was an approach to EAV databases which is no longer pursued; this name is now free. The next
+  major version will bring together in one package both
+  * a much faster re-implementation of `hollerith-codec`-like encodings (serializations), and
+  * all the machinery to conveniently work with VNRs (`advance()`, `retract()` and so on).
+
+* `icql-dba-vnr` is a [`icql-dba`](https://github.com/loveencounterflow/icql-dba)
+  [plugin](https://github.com/loveencounterflow/icql-dba/blob/master/README-plugins.md) that (e.g.) allows
+  to easily add VNR columns to existing tables. It will be renamed `icql-dba-hollerith` to hilite that it
+  is, basically, 'Hollerith (VNRs + codec) for SQLite (relational DBs)'.
 
 
 ## Packages mentioned
