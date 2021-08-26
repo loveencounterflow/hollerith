@@ -16,7 +16,7 @@
   - [Add benchmarks](#add-benchmarks)
 - [Benchmarks](#benchmarks)
   - [`encode()`](#encode)
-  - [`sorting`](#sorting)
+  - [Sorting](#sorting)
 - [Related](#related)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -89,6 +89,7 @@ picture:
 * **[+]** rename `hollerith-codec` to `hollerith-codec-legacy`
 * **[+]** publish a salutory `hollerith-codec` version on npm that *includes the new repo URL*,
 * **[+]** move relevant tests, benchmarks from `hengist/dev/hollerith-codec` to `hengist/dev/hollerith-codec-legacy`
+* **[–]** deprecate `hollerith-codec` on npm, in docs
 
 ### [–] Init New Major Version of `hollerith`
 
@@ -100,7 +101,7 @@ picture:
 
 ### [–] Re-Publish `icql-dba-vnr` as `icql-dba-hollerith`
 
-* **[–]** deprecate `icql-dba-vnr`
+* **[–]** deprecate `icql-dba-vnr` on npm, in docs
 * **[–]** copy code, history to `icql-dba-hollerith`
 * **[–]** relocate relevant test, benchmarks, demos in `hengist`
 * **[–]** adapt `icql-dba-hollerith` to replace dependency on `hollerith-codec`, `datom/lib/vnr` with dependency
@@ -108,7 +109,7 @@ picture:
 
 ### Add benchmarks
 
-* **[–]** add benchmarks for Hollerith v2 with and without validation
+* **[+]** add benchmarks for Hollerith v2 with and without validation
 * **[–]** add benchmarks for Hollerith v2 with different sorting methods
 
 
@@ -134,7 +135,7 @@ bytewise           15.028 s    300,000 items        19,963⏶Hz          50,092�
 * neither of which have a fixed length and would probably have to be padded or otherwise post-processed to
   be used in SQLite sort entries
 
-### `sorting`
+### Sorting
 
 ```
 hollerith2_nv_bcd   0.648 s         300,000 items    462,622⏶Hz             2,162⏷nspc
