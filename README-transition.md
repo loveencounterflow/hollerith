@@ -95,13 +95,17 @@ picture:
 
 * **[–]** move code from `datom/src/vnr` to `hollerith`
 * **[–]** publish new major version of `datom` to reflect breaking change
-* **[–]** move code from `hollerith-codec-legacy` to `hollerith`
+* **[+]** move code from `hollerith-codec-legacy` to `hollerith`
 * **[–]** rewrite relevant tests, benchmarks, demos in `hengist/dev/hollerith` based on existing code
-* **[–]** publish initial version of `hollerith`
+* **[+]** publish initial version of `hollerith`
+* **[–]** deprecate versions prior to 10.0.0 of `hollerith` on npm, in docs (**Note** this keeps throwing
+  `422 Unprocessable Entity` which appears to be a bug with npm)
 
 ### [–] Re-Publish `icql-dba-vnr` as `icql-dba-hollerith`
 
 * **[–]** deprecate `icql-dba-vnr` on npm, in docs
+* **[–]** rename `icql-dba-vnr` to `icql-dba-vnr-legacy`
+* **[–]** in `hengist/apps`, remove `icql-dba-vnr`, add `icql-dba-hollerith`
 * **[–]** copy code, history to `icql-dba-hollerith`
 * **[–]** relocate relevant test, benchmarks, demos in `hengist`
 * **[–]** adapt `icql-dba-hollerith` to replace dependency on `hollerith-codec`, `datom/lib/vnr` with dependency
