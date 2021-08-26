@@ -8,7 +8,6 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Purpose](#purpose)
-- [Packages mentioned](#packages-mentioned)
 - [The Plan](#the-plan)
   - [[+] Retire `hollerith`](#-retire-hollerith)
   - [[+] Retire `hollerith-codec`](#-retire-hollerith-codec)
@@ -41,45 +40,36 @@ picture:
   as strings and will sort `[1],[10],[100],[2]` instead of `[1],[2],[10],[100]`). This was first implemented
   in `hollerith-codec`.
 
-* `hollerith` was an approach to EAV databases which is no longer pursued; this name is now free. The next
-  major version will bring together in one package both
+* [`hollerith`](https://github.com/loveencounterflow/hollerith) was an approach to EAV databases which is no
+  longer pursued (it supported an EAV-like 'single/big table' 'phrase' DB for use with key/value stores like
+  LevelDB; these efforts have been scrapped in favor of Relational DBs and SQL. The fundamental idea here
+  was that one could order values by encoding them using lists of scalar values).
+
+  The name `hollerith` now being free, the next major version will bring together in one package both
   * a much faster re-implementation of `hollerith-codec`-like encodings (serializations), and
   * all the machinery to conveniently work with VNRs (`advance()`, `retract()` and so on).
+
+  To provide the binary representation of such lists,
+
+* [`hollerith-codec`](https://github.com/loveencounterflow/hollerith-codec) was implemented after techniques
+  used in [`bytewise`](https://github.com/deanlandolt/bytewise). The faster version that is restricted to
+  lists of integers is in
+  [`hollerith-codec/tng`](https://github.com/loveencounterflow/hollerith-codec/blob/master/src/tng.coffee)
+
+* [`datom`](https://github.com/loveencounterflow/datom) contains a submodule
+
+* [`datom/vnr`](https://github.com/loveencounterflow/datom/blob/master/src/vnr.coffee) with a class `Vnr`.
+  It does not use binary encoding for sorting but a JS `cmp a, b` method (a mthodology which will
+  presently not work in SQLite for lack of access from JS to the internal C collation methods).
 
 * `icql-dba-vnr` is a [`icql-dba`](https://github.com/loveencounterflow/icql-dba)
   [plugin](https://github.com/loveencounterflow/icql-dba/blob/master/README-plugins.md) that (e.g.) allows
   to easily add VNR columns to existing tables. It will be renamed `icql-dba-hollerith` to hilite that it
-  is, basically, 'Hollerith (VNRs + codec) for SQLite (relational DBs)'.
+  is, basically, 'Hollerith (VNRs + codec) for SQLite (relational DBs)'. It
 
-
-## Packages mentioned
-
-
-* [`hollerith`](https://github.com/loveencounterflow/hollerith), which
-
-  * supports an EAV-like 'single/big table' 'phrase' DB for use with key/value stores like LevelDB; these
-    efforts have been scrapped in favor of Relational DBs and SQL. The fundamental idea here was that one
-    could order values by encoding them using lists of scalar values; to provide the binary representation
-    of such lists,
-
-  * [`hollerith-codec`](https://github.com/loveencounterflow/hollerith-codec) was implemented after
-    techniques used in [`bytewise`](https://github.com/deanlandolt/bytewise). There's a much faster, more
-    restricted version in
-    [`hollerith-codec/tng`](https://github.com/loveencounterflow/hollerith-codec/blob/master/src/tng.coffee)
-
-* [`datom`](https://github.com/loveencounterflow/datom), which contains a submodule
-
-  * [`vnr`](https://github.com/loveencounterflow/datom/blob/master/src/vnr.coffee), containing a class `Vnr`
-    that does not use binary encoding for sorting but a JS `cmp a, b` method (a mthodology which will
-    presently not work in SQLite for lack of access from JS to the internal C collation methods).
-
-* [`icql-dba-vnr`](https://github.com/loveencounterflow/icql-dba-vnr)
-
-  * defines tables and indices to work with VNRs in SQLite
-
-  * VNR methods inherited from `datom/lib/vnr#Vnr`
-
-  * uses `hollerith-codec/tng` for fast indexing BLOBs
+  * defines tables and indices to work with VNRs in SQLite,
+  * VNR methods inherited from `datom/lib/vnr#Vnr`,
+  * and uses `hollerith-codec/tng` for ordering of BLOBs that encode lists of integers.
 
 ## The Plan
 
