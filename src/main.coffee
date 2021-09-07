@@ -23,64 +23,65 @@ echo                      = CND.echo.bind CND
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
-C = freeze
-  u32_sign_delta:   0x80000000  ### used to lift negative numbers to non-negative                        ###
-  u32_width:        4           ### bytes per element                                                    ###
-  u32_nr_min:       -0x80000000 ### smallest possible VNR element                                        ###
-  u32_nr_max:       +0x7fffffff ### largest possible VNR element                                         ###
-  #.........................................................................................................
-  bcd_dpe:          4           ### digits per element                                                   ###
-  bcd_base:         36          ### number base                                                          ###
-  bcd_plus:         '+'         ### plus symbol, should sort after bcd_minus                             ###
-  bcd_minus:        '!'         ### minus symbol, should sort before bcd_plus                            ###
-  bcd_padder:       '.'         ### used to pad empty fields                                             ###
-  bcd_nr_max:       parseInt '+zzzz', 36
-  bcd_nr_min:       parseInt '-zzzz', 36
-  #.........................................................................................................
-  defaults:
-    hlr_constructor_cfg:
-      vnr_width:    5           ### maximum elements in VNR vector ###
-      validate:     false
-      # autoextend: false
-      format:       'u32'
+class _Hollerith_proto
 
-#===========================================================================================================
-#
-#-----------------------------------------------------------------------------------------------------------
-create_types = ( instance ) ->
-  types = new ( require 'intertype' ).Intertype()
+  #---------------------------------------------------------------------------------------------------------
+  @C: freeze
+    u32_sign_delta:   0x80000000  ### used to lift negative numbers to non-negative                      ###
+    u32_width:        4           ### bytes per element                                                  ###
+    u32_nr_min:       -0x80000000 ### smallest possible VNR element                                      ###
+    u32_nr_max:       +0x7fffffff ### largest possible VNR element                                       ###
+    #.......................................................................................................
+    bcd_dpe:          4           ### digits per element                                                 ###
+    bcd_base:         36          ### number base                                                        ###
+    bcd_plus:         '+'         ### plus symbol, should sort after bcd_minus                           ###
+    bcd_minus:        '!'         ### minus symbol, should sort before bcd_plus                          ###
+    bcd_padder:       '.'         ### used to pad empty fields                                           ###
+    bcd_nr_max:       parseInt '+zzzz', 36
+    bcd_nr_min:       parseInt '-zzzz', 36
+    #.......................................................................................................
+    defaults:
+      hlr_constructor_cfg:
+        vnr_width:    5           ### maximum elements in VNR vector ###
+        validate:     false
+        # autoextend: false
+        format:       'u32'
 
-  #-----------------------------------------------------------------------------------------------------------
-  types.declare 'hlr_constructor_cfg', tests:
-    "x is a object":                    ( x ) -> @isa.object x
-    "@isa.cardinal x.vnr_width":        ( x ) -> @isa.cardinal x.vnr_width
-    "@isa.boolean x.validate":          ( x ) -> @isa.boolean x.validate
-    "x.format in [ 'u32', 'bcd', ]":    ( x ) -> x.format in [ 'u32', 'bcd', ]
-  types.validate.hlr_constructor_cfg instance.cfg
+  #---------------------------------------------------------------------------------------------------------
+  @create_types: ( instance ) ->
+    types = new ( require 'intertype' ).Intertype()
+    #.......................................................................................................
+    types.declare 'hlr_constructor_cfg', tests:
+      "x is a object":                    ( x ) -> @isa.object x
+      "@isa.cardinal x.vnr_width":        ( x ) -> @isa.cardinal x.vnr_width
+      "@isa.boolean x.validate":          ( x ) -> @isa.boolean x.validate
+      "x.format in [ 'u32', 'bcd', ]":    ( x ) -> x.format in [ 'u32', 'bcd', ]
+    types.validate.hlr_constructor_cfg instance.cfg
+    #.......................................................................................................
+    types.declare 'hlr_vnr', ( x ) ->
+      ### TAINT check bounds of elements ###
+      return false unless @isa.nonempty_list x
+      return x.every ( xx ) => @isa.positive_integer xx
+    #.......................................................................................................
+    return types
 
-  #-----------------------------------------------------------------------------------------------------------
-  types.declare 'hlr_vnr', ( x ) ->
-    ### TAINT check bounds of elements ###
-    return false unless @isa.nonempty_list x
-    return x.every ( xx ) => @isa.positive_integer xx
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( cfg ) ->
+    @cfg    = { @constructor.C.defaults.hlr_constructor_cfg..., cfg..., }
+    @types  = @constructor.create_types @
+    @cfg    = freeze @cfg
+    return undefined
 
-  #-----------------------------------------------------------------------------------------------------------
-  return types
 
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
 ### TAINT use separate class? for validation to eschew extra call on each use ###
-class @Hollerith
-
-  #---------------------------------------------------------------------------------------------------------
-  @C: C
+class @Hollerith extends _Hollerith_proto
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
-    @cfg    = { C.defaults.hlr_constructor_cfg..., cfg..., }
-    @types  = create_types @
-    @cfg    = freeze @cfg
+    super cfg
     @encode = switch @cfg.format
       when 'u32' then @_encode_u32
       when 'bcd' then @_encode_bcd
@@ -185,6 +186,7 @@ class @Hollerith
 
 
 #===========================================================================================================
+C           = _Hollerith_proto.C
 @Hollerith  = freeze @Hollerith
 @HOLLERITH  = new @Hollerith()
 
