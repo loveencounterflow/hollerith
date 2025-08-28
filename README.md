@@ -21,7 +21,6 @@
 
 
 
-+000      0   n
 
 
 
@@ -64,15 +63,16 @@
   * **+C**: Prepend a magnifier corresponding to the number of digits; longer numbers get a
     lexicographically bigger magnifier.
 
-* For negative numbers greater than zero as in * **−A**:
-  * **−B**: Add `max_integer` plus one; this 'lifts' −999 to +1
-  * **−C**: Do two things:
+* For negative numbers greater than zero:
+  * **−A**: Add `max_integer` plus one; this 'lifts' −999 to +1
+  * **−B**: Do two things:
     * pad with leading zeroes up to the length of `max_integer` and
     * remove leading nines.
-  * **−D**: ; Now absolutely small negative integers have few digits again while absolutely large ones have
+  * **−C**: ; Now absolutely small negative integers have few digits again while absolutely large ones have
     many digits again. Prepend a magnifier corresponding to the number of digits; numbers with more digits
     get a prefix that lexicographically precedes ones with fewer digits.
 
++000      0   n
 
 
 
