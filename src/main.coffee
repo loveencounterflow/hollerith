@@ -2,8 +2,11 @@
 'use strict'
 
 #===========================================================================================================
-{ encodeBigInt,
-  decodeBigInt,   } = TMP_require_encode_in_alphabet()
+# { encodeBigInt,
+#   decodeBigInt,   } = TMP_require_encode_in_alphabet()
+SFMODULES                 = require 'bricabrac-single-file-modules'
+{ encode, decode,       } = SFMODULES.unstable.require_anybase()
+{ debug,                } = console
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
@@ -37,6 +40,36 @@ constants_10 = Object.freeze
   nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
 
 #-----------------------------------------------------------------------------------------------------------
+constants_10mvp = Object.freeze
+  max_integer:  +999
+  min_integer:  -999
+  zpuns:        'N' # zero and positive uniliteral numbers
+  nuns:         ''  # negative          uniliteral numbers
+  zpun_max:     +0
+  nun_min:      -0
+  zero_pad_length:  3
+  alphabet:     '0123456789'
+  pmag:         ' OPQR'   # positive 'magnifier' for 1 to 8 positive digits
+  nmag:         ' MLKJ'   # negative 'magnifier' for 1 to 8 negative digits
+  nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+
+#-----------------------------------------------------------------------------------------------------------
+constants_10mvp2 = Object.freeze
+  max_integer:  +999
+  min_integer:  -999
+  # MLKJIHGFEDCBA
+  # N XYZ
+  zpuns:        'NOPQRSTUVW' # zero and positive uniliteral numbers
+  nuns:         'EFGHIJKLM'  # negative          uniliteral numbers
+  zpun_max:     +9
+  nun_min:      -9
+  zero_pad_length:  3
+  alphabet:     '0123456789'
+  pmag:         '  XYZ'   # positive 'magnifier' for 1 to 8 positive digits
+  nmag:         '  CBA'   # negative 'magnifier' for 1 to 8 negative digits
+  nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+
+#-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
 constants = C = constants_10
 
@@ -45,7 +78,12 @@ internals = Object.freeze { constants, }
 
 
 #===========================================================================================================
-class Vindex
+class Hollerith
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( _TMP_constants ) ->
+    @cfg = _TMP_constants
+    return undefined
 
   #---------------------------------------------------------------------------------------------------------
   encode: ( integer_or_list ) ->
@@ -56,9 +94,9 @@ class Vindex
     n = integer_or_list
     unless Number.isFinite n
       type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-      throw new Error "Ωvdx__42 expected a float, got a #{type}"
-    unless C.min_integer <= n <= C.max_integer
-      throw new Error "Ωvdx__43 expected a float between #{C.min_integer} and #{C.max_integer}, got #{n}"
+      throw new Error "Ωhll___1 expected a float, got a #{type}"
+    unless @cfg.min_integer <= n <= @cfg.max_integer
+      throw new Error "Ωhll___2 expected a float between #{@cfg.min_integer} and #{@cfg.max_integer}, got #{n}"
     #.......................................................................................................
     return @encode_integer n
 
@@ -67,18 +105,33 @@ class Vindex
     ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
     #.......................................................................................................
     # Zero or small positive:
-    return ( C.zpuns.at n ) if 0          <= n <= C.zpun_max
+    return ( @cfg.zpuns.at n ) if 0          <= n <= @cfg.zpun_max
     #.......................................................................................................
     # Small negative:
-    return ( C.nuns.at  n ) if C.nun_min  <= n <  0
+    return ( @cfg.nuns.at  n ) if @cfg.nun_min  <= n <  0
     #.......................................................................................................
     # Big positive:
-    if n > C.zpun_max
-      R = encodeBigInt n, C.alphabet
-      return ( C.pmag.at R.length ) + R
+    if n > @cfg.zpun_max
+      R = encode n, @cfg.alphabet
+      return ( @cfg.pmag.at R.length ) + R
     #.......................................................................................................
     # Big negative:
-    R = ( encodeBigInt ( n + C.max_integer + 1 ), C.alphabet )
-    if R.length < C.zero_pad_length   then  R = R.padStart C.zero_pad_length, C.alphabet.at 0
-    else                                    R = R.replace C.nlead_re, ''
-    return ( C.nmag.at R.length ) + R
+    ### NOTE plus one or not plus one?? ###
+    # R = ( encode ( n + @cfg.max_integer + 1 ), @cfg.alphabet )
+    R = ( encode ( n + @cfg.max_integer     ), @cfg.alphabet )
+    # debug 'Ωhll___3', { n, R, }
+    if R.length < @cfg.zero_pad_length
+      R = R.padStart @cfg.zero_pad_length, @cfg.alphabet.at 0
+      # debug 'Ωhll___4', { n, R, }
+    else
+      R = R.replace @cfg.nlead_re, ''
+      # debug 'Ωhll___5', { n, R, }
+    return ( @cfg.nmag.at R.length ) + R
+
+#===========================================================================================================
+module.exports = do =>
+  hollerith_10      = new Hollerith constants_10
+  hollerith_10mvp   = new Hollerith constants_10mvp
+  hollerith_10mvp2  = new Hollerith constants_10mvp2
+  hollerith_128     = new Hollerith constants_128
+  return { Hollerith, hollerith_10, hollerith_10mvp, hollerith_10mvp2, hollerith_128, internals, }
