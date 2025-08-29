@@ -11,12 +11,27 @@ importers:
       bricabrac-single-file-modules:
         specifier: ^0.7.0
         version: 0.7.0
+      regex:
+        specifier: ^6.0.1
+        version: 6.0.1
 
 packages:
 
   bricabrac-single-file-modules@0.7.0:
     resolution: {integrity: sha512-CrCRHORvw3zP+KhYvJT+5Bo69nDwtjCBlCZrV1Wj9tvAghpUSGipC6PxenVTG6hW88C9M+tH1auTZpdDyIDuPQ==}
 
+  regex-utilities@2.3.0:
+    resolution: {integrity: sha512-8VhliFJAWRaUiVvREIiW2NXXTmHs4vMNnSzuJVhscgmGav3g9VDxLrQndI3dZZVVdp0ZO/5v0xmX516/7M9cng==}
+
+  regex@6.0.1:
+    resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
+
 snapshots:
 
   bricabrac-single-file-modules@0.7.0: {}
+
+  regex-utilities@2.3.0: {}
+
+  regex@6.0.1:
+    dependencies:
+      regex-utilities: 2.3.0
