@@ -16,6 +16,9 @@
 
 # Hollerith
 
+vectorial indices ('vindices' or VDXs) that allow for arbitrary many interstitial elements with a binary
+sortable representation
+
 ## Compact Encoding
 
 ### Motivation
