@@ -6,7 +6,11 @@
 #   decodeBigInt,   } = TMP_require_encode_in_alphabet()
 SFMODULES                 = require 'bricabrac-single-file-modules'
 { encode, decode,       } = SFMODULES.unstable.require_anybase()
+{ type_of,              } = SFMODULES.unstable.require_type_of()
+{ show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { debug,                } = console
+{ regex,                } = require 'regex'
+
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
@@ -83,7 +87,14 @@ class Hollerith
   #---------------------------------------------------------------------------------------------------------
   constructor: ( _TMP_constants ) ->
     @cfg = _TMP_constants
+    @_compile_sorkey_re()
     return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  @_compile_sorkey_re: ->
+
+    # @cfg.sortkey_re =
+    return null
 
   #---------------------------------------------------------------------------------------------------------
   encode: ( integer_or_list ) ->
@@ -127,6 +138,17 @@ class Hollerith
       R = R.replace @cfg.nlead_re, ''
       # debug 'Ωhll___5', { n, R, }
     return ( @cfg.nmag.at R.length ) + R
+
+  #---------------------------------------------------------------------------------------------------------
+  decode: ( sortkey ) ->
+    ### TAINT use proper validation ###
+    unless ( type = type_of sortkey ) is 'text'
+      throw new Error "Ωhll___1 expected a text, got a #{type}"
+    unless sortkey.length > 0
+      throw new Error "Ωhll___1 expected a non-empty text, got #{rpr sortkey}"
+
+  #---------------------------------------------------------------------------------------------------------
+  decode_integer: ( n ) ->
 
 #===========================================================================================================
 module.exports = do =>
