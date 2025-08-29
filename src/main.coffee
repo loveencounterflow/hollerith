@@ -86,15 +86,27 @@ class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( _TMP_constants ) ->
-    @cfg = _TMP_constants
-    @_compile_sorkey_re()
+    cfg             = { _TMP_constants..., }
+    cfg.sortkey_re  = @_compile_sorkey_re cfg
+    @cfg            = Object.freeze cfg
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  @_compile_sorkey_re: ->
-
-    # @cfg.sortkey_re =
-    return null
+  _compile_sorkey_re: ( cfg ) ->
+    { nuns,
+      zpuns,
+      nmag,
+      pmag,
+      alphabet,     } = cfg
+    return regex"""
+    ^ (
+      (?<neg_unilit_number>   [ #{nuns}           ]                                       ) |
+      (?<zpos_unilit_number>  [ #{zpuns}          ]                                       ) |
+      (?<neg_number>          [ #{nmag[ 1 .. ] }  ] (?<mantissa> [ #{alphabet}    ]* )    ) |
+      (?<zpos_number>         [ #{pmag[ 1 .. ] }  ] (?<mantissa> [ #{alphabet}    ]* )    )
+      (?<padding>             [ #{zpuns[ 0 ]}     ]*                                      )
+      )+ $
+    """
 
   #---------------------------------------------------------------------------------------------------------
   encode: ( integer_or_list ) ->
@@ -146,6 +158,9 @@ class Hollerith
       throw new Error "Ωhll___1 expected a text, got a #{type}"
     unless sortkey.length > 0
       throw new Error "Ωhll___1 expected a non-empty text, got #{rpr sortkey}"
+    unless ( match = sortkey.match @cfg.sortkey_re )?
+      throw new Error "Ωhll___1 expected a sortkey, got #{rpr sortkey}"
+    debug 'Ωhll___1', { match.groups..., }
 
   #---------------------------------------------------------------------------------------------------------
   decode_integer: ( n ) ->
