@@ -23,5 +23,7 @@
     "url": "https://github.com/loveencounterflow/hollerith/issues"
   },
   "homepage": "https://github.com/loveencounterflow/hollerith#readme",
-  "dependencies": {}
+  "dependencies": {
+    "bricabrac-single-file-modules": "^0.7.0"
+  }
 }
