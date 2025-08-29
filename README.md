@@ -10,6 +10,7 @@
 - [Hollerith](#hollerith)
   - [Compact Encoding](#compact-encoding)
     - [Motivation](#motivation)
+- [See Also](#see-also)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -76,3 +77,6 @@
 
 
 
+# See Also
+
+inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-database-keys/
