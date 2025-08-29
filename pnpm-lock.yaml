@@ -11,6 +11,9 @@ importers:
       bricabrac-single-file-modules:
         specifier: ^0.7.0
         version: 0.7.0
+      interlex:
+        specifier: ^0.13.1
+        version: 0.13.1
       regex:
         specifier: ^6.0.1
         version: 6.0.1
@@ -19,6 +22,18 @@ packages:
 
   bricabrac-single-file-modules@0.7.0:
     resolution: {integrity: sha512-CrCRHORvw3zP+KhYvJT+5Bo69nDwtjCBlCZrV1Wj9tvAghpUSGipC6PxenVTG6hW88C9M+tH1auTZpdDyIDuPQ==}
+
+  cleartype@0.0.7:
+    resolution: {integrity: sha512-RoPd7mvyF4K4BiWktnNhPUkIdVE0RoRmpkga3JJpc4TWkPFdy1gcU41gCog2Ot/PPzQWAPFXtcqC1316fAAuZg==}
+
+  interlex@0.13.1:
+    resolution: {integrity: sha512-k/0Mawu5l6hhFXsQMs8GHXisDZ5DBMo81bIlgsoVVmH69aUu2Pgyp1LNHkweEJh9qJRiH6qkikLC+Sd3xKKTuw==}
+
+  loupe@3.2.1:
+    resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
+
+  normalize-function-arguments@0.0.11:
+    resolution: {integrity: sha512-0YF49+WVwATNqQqzl42tAb3dwb4a++grXqIOnvF9H/Tf+xhRZ14pSVbyCHlznaMk4lRfxFTkNUKgZJZ7Wa4ADw==}
 
   regex-utilities@2.3.0:
     resolution: {integrity: sha512-8VhliFJAWRaUiVvREIiW2NXXTmHs4vMNnSzuJVhscgmGav3g9VDxLrQndI3dZZVVdp0ZO/5v0xmX516/7M9cng==}
@@ -29,6 +44,23 @@ packages:
 snapshots:
 
   bricabrac-single-file-modules@0.7.0: {}
+
+  cleartype@0.0.7:
+    dependencies:
+      loupe: 3.2.1
+
+  interlex@0.13.1:
+    dependencies:
+      cleartype: 0.0.7
+      loupe: 3.2.1
+      normalize-function-arguments: 0.0.11
+      regex: 6.0.1
+
+  loupe@3.2.1: {}
+
+  normalize-function-arguments@0.0.11:
+    dependencies:
+      loupe: 3.2.1
 
   regex-utilities@2.3.0: {}
 
