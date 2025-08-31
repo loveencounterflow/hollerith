@@ -10,19 +10,118 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { debug,                } = console
 { regex,                } = require 'regex'
+{ Grammar
+  Token
+  Lexeme                } = require 'interlex'
+{ debug,                } = console
 
+
+#===========================================================================================================
+class Type
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( tspace, isa ) ->
+    @ts     = ts
+    @_isa   = isa
+    @_ctx   = Object.create @
+    @data   = {}
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  isa: ( P... ) => @_isa.call @_ctx, x
+
+#===========================================================================================================
+class Typespace
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ->
+    clasz = @constructor
+    for name in Object.getOwnPropertyNames clasz
+      @[ name ] = new Type @, isa = clasz[ name ]
+    return undefined
+
+  #=========================================================================================================
+  @text:           ( x ) -> ( type_of x ) is 'text'
+  @nonempy_text:   ( x ) -> ( @ts.text.isa x ) and x.length > 0
+  @float:          ( x ) -> Number.isFinite x
+  @integer:        ( x ) -> Number.isSafeInteger x
+  @pinteger:       ( x ) -> ( @ts.integer.isa x ) and x > 0
+  @zpinteger:      ( x ) -> ( @ts.integer.isa x ) and x >= 0
+  @cardinal:       ( x ) -> @ts.zpinteger.isa x
+
+  #---------------------------------------------------------------------------------------------------------
+  @moninc_chrs: ( x ) ->
+    return false unless @ts.nonempy_text x
+    @data.chrs = chrs = Array.split x
+    prv_chr    = null
+    for chr, idx in chrs
+      continue unless prv_chr?
+      return false unless prv_chr < chr
+      prv_chr = chr
+    return true
+
+  #---------------------------------------------------------------------------------------------------------
+  @dimension:      ( x ) -> @ts.pinteger.isa  x
+
+  #---------------------------------------------------------------------------------------------------------
+  @nmag_bare_reversed: ( x ) ->
+    return false unless @ts.nonempy_text x
+  #---------------------------------------------------------------------------------------------------------
+  @pmag_bare: ( x ) ->
+
+  #---------------------------------------------------------------------------------------------------------
+  @magnifiers: ( x ) ->
+    return false unless @ts.nonempy_text.isa x
+    [ nmag_bare_reversed,
+      pmag_bare,  ] = x.split /\s+/
+    return false unless @ts.nmag_bare_reversed  nmag_bare_reversed
+    return false unless @ts.pmag_bare           pmag_bare
+    nmag            = ' ' + nmag_bare_reversed.reverse()
+    pmag            = ' ' + pmag_bare
+
+ts = new Typespace()
+debug 'Ωhll___1', ts
+debug 'Ωhll___2', ts.nonempy_text.isa 8
+debug 'Ωhll___3', ts.nonempy_text.isa ''
+debug 'Ωhll___4', ts.nonempy_text.isa 'yes'
+process.exit 111
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
-  max_integer:  Number.MAX_SAFE_INTEGER
-  min_integer:  Number.MIN_SAFE_INTEGER
+  max_integer:  Number.MAX_SAFE_INTEGER + 1
+  min_integer:  Number.MIN_SAFE_INTEGER - 1
   zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
   nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
   zpun_max:     +20
   nun_min:      -20
   zero_pad_length: 8
-  alphabet:     '!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`' \
-                  + 'abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+  ###                     1         2         3       ###
+  ###            12345678901234567890123456789012     ###
+  alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+                'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
+                'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
+                '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+  ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
+  be used, thus can be freed for other(?) things ###
+  pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
+  nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
+  nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+
+#-----------------------------------------------------------------------------------------------------------
+constants_128b = Object.freeze
+  max_integer:  Number.MAX_SAFE_INTEGER + 1
+  min_integer:  Number.MIN_SAFE_INTEGER - 1
+  zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
+  nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
+  zpun_max:     +0
+  nun_min:      -0
+  zero_pad_length: 8
+  ###                     1         2         3       ###
+  ###            12345678901234567890123456789012     ###
+  alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+                'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
+                'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
+                '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
   ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
   be used, thus can be freed for other(?) things ###
   pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
@@ -61,8 +160,6 @@ constants_10mvp = Object.freeze
 constants_10mvp2 = Object.freeze
   max_integer:  +999
   min_integer:  -999
-  # MLKJIHGFEDCBA
-  # N XYZ
   zpuns:        'NOPQRSTUVW' # zero and positive uniliteral numbers
   nuns:         'EFGHIJKLM'  # negative          uniliteral numbers
   zpun_max:     +9
@@ -87,26 +184,93 @@ class Hollerith
   #---------------------------------------------------------------------------------------------------------
   constructor: ( _TMP_constants ) ->
     cfg             = { _TMP_constants..., }
-    cfg.sortkey_re  = @_compile_sorkey_re cfg
     @cfg            = Object.freeze cfg
+    @lexer          = @compile_sortkey_lexer @cfg
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  _compile_sorkey_re: ( cfg ) ->
+  validate_and_compile_cfg: ( cfg ) ->
+    ###
+    max_integer:  +999            # TO BE DERIVED
+    min_integer:  -999            # TO BE DERIVED
+    zpuns:        'NOPQRSTUVW'    #                           # zero and positive uniliteral numbers
+    nuns:         'EFGHIJKLM'     #                           # negative          uniliteral numbers
+    zpun_max:     +9              # TO BE DERIVED             # biggest   number representable as uniliteral
+    nun_min:      -9              # TO BE DERIVED             # smallest  number representable as uniliteral
+    dimension:     3              #                           # number of indices supported
+    zero_pad_length:  3           # TO BE DERIVED from number of places supported
+    alphabet:     '0123456789'
+    base:         10              # TO BE DERIVED from length of alphabet
+    magnifiers:   'ABC XYZ'
+    pmag:         '  XYZ'         # TO BE DERIVED from magnifiers  # positive 'magnifier' for 1 to 8 positive digits
+    nmag:         '  CBA'         # TO BE DERIVED from magnifiers  # negative 'magnifier' for 1 to 8 negative digits
+    nlead_re:     /^9*(?=[0-9])/  # TO BE DERIVED             # 'negative leader', discardable leading digits of lifted negative numbers
+
+    * no codepoint is repeated
+    * only codepoints between U+0000 and U+10ffff are supported;
+      * **NOTE** this needs re-writing string index access to array index access
+    * all codepoints must be be given in monotonically ascending order
+
+
+    ###
+    ### Validations: ###
+    ### Derivations: ###
+
+      base            = alphabet.length
+      [ nmag_bare_reversed,
+        nmag_bare,  ] = magnifiers.split /\s+/
+      nmag            = ' ' + nmag_bare_reversed.reverse()
+      pmag            = ' ' + pmag_bare
+      max_integer     = ( base ** dimension ) - 1
+      min_integer     = -max_integer
+      min_integer     = -max_integer
+
+  #---------------------------------------------------------------------------------------------------------
+  compile_sortkey_lexer: ( cfg ) ->
     { nuns,
       zpuns,
       nmag,
       pmag,
       alphabet,     } = cfg
-    return regex"""
-    ^ (
-      (?<neg_unilit_number>   [ #{nuns}           ]                                       ) |
-      (?<zpos_unilit_number>  [ #{zpuns}          ]                                       ) |
-      (?<neg_number>          [ #{nmag[ 1 .. ] }  ] (?<mantissa> [ #{alphabet}    ]* )    ) |
-      (?<zpos_number>         [ #{pmag[ 1 .. ] }  ] (?<mantissa> [ #{alphabet}    ]* )    )
-      (?<padding>             [ #{zpuns[ 0 ]}     ]*                                      )
-      )+ $
-    """
+    # base              = alphabet.length
+    #.....................................................................................................
+    nuns_letters  = nuns
+    puns_letters  = zpuns[  1 ..  ]
+    nmag_letters  = nmag[   1 ..  ]
+    pmag_letters  = pmag[   1 ..  ]
+    zero_letters  = zpuns[  0     ]
+    max_digit     = alphabet.at -1
+    #.....................................................................................................
+    fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
+    fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
+    fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
+    fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
+    fit_padding   = regex"(?<letters> [ #{zero_letters} ]+ ) $                                "
+    fit_zero      = regex"(?<letters> [ #{zero_letters} ]  (?= .* [^ #{zero_letters} ] ) )     "
+    fit_other     = regex"(?<letters> .                    )                                  "
+    all_zero_re   = regex"^ #{zero_letters}+ $"
+    #.....................................................................................................
+    cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
+    cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
+    cast_nnum     = ({ data: d, }) ->
+      mantissa  = d.mantissa.padStart cfg.zero_pad_length, max_digit
+      d.index   = ( decode mantissa, alphabet ) - cfg.max_integer
+    cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
+    cast_zero     = ({ data: d, }) -> d.index = 0
+    cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
+    cast_other    = null
+    #.....................................................................................................
+    R           = new Grammar { emit_signals: false, }
+    first       = R.new_level { name: 'first', }
+    first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      }
+    first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,      }
+    first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,     }
+    first.new_token   { name: 'pnum',     fit: fit_pnum,                 cast: cast_pnum,     }
+    first.new_token   { name: 'padding',  fit: fit_padding,              cast: cast_padding,  }
+    first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,     }
+    first.new_token   { name: 'other',    fit: fit_other, merge: 'list', cast: cast_other,    }
+    #.....................................................................................................
+    return R
 
   #---------------------------------------------------------------------------------------------------------
   encode: ( integer_or_list ) ->
@@ -117,9 +281,9 @@ class Hollerith
     n = integer_or_list
     unless Number.isFinite n
       type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-      throw new Error "Ωhll___1 expected a float, got a #{type}"
+      throw new Error "Ωhll___5 expected a float, got a #{type}"
     unless @cfg.min_integer <= n <= @cfg.max_integer
-      throw new Error "Ωhll___2 expected a float between #{@cfg.min_integer} and #{@cfg.max_integer}, got #{n}"
+      throw new Error "Ωhll___6 expected a float between #{@cfg.min_integer} and #{@cfg.max_integer}, got #{n}"
     #.......................................................................................................
     return @encode_integer n
 
@@ -142,25 +306,49 @@ class Hollerith
     ### NOTE plus one or not plus one?? ###
     # R = ( encode ( n + @cfg.max_integer + 1 ), @cfg.alphabet )
     R = ( encode ( n + @cfg.max_integer     ), @cfg.alphabet )
-    # debug 'Ωhll___3', { n, R, }
+    # debug 'Ωhll___7', { n, R, }
     if R.length < @cfg.zero_pad_length
       R = R.padStart @cfg.zero_pad_length, @cfg.alphabet.at 0
-      # debug 'Ωhll___4', { n, R, }
+      # debug 'Ωhll___8', { n, R, }
     else
       R = R.replace @cfg.nlead_re, ''
-      # debug 'Ωhll___5', { n, R, }
+      # debug 'Ωhll___9', { n, R, }
     return ( @cfg.nmag.at R.length ) + R
+
+  #---------------------------------------------------------------------------------------------------------
+  parse: ( sortkey ) ->
+    R = []
+    for lexeme in @lexer.scan_to_list sortkey
+      { name,
+        start,
+        stop,
+        data,       } = lexeme
+      #.....................................................................................................
+      { letters,
+        mantissa,
+        index,      } = data
+      letters         = letters.join '' if ( type_of letters ) is 'list'
+      mantissa       ?= null
+      index          ?= null
+      #.....................................................................................................
+      R.push { name, letters, mantissa, index, }
+    return R
 
   #---------------------------------------------------------------------------------------------------------
   decode: ( sortkey ) ->
     ### TAINT use proper validation ###
     unless ( type = type_of sortkey ) is 'text'
-      throw new Error "Ωhll___1 expected a text, got a #{type}"
+      throw new Error "Ωhll__10 expected a text, got a #{type}"
     unless sortkey.length > 0
-      throw new Error "Ωhll___1 expected a non-empty text, got #{rpr sortkey}"
-    unless ( match = sortkey.match @cfg.sortkey_re )?
-      throw new Error "Ωhll___1 expected a sortkey, got #{rpr sortkey}"
-    debug 'Ωhll___1', { match.groups..., }
+      throw new Error "Ωhll__11 expected a non-empty text, got #{rpr sortkey}"
+    R = []
+    for unit in @parse sortkey
+      if unit.name is 'other'
+        message   = "Ωhll__12 not a valid sortkey: unable to parse #{rpr unit.letters}"
+        message  += " in #{rpr sortkey}" if sortkey isnt unit.letters
+        throw new Error message
+      R.push unit.index if unit.index?
+    return R
 
   #---------------------------------------------------------------------------------------------------------
   decode_integer: ( n ) ->
@@ -171,4 +359,12 @@ module.exports = do =>
   hollerith_10mvp   = new Hollerith constants_10mvp
   hollerith_10mvp2  = new Hollerith constants_10mvp2
   hollerith_128     = new Hollerith constants_128
-  return { Hollerith, hollerith_10, hollerith_10mvp, hollerith_10mvp2, hollerith_128, internals, }
+  hollerith_128b    = new Hollerith constants_128b
+  return {
+    Hollerith,
+    hollerith_10,
+    hollerith_10mvp,
+    hollerith_10mvp2,
+    hollerith_128,
+    hollerith_128b,
+    internals, }
