@@ -11,6 +11,7 @@
   - [Compact Encoding](#compact-encoding)
     - [Motivation](#motivation)
 - [See Also](#see-also)
+  - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -83,3 +84,8 @@ sortable representation
 # See Also
 
 inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-database-keys/
+
+
+## To Do
+
+* support codepoints beyonf `U+ffff`; this needs re-writing string index access to frozen array index access
