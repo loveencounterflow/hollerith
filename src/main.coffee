@@ -13,78 +13,8 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { Grammar
   Token
   Lexeme                } = require 'interlex'
-{ debug,                } = console
+{ types: T,             } = require './types'
 
-
-#===========================================================================================================
-class Type
-
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ( tspace, isa ) ->
-    @ts     = ts
-    @_isa   = isa
-    @_ctx   = Object.create @
-    @data   = {}
-    return undefined
-
-  #---------------------------------------------------------------------------------------------------------
-  isa: ( P... ) => @_isa.call @_ctx, x
-
-#===========================================================================================================
-class Typespace
-
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    clasz = @constructor
-    for name in Object.getOwnPropertyNames clasz
-      @[ name ] = new Type @, isa = clasz[ name ]
-    return undefined
-
-  #=========================================================================================================
-  @text:           ( x ) -> ( type_of x ) is 'text'
-  @nonempy_text:   ( x ) -> ( @ts.text.isa x ) and x.length > 0
-  @float:          ( x ) -> Number.isFinite x
-  @integer:        ( x ) -> Number.isSafeInteger x
-  @pinteger:       ( x ) -> ( @ts.integer.isa x ) and x > 0
-  @zpinteger:      ( x ) -> ( @ts.integer.isa x ) and x >= 0
-  @cardinal:       ( x ) -> @ts.zpinteger.isa x
-
-  #---------------------------------------------------------------------------------------------------------
-  @moninc_chrs: ( x ) ->
-    return false unless @ts.nonempy_text x
-    @data.chrs = chrs = Array.split x
-    prv_chr    = null
-    for chr, idx in chrs
-      continue unless prv_chr?
-      return false unless prv_chr < chr
-      prv_chr = chr
-    return true
-
-  #---------------------------------------------------------------------------------------------------------
-  @dimension:      ( x ) -> @ts.pinteger.isa  x
-
-  #---------------------------------------------------------------------------------------------------------
-  @nmag_bare_reversed: ( x ) ->
-    return false unless @ts.nonempy_text x
-  #---------------------------------------------------------------------------------------------------------
-  @pmag_bare: ( x ) ->
-
-  #---------------------------------------------------------------------------------------------------------
-  @magnifiers: ( x ) ->
-    return false unless @ts.nonempy_text.isa x
-    [ nmag_bare_reversed,
-      pmag_bare,  ] = x.split /\s+/
-    return false unless @ts.nmag_bare_reversed  nmag_bare_reversed
-    return false unless @ts.pmag_bare           pmag_bare
-    nmag            = ' ' + nmag_bare_reversed.reverse()
-    pmag            = ' ' + pmag_bare
-
-ts = new Typespace()
-debug 'Ωhll___1', ts
-debug 'Ωhll___2', ts.nonempy_text.isa 8
-debug 'Ωhll___3', ts.nonempy_text.isa ''
-debug 'Ωhll___4', ts.nonempy_text.isa 'yes'
-process.exit 111
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
@@ -175,7 +105,7 @@ constants_10mvp2 = Object.freeze
 constants = C = constants_10
 
 #-----------------------------------------------------------------------------------------------------------
-internals = Object.freeze { constants, }
+internals = Object.freeze { constants, types: T, }
 
 
 #===========================================================================================================
