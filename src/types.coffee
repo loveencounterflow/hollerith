@@ -20,13 +20,14 @@ class Type
     hide @, 'name',   name
     hide @, 'T',      typespace
     hide @, '_isa',   isa
-    hide @, '_ctx',   Object.create typespace
-    @_ctx.me        = @
     @data           = {}
+    hide @, '_ctx',   { T: typespace, me: @, data: @data, }
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa: ( P... ) -> @_isa.call @_ctx, P...
+  isa: ( x ) ->
+    delete @data[ key ] for key of @data
+    return @_isa.call @_ctx, x
 
 
 #===========================================================================================================
@@ -43,40 +44,40 @@ class Typespace
 
   #=========================================================================================================
   @text:           ( x ) -> ( type_of x ) is 'text'
-  @nonempty_text:  ( x ) -> ( @text.isa x ) and x.length > 0
+  @nonempty_text:  ( x ) -> ( @T.text.isa x ) and x.length > 0
   @float:          ( x ) -> Number.isFinite x
   @integer:        ( x ) -> Number.isSafeInteger x
-  @pinteger:       ( x ) -> ( @integer.isa x ) and x > 0
-  @zpinteger:      ( x ) -> ( @integer.isa x ) and x >= 0
-  @cardinal:       ( x ) -> @zpinteger.isa x
+  @pinteger:       ( x ) -> ( @T.integer.isa x ) and x > 0
+  @zpinteger:      ( x ) -> ( @T.integer.isa x ) and x >= 0
+  @cardinal:       ( x ) -> @T.zpinteger.isa x
 
   #---------------------------------------------------------------------------------------------------------
   @moninc_chrs: ( x ) ->
-    return false unless @nonempty_text x
-    @data.chrs = chrs = Array.split x
-    prv_chr    = null
-    for chr, idx in chrs
-      continue unless prv_chr?
-      return false unless prv_chr < chr
-      prv_chr = chr
+    return false unless @T.nonempty_text.isa x
+    @data.chrs = chrs = Array.from x
+    return true if chrs.length is 1
+    for idx in [ 1 ... chrs.length ]
+      unless ( prv_chr = chrs[ idx - 1 ] ) < ( chr = chrs[ idx ] )
+        @data.fail = { x, idx, prv_chr, chr, }
+        return false
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @dimension:      ( x ) -> @pinteger.isa  x
+  @dimension:      ( x ) -> @T.pinteger.isa  x
 
   #---------------------------------------------------------------------------------------------------------
   @nmag_bare_reversed: ( x ) ->
-    return false unless @nonempty_text x
+    return false unless @T.nonempty_text x
   #---------------------------------------------------------------------------------------------------------
   @pmag_bare: ( x ) ->
 
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
-    return false unless @nonempty_text.isa x
+    return false unless @T.nonempty_text.isa x
     [ nmag_bare_reversed,
       pmag_bare,  ] = x.split /\s+/
-    return false unless @nmag_bare_reversed  nmag_bare_reversed
-    return false unless @pmag_bare           pmag_bare
+    return false unless @T.nmag_bare_reversed  nmag_bare_reversed
+    return false unless @T.pmag_bare           pmag_bare
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
 
