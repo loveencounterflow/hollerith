@@ -24,21 +24,18 @@ class Bounded_list
 
   #---------------------------------------------------------------------------------------------------------
   create: ( P... ) ->
-    @data.push { P..., }
+    @data.push Object.assign {}, P...
     @data.shift() if @size > @max_size
     return @current
 
   #---------------------------------------------------------------------------------------------------------
-  at: ( idx ) -> @data.at idx
+  at: ( idx ) ->
+    @data.at idx
 
   #---------------------------------------------------------------------------------------------------------
   set_getter @::, 'size',     -> @data.length
   set_getter @::, 'is_empty', -> @data.length is 0
-
-  #---------------------------------------------------------------------------------------------------------
-  set_getter @::, 'current', ->
-    @create() if @is_empty
-    return @at -1
+  set_getter @::, 'current',  -> if @is_empty then @create() else @at -1
 
 
 #===========================================================================================================
@@ -50,14 +47,31 @@ class Type
     hide @, 'name',   name
     hide @, 'T',      typespace
     hide @, '_isa',   isa
-    @data           = {}
-    hide @, '_ctx',   { T: typespace, me: @, data: @data, }
+    @data           = new Bounded_list()
+    create_data     = ( P... ) => @data.create P...
+    hide @, '_ctx',   { T: typespace, me: @, create_data, }
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa: ( x ) ->
-    delete @data[ key ] for key of @data
-    return @_isa.call @_ctx, x
+  isa: ( x ) -> @_isa.call @_ctx, x
+
+
+#===========================================================================================================
+_test_monotony = ( x, data, cmp ) ->
+  { chrs, } = data
+  return false  if chrs.length is 0
+  return true   if chrs.length is 1
+  for idx in [ 1 ... chrs.length ]
+    prv_chr = chrs[ idx - 1 ]
+    chr     = chrs[ idx     ]
+    R       = switch cmp
+      when '>' then prv_chr > chr
+      when '<' then prv_chr < chr
+      else throw new Error "Ωbsk___8 (internal) expected '>' or '<', got #{rpr cmp}"
+    continue if R
+    data.fail = { x, idx, prv_chr, chr, }
+    return false
+  return true
 
 
 #===========================================================================================================
@@ -85,27 +99,15 @@ class Typespace
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
-    ### TAINT code duplication ###
-    return false unless @T.nonempty_text.isa x
-    @data.chrs = chrs = Array.from x
-    return true if chrs.length is 1
-    for idx in [ 1 ... chrs.length ]
-      unless ( prv_chr = chrs[ idx - 1 ] ) < ( chr = chrs[ idx ] )
-        @data.fail = { x, idx, prv_chr, chr, }
-        return false
-    return true
+    return false unless @T.text.isa x
+    data = @create_data { chrs: ( Array.from x), }
+    return _test_monotony x, data, '<'
 
   #---------------------------------------------------------------------------------------------------------
   @decremental_text: ( x ) ->
-    ### TAINT code duplication ###
-    return false unless @T.nonempty_text.isa x
-    @data.chrs = chrs = Array.from x
-    return true if chrs.length is 1
-    for idx in [ 1 ... chrs.length ]
-      unless ( prv_chr = chrs[ idx - 1 ] ) > ( chr = chrs[ idx ] )
-        @data.fail = { x, idx, prv_chr, chr, }
-        return false
-    return true
+    return false unless @T.text.isa x
+    data = @create_data { chrs: ( Array.from x), }
+    return _test_monotony x, data, '>'
 
   #---------------------------------------------------------------------------------------------------------
   @nmag_bare_reversed: ( x ) ->
