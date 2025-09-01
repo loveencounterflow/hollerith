@@ -13,6 +13,36 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 
 
 #===========================================================================================================
+### NOTE Future Single-File Module ###
+class Bounded_list
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( max_size = 3 ) ->
+    @max_size   = max_size
+    @data       = []
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  create: ( P... ) ->
+    @data.push { P..., }
+    @data.shift() if @size > @max_size
+    return @current
+
+  #---------------------------------------------------------------------------------------------------------
+  at: ( idx ) -> @data.at idx
+
+  #---------------------------------------------------------------------------------------------------------
+  set_getter @::, 'size',     -> @data.length
+  set_getter @::, 'is_empty', -> @data.length is 0
+
+  #---------------------------------------------------------------------------------------------------------
+  set_getter @::, 'current', ->
+    @create() if @is_empty
+    return @at -1
+
+
+#===========================================================================================================
+### NOTE Future Single-File Module ###
 class Type
 
   #---------------------------------------------------------------------------------------------------------
@@ -50,9 +80,12 @@ class Typespace
   @pinteger:       ( x ) -> ( @T.integer.isa x ) and x > 0
   @zpinteger:      ( x ) -> ( @T.integer.isa x ) and x >= 0
   @cardinal:       ( x ) -> @T.zpinteger.isa x
+  #---------------------------------------------------------------------------------------------------------
+  @dimension:      ( x ) -> @T.pinteger.isa  x
 
   #---------------------------------------------------------------------------------------------------------
-  @moninc_chrs: ( x ) ->
+  @incremental_text: ( x ) ->
+    ### TAINT code duplication ###
     return false unless @T.nonempty_text.isa x
     @data.chrs = chrs = Array.from x
     return true if chrs.length is 1
@@ -63,11 +96,21 @@ class Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @dimension:      ( x ) -> @T.pinteger.isa  x
+  @decremental_text: ( x ) ->
+    ### TAINT code duplication ###
+    return false unless @T.nonempty_text.isa x
+    @data.chrs = chrs = Array.from x
+    return true if chrs.length is 1
+    for idx in [ 1 ... chrs.length ]
+      unless ( prv_chr = chrs[ idx - 1 ] ) > ( chr = chrs[ idx ] )
+        @data.fail = { x, idx, prv_chr, chr, }
+        return false
+    return true
 
   #---------------------------------------------------------------------------------------------------------
   @nmag_bare_reversed: ( x ) ->
     return false unless @T.nonempty_text x
+
   #---------------------------------------------------------------------------------------------------------
   @pmag_bare: ( x ) ->
 
@@ -75,12 +118,12 @@ class Typespace
   @magnifiers: ( x ) ->
     return false unless @T.nonempty_text.isa x
     [ nmag_bare_reversed,
-      pmag_bare,  ] = x.split /\s+/
-    return false unless @T.nmag_bare_reversed  nmag_bare_reversed
-    return false unless @T.pmag_bare           pmag_bare
+      pmag_bare,  ] = x.split /\s+/v
+    return false unless @T.nmag_bare_reversed.isa nmag_bare_reversed
+    return false unless @T.pmag_bare.isa          pmag_bare
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
 
 
 #===========================================================================================================
-module.exports = { types: new Typespace(), internals: { Type, Typespace, }, }
+module.exports = { types: new Typespace(), internals: { Type, Typespace, Bounded_list, }, }
