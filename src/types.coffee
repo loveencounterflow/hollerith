@@ -29,6 +29,9 @@ class Bounded_list
     return @current
 
   #---------------------------------------------------------------------------------------------------------
+  assign: ( P... ) -> Object.assign @current, P...
+
+  #---------------------------------------------------------------------------------------------------------
   at: ( idx ) ->
     @data.at idx
 
@@ -48,18 +51,22 @@ class Type
     hide @, 'T',      typespace
     hide @, '_isa',   isa
     @data           = new Bounded_list()
-    create_data     = ( P... ) => @data.create P...
-    hide @, '_ctx',   { T: typespace, me: @, create_data, }
+    create          = (           P... ) => @data.create P...
+    assign          = (           P... ) => @data.assign P...
+    fail            = ( message,  P... ) => @data.assign { message, }, P...; false
+    hide @, '_ctx', { T: typespace, me: @, create, assign, fail, }
+    set_getter @_ctx, 'data', => @data.current
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa: ( x ) -> @_isa.call @_ctx, x
+  isa: ( x ) -> @data.create(); @_isa.call @_ctx, x
 
 
 #===========================================================================================================
-_test_monotony = ( x, data, cmp ) ->
-  { chrs, } = data
-  return false  if chrs.length is 0
+_test_monotony = ( x, cmp ) ->
+  debug 'Ωbsk___8', @data
+  { chrs, } = @data # = @create data
+  return ( @fail "empty is not monotonic" ) if chrs.length is 0
   return true   if chrs.length is 1
   for idx in [ 1 ... chrs.length ]
     prv_chr = chrs[ idx - 1 ]
@@ -69,7 +76,7 @@ _test_monotony = ( x, data, cmp ) ->
       when '<' then prv_chr < chr
       else throw new Error "Ωbsk___8 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
-    data.fail = { x, idx, prv_chr, chr, }
+    @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
   return true
 
@@ -86,6 +93,10 @@ class Typespace
       @[ name ] = new Typeclass @, name, isa = clasz[ name ]
     return undefined
 
+
+#===========================================================================================================
+class Hollerith_typespace extends Typespace
+
   #=========================================================================================================
   @text:           ( x ) -> ( type_of x ) is 'text'
   @nonempty_text:  ( x ) -> ( @T.text.isa x ) and x.length > 0
@@ -100,18 +111,18 @@ class Typespace
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
     return false unless @T.text.isa x
-    data = @create_data { chrs: ( Array.from x), }
-    return _test_monotony x, data, '<'
+    data = @create { chrs: ( Array.from x ), }
+    return _test_monotony.call @, x, '<'
 
   #---------------------------------------------------------------------------------------------------------
   @decremental_text: ( x ) ->
     return false unless @T.text.isa x
-    data = @create_data { chrs: ( Array.from x), }
-    return _test_monotony x, data, '>'
+    data = @create { chrs: ( Array.from x ), }
+    return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
   @nmag_bare_reversed: ( x ) ->
-    return false unless @T.nonempty_text x
+    return false unless @T.nonempty_text.isa x
 
   #---------------------------------------------------------------------------------------------------------
   @pmag_bare: ( x ) ->
@@ -125,7 +136,15 @@ class Typespace
     return false unless @T.pmag_bare.isa          pmag_bare
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
-
+    @create { nmag, pmag, }
+    return true
 
 #===========================================================================================================
-module.exports = { types: new Typespace(), internals: { Type, Typespace, Bounded_list, }, }
+Object.assign module.exports,
+  types:      new Hollerith_typespace()
+  internals: {
+    Type
+    Typespace
+    Hollerith_typespace
+    Bounded_list
+    }
