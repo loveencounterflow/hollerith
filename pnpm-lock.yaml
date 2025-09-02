@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       bricabrac-single-file-modules:
-        specifier: ^0.7.0
-        version: 0.7.0
+        specifier: ^0.10.0
+        version: 0.10.0
       interlex:
         specifier: ^0.13.1
         version: 0.13.1
@@ -20,8 +20,8 @@ importers:
 
 packages:
 
-  bricabrac-single-file-modules@0.7.0:
-    resolution: {integrity: sha512-CrCRHORvw3zP+KhYvJT+5Bo69nDwtjCBlCZrV1Wj9tvAghpUSGipC6PxenVTG6hW88C9M+tH1auTZpdDyIDuPQ==}
+  bricabrac-single-file-modules@0.10.0:
+    resolution: {integrity: sha512-9KNvneMIStx9njKUZwQD/QcM/IfwGCNQF4mXQbwhYOZrK1fCFwMGVQKFF1Q/29kxVfrGQEAOYJ+z0egZ3ljNsA==}
 
   cleartype@0.0.7:
     resolution: {integrity: sha512-RoPd7mvyF4K4BiWktnNhPUkIdVE0RoRmpkga3JJpc4TWkPFdy1gcU41gCog2Ot/PPzQWAPFXtcqC1316fAAuZg==}
@@ -43,7 +43,7 @@ packages:
 
 snapshots:
 
-  bricabrac-single-file-modules@0.7.0: {}
+  bricabrac-single-file-modules@0.10.0: {}
 
   cleartype@0.0.7:
     dependencies:
