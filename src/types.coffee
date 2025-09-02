@@ -10,6 +10,9 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { hide,
   set_getter,           } = SFMODULES.require_managed_property_tools()
 { nameit,               } = SFMODULES.require_nameit()
+{ clean_assign,         } = SFMODULES.unstable.require_clean_assign()
+{ remap,
+  omit,                 } = SFMODULES.unstable.require_remap()
 
 
 #===========================================================================================================
@@ -24,16 +27,13 @@ class Bounded_list
 
   #---------------------------------------------------------------------------------------------------------
   create: ( P... ) ->
-    @data.push Object.assign {}, P...
+    @data.push clean_assign {}, P...
     @data.shift() if @size > @max_size
     return @current
 
   #---------------------------------------------------------------------------------------------------------
-  assign: ( P... ) -> Object.assign @current, P...
-
-  #---------------------------------------------------------------------------------------------------------
-  at: ( idx ) ->
-    @data.at idx
+  assign: ( P...  ) -> clean_assign @current, P...
+  at:     ( idx   ) -> @data.at idx
 
   #---------------------------------------------------------------------------------------------------------
   set_getter @::, 'size',     -> @data.length
@@ -50,35 +50,43 @@ class Type
     hide @, 'name',   name
     hide @, 'T',      typespace
     hide @, '_isa',   isa
-    @data           = new Bounded_list()
-    create          = (           P... ) => @data.create P...
-    assign          = (           P... ) => @data.assign P...
-    fail            = ( message,  P... ) => @data.assign { message, }, P...; false
-    hide @, '_ctx', { T: typespace, me: @, create, assign, fail, }
-    set_getter @_ctx, 'data', => @data.current
+    @data           = {} # new Bounded_list()
+    # create          = (           P... ) => @data.create P...
+    assign          = (           P... ) => clean_assign @data, P...
+    fail            = ( message,  P... ) => clean_assign @data, { message, }, P...; false
+    # absorb          = ( type,     x    ) => R = type.isa x; @data.assign type.data.current; R
+    hide @, '_ctx', { T: typespace, me: @, assign, fail, } # create, absorb, }
+    set_getter @_ctx, 'data', => @data # .current
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa: ( x ) -> @data.create(); @_isa.call @_ctx, x
+  isa:  ( x ) ->
+    # try
+    #   ( new Test guytest_cfg ).test { types: @hollerith.types, }
+    # finally
+    #   debug 'Ωhllt___1', "error"
+    @data = {}; R = @_isa.call @_ctx, x
+    return R
 
+  #---------------------------------------------------------------------------------------------------------
+  isame:  ( ctx, mapping, x ) ->
+    # try
+    #   ( new Test guytest_cfg ).test { types: @hollerith.types, }
+    # finally
+    #   debug 'Ωhllt___2', "error"
+    switch arity = arguments.length
+      when 2
+        R = @_isa.call ctx, x
+      when 3
+        tmp_ctx       = Object.assign {}, ctx
+        tmp_ctx.data  = Object.assign {}, ctx.data
+        R             = @_isa.call tmp_ctx, x
+        remap ctx.data, mapping
+      else
+        throw new Error "Ωbsk___6 expected 2 or 3 arguments, got #{arity}"
+    return R
 
-#===========================================================================================================
-_test_monotony = ( x, cmp ) ->
-  debug 'Ωbsk___8', @data
-  { chrs, } = @data # = @create data
-  return ( @fail "empty is not monotonic" ) if chrs.length is 0
-  return true   if chrs.length is 1
-  for idx in [ 1 ... chrs.length ]
-    prv_chr = chrs[ idx - 1 ]
-    chr     = chrs[ idx     ]
-    R       = switch cmp
-      when '>' then prv_chr > chr
-      when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___8 (internal) expected '>' or '<', got #{rpr cmp}"
-    continue if R
-    @assign { fail: { x, idx, prv_chr, chr, }, }
-    return false
-  return true
+  # isok: ( x ) -> { data: @data.create(), ok: ( @_isa.call @_ctx, x ), }
 
 
 #===========================================================================================================
@@ -94,6 +102,8 @@ class Typespace
     return undefined
 
 
+############################################################################################################
+# HOLLERITH TYPESPACE
 #===========================================================================================================
 class Hollerith_typespace extends Typespace
 
@@ -111,33 +121,53 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
     return false unless @T.text.isa x
-    data = @create { chrs: ( Array.from x ), }
+    # @assign { iam: 'incremental_text', }
+    @assign { chrs: ( Array.from x ), }
+    debug 'Ωbsk___3', @data
     return _test_monotony.call @, x, '<'
 
   #---------------------------------------------------------------------------------------------------------
   @decremental_text: ( x ) ->
     return false unless @T.text.isa x
-    data = @create { chrs: ( Array.from x ), }
+    @assign { chrs: ( Array.from x ), }
     return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
-  @nmag_bare_reversed: ( x ) ->
-    return false unless @T.nonempty_text.isa x
-
-  #---------------------------------------------------------------------------------------------------------
-  @pmag_bare: ( x ) ->
+  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isame @, x
+  @pmag_bare:           ( x ) -> @T.incremental_text.isame @, x
 
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
-    return false unless @T.nonempty_text.isa x
+    return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
     [ nmag_bare_reversed,
       pmag_bare,  ] = x.split /\s+/v
-    return false unless @T.nmag_bare_reversed.isa nmag_bare_reversed
-    return false unless @T.pmag_bare.isa          pmag_bare
+    #.......................................................................................................
+    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___4', @data
+    return ( @fail "???" ) unless  @T.nmag_bare_reversed.isame  @, { chrs: 'nmag_chrs', }, nmag_bare_reversed
+    return ( @fail "???" ) unless  @T.pmag_bare.isame           @, { chrs: 'pmag_chrs', }, pmag_bare
+    #.......................................................................................................
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
-    @create { nmag, pmag, }
+    @assign { nmag, pmag, }
     return true
+
+
+#===========================================================================================================
+_test_monotony = ( x, cmp ) ->
+  { chrs, } = @data # = @create data
+  return ( @fail "empty is not monotonic" ) if chrs.length is 0
+  return true   if chrs.length is 1
+  for idx in [ 1 ... chrs.length ]
+    prv_chr = chrs[ idx - 1 ]
+    chr     = chrs[ idx     ]
+    R       = switch cmp
+      when '>' then prv_chr > chr
+      when '<' then prv_chr < chr
+      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
+    continue if R
+    @assign { fail: { x, idx, prv_chr, chr, }, }
+    return false
+  return true
 
 #===========================================================================================================
 Object.assign module.exports,
