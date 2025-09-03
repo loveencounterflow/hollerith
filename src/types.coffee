@@ -84,29 +84,14 @@ class Type
   #---------------------------------------------------------------------------------------------------------
   isa2: ( x, data = null, mapping = null ) ->
     # try
+    @data   = {}
+    R       = @_isa.call @, x
     #.......................................................................................................
     if data?
-      #.....................................................................................................
-      if mapping?                                                                             ### d1 m1 ###
-        @data   = {}
-        R       = @_isa.call @, x
-        clean_assign data, ( remap ( clean_assign {}, @data ), mapping )
-        return R
-      #.....................................................................................................
-      else                                                                                    ### d1 m0 ###
-        @data = {}
-        R     = @_isa.call @, x
-        clean_assign data, @data
-        return R
-    #.......................................................................................................
-    else if mapping?                                                                          ### d0 m1 ###
-      @data = {}
-      R     = @_isa.call @, x
-      remap @data, mapping
-      return R
-    #.......................................................................................................
-    @data = {}                                                                                ### d0 m0 ###
-    return @_isa.call @, x
+      if mapping?     then  clean_assign data, ( remap ( clean_assign {}, @data ), mapping )  ### d1 m1 ###
+      else                  clean_assign data, @data                                          ### d1 m0 ###
+    else if mapping?  then  remap @data, mapping                                              ### d0 m1 ###
+    return R                                                                                  ### d0 m0 ###
     # finally
 
 
