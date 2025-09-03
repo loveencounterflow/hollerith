@@ -83,7 +83,7 @@ class Type
         R             = @_isa.call tmp_ctx, x
         remap ctx.data, mapping
       else
-        throw new Error "Ωbsk___6 expected 2 or 3 arguments, got #{arity}"
+        throw new Error "Ωbsk___3 expected 2 or 3 arguments, got #{arity}"
     return R
 
   # isok: ( x ) -> { data: @data.create(), ok: ( @_isa.call @_ctx, x ), }
@@ -123,7 +123,7 @@ class Hollerith_typespace extends Typespace
     return false unless @T.text.isa x
     # @assign { iam: 'incremental_text', }
     @assign { chrs: ( Array.from x ), }
-    debug 'Ωbsk___3', @data
+    debug 'Ωbsk___5', @data
     return _test_monotony.call @, x, '<'
 
   #---------------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ class Hollerith_typespace extends Typespace
     [ nmag_bare_reversed,
       pmag_bare,  ] = x.split /\s+/v
     #.......................................................................................................
-    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___4', @data
+    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___6', @data
     return ( @fail "???" ) unless  @T.nmag_bare_reversed.isame  @, { chrs: 'nmag_chrs', }, nmag_bare_reversed
     return ( @fail "???" ) unless  @T.pmag_bare.isame           @, { chrs: 'pmag_chrs', }, pmag_bare
     #.......................................................................................................
@@ -163,7 +163,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk___7 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
