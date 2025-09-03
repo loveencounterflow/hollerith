@@ -15,30 +15,30 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
   omit,                 } = SFMODULES.unstable.require_remap()
 
 
-#===========================================================================================================
-### NOTE Future Single-File Module ###
-class Bounded_list
+# #===========================================================================================================
+# ### NOTE Future Single-File Module ###
+# class Bounded_list
 
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ( max_size = 3 ) ->
-    @max_size   = max_size
-    @data       = []
-    return undefined
+#   #---------------------------------------------------------------------------------------------------------
+#   constructor: ( max_size = 3 ) ->
+#     @max_size   = max_size
+#     @data       = []
+#     return undefined
 
-  #---------------------------------------------------------------------------------------------------------
-  create: ( P... ) ->
-    @data.push clean_assign {}, P...
-    @data.shift() if @size > @max_size
-    return @current
+#   #---------------------------------------------------------------------------------------------------------
+#   create: ( P... ) ->
+#     @data.push clean_assign {}, P...
+#     @data.shift() if @size > @max_size
+#     return @current
 
-  #---------------------------------------------------------------------------------------------------------
-  assign: ( P...  ) -> clean_assign @current, P...
-  at:     ( idx   ) -> @data.at idx
+#   #---------------------------------------------------------------------------------------------------------
+#   assign: ( P...  ) -> clean_assign @current, P...
+#   at:     ( idx   ) -> @data.at idx
 
-  #---------------------------------------------------------------------------------------------------------
-  set_getter @::, 'size',     -> @data.length
-  set_getter @::, 'is_empty', -> @data.length is 0
-  set_getter @::, 'current',  -> if @is_empty then @create() else @at -1
+#   #---------------------------------------------------------------------------------------------------------
+#   set_getter @::, 'size',     -> @data.length
+#   set_getter @::, 'is_empty', -> @data.length is 0
+#   set_getter @::, 'current',  -> if @is_empty then @create() else @at -1
 
 
 #===========================================================================================================
@@ -176,5 +176,5 @@ Object.assign module.exports,
     Type
     Typespace
     Hollerith_typespace
-    Bounded_list
+    # Bounded_list
     }
