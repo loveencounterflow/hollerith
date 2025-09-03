@@ -100,7 +100,10 @@ class Type
         return R
     #.......................................................................................................
     else if mapping?                                                                          ### d0 m1 ###
-      throw new Error "Ωbsk___4 calling `isa()` with no `data` argument but with a `mapping` is not implemented"
+      @data = {}
+      R     = @_isa.call @, x
+      remap @data, mapping
+      return R
     #.......................................................................................................
     @data = {}                                                                                ### d0 m0 ###
     return @_isa.call @, x
