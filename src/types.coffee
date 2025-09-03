@@ -51,37 +51,32 @@ class Type
     hide @, 'T',      typespace
     hide @, '_isa',   isa
     @data           = {} # new Bounded_list()
-    # create          = (           P... ) => @data.create P...
-    assign          = (           P... ) => clean_assign @data, P...
-    fail            = ( message,  P... ) => clean_assign @data, { message, }, P...; false
-    # absorb          = ( type,     x    ) => R = type.isa x; @data.assign type.data.current; R
-    hide @, '_ctx', { T: typespace, me: @, assign, fail, } # create, absorb, }
-    set_getter @_ctx, 'data', => @data # .current
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa:  ( x ) ->
+  isa: ( x ) ->
     # try
     #   ( new Test guytest_cfg ).test { types: @hollerith.types, }
     # finally
     #   debug 'Ωhllt___1', "error"
-    @data = {}; R = @_isa.call @_ctx, x
+    @data = {}; R = @_isa.call @, x
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  isame:  ( ctx, mapping, x ) ->
+  isame: ( caller, mapping, x ) ->
     # try
     #   ( new Test guytest_cfg ).test { types: @hollerith.types, }
     # finally
     #   debug 'Ωhllt___2', "error"
     switch arity = arguments.length
       when 2
-        R = @_isa.call ctx, x
+        [ caller, mapping, x, ] = [ caller, null, mapping, ]
+        R                       = @_isa.call caller, x
       when 3
-        tmp_ctx       = Object.assign {}, ctx
-        tmp_ctx.data  = Object.assign {}, ctx.data
-        R             = @_isa.call tmp_ctx, x
-        remap ctx.data, mapping
+        original_data           = caller.data
+        caller.data             = Object.assign {}, caller.data
+        R                       = @_isa.call caller, x
+        caller.data             = Object.assign original_data, ( remap caller.data, mapping )
       else
         throw new Error "Ωbsk___3 expected 2 or 3 arguments, got #{arity}"
     return R
