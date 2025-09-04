@@ -117,4 +117,10 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 
 ## To Do
 
-* support codepoints beyonf `U+ffff`; this needs re-writing string index access to frozen array index access
+* **`[—]`** support codepoints beyonf `U+ffff`; this needs re-writing string index access to frozen array index access
+* **`[—]`** in `compile_sortkey_lexer`, fix derivation of `nuns_letters`, `puns_letters`, `nmag_letters`,
+  `pmag_letters`, `zero_letters` to work for non-BMP codepoints
+* **`[—]`** in `Hollerith_typespace.magnifiers`, `nmag_bare_reversed` and `pmag_bare` are derived as
+  `x.split @[CFG].blank` where a RegEx compiled from `@[CFG].blank` (roughly as `new RegExp
+  "(?:#{RegExp.escape @[CFG].blank})+", 'v'`) should be used
+
