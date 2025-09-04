@@ -120,19 +120,26 @@ class Hollerith
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  validate_and_compile_cfg: ( cfg ) ->
+  @validate_and_compile_cfg: ( cfg ) ->
     ### Validations: ###
     ### Derivations: ###
-
-    base            = alphabet.length
-    [ nmag_bare_reversed,
-      nmag_bare,  ] = magnifiers.split /\s+/
-    nmag            = ' ' + nmag_bare_reversed.reverse()
-    pmag            = ' ' + pmag_bare
-    max_integer     = ( base ** dimension ) - 1
-    min_integer     = -max_integer
-    min_integer     = -max_integer
-    return null
+    hollerith_cfg_template =
+      blank:  '\x20'
+    R               = { hollerith_cfg_template..., cfg..., }
+    T               = new Hollerith_typespace { blank: R.blank, }
+    T.alphabet.validate cfg.alphabet
+    debug 'Ωhll__10', T.alphabet.data
+    R.alphabet      = cfg.alphabet
+    R.alphabet_chrs = T.alphabet.data.alphabet_chrs
+    # base            = alphabet.length
+    # [ nmag_bare_reversed,
+    #   nmag_bare,  ] = magnifiers.split /\s+/
+    # nmag            = ' ' + nmag_bare_reversed.reverse()
+    # pmag            = ' ' + pmag_bare
+    # max_integer     = ( base ** dimension ) - 1
+    # min_integer     = -max_integer
+    # min_integer     = -max_integer
+    return R
 
   #---------------------------------------------------------------------------------------------------------
   compile_sortkey_lexer: ( cfg ) ->
