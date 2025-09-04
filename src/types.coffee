@@ -139,11 +139,7 @@ _test_monotony = ( x, cmp ) ->
   return true
 
 #===========================================================================================================
-Object.assign module.exports,
-  types:      new Hollerith_typespace()
-  internals: {
-    Type
-    Typespace
-    Hollerith_typespace
-    # Bounded_list
-    }
+Object.assign module.exports, {
+  Hollerith_typespace,
+  CFG:                  CFG,
+  internals:            { Type, Typespace, }, }
