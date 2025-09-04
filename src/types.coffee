@@ -81,7 +81,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___5 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
