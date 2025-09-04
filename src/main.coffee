@@ -144,7 +144,7 @@ class Hollerith
     R.dimension     = T.dimension.validate cfg.dimension
     R.max_digits    = R.pmag_chrs.length - 1
     R.max_integer   = ( R.base ** R.max_digits ) - 1
-    R.min_integer   = -max_integer
+    R.min_integer   = -R.max_integer
     return R
 
   #---------------------------------------------------------------------------------------------------------
