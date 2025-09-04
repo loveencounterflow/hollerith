@@ -63,27 +63,7 @@ class Type
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  isame: ( caller, mapping, x ) ->
-    # try
-    #   ( new Test guytest_cfg ).test { types: @hollerith.types, }
-    # finally
-    #   debug 'Ωhllt___2', "error"
-    switch arity = arguments.length
-      when 2
-        [ caller, mapping, x, ] = [ caller, null, mapping, ]
-        R                       = @_isa.call caller, x
-      when 3
-        original_data           = caller.data
-        caller.data             = Object.assign {}, caller.data
-        R                       = @_isa.call caller, x
-        caller.data             = Object.assign original_data, ( remap caller.data, mapping )
-      else
-        throw new Error "Ωbsk___3 expected 2 or 3 arguments, got #{arity}"
-    return R
-
-  #---------------------------------------------------------------------------------------------------------
   isa2: ( x, data = null, mapping = null ) ->
-    # try
     @data   = {}
     R       = @_isa.call @, x
     #.......................................................................................................
@@ -92,8 +72,6 @@ class Type
       else                  clean_assign data, @data                                          ### d1 m0 ###
     else if mapping?  then  remap @data, mapping                                              ### d0 m1 ###
     return R                                                                                  ### d0 m0 ###
-    # finally
-
 
   #---------------------------------------------------------------------------------------------------------
   assign: ( P... ) -> clean_assign @data, P...
@@ -146,8 +124,8 @@ class Hollerith_typespace extends Typespace
     return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
-  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isame @, x
-  @pmag_bare:           ( x ) -> @T.incremental_text.isame @, x
+  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isa2 x, @data
+  @pmag_bare:           ( x ) -> @T.incremental_text.isa2 x, @data
 
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
@@ -156,8 +134,8 @@ class Hollerith_typespace extends Typespace
       pmag_bare,  ] = x.split /\s+/v
     #.......................................................................................................
     # @assign { iam: 'magnifiers', }; debug 'Ωbsk___6', @data
-    return ( @fail "???" ) unless  @T.nmag_bare_reversed.isame  @, { chrs: 'nmag_chrs', }, nmag_bare_reversed
-    return ( @fail "???" ) unless  @T.pmag_bare.isame           @, { chrs: 'pmag_chrs', }, pmag_bare
+    return ( @fail "???" ) unless  @T.nmag_bare_reversed.isa2 nmag_bare_reversed, @data, { chrs: 'nmag_chrs', }
+    return ( @fail "???" ) unless  @T.pmag_bare.isa2          pmag_bare,          @data, { chrs: 'pmag_chrs', }
     #.......................................................................................................
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
