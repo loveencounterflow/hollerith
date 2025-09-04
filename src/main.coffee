@@ -13,7 +13,8 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { Grammar
   Token
   Lexeme                } = require 'interlex'
-{ types: T,             } = require './types'
+types                     = require './types'
+{ Hollerith_typespace,  } = types
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -105,7 +106,7 @@ constants_10mvp2 = Object.freeze
 constants = C = constants_10
 
 #-----------------------------------------------------------------------------------------------------------
-internals = Object.freeze { constants, types: T, }
+internals = Object.freeze { constants, types, }
 
 
 #===========================================================================================================
