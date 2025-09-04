@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/loveencounterflow/hollerith#readme",
   "dependencies": {
-    "bricabrac-single-file-modules": "^0.11.0",
+    "bricabrac-single-file-modules": "^0.12.0",
     "interlex": "^0.13.1",
     "regex": "^6.0.1"
   }
