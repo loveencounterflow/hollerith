@@ -69,6 +69,13 @@ class Hollerith_typespace extends Typespace
     @assign { nmag, pmag, }
     return true
 
+  #---------------------------------------------------------------------------------------------------------
+  @alphabet: ( x ) ->
+    return false unless @T.incremental_text.isa x, @data, { chrs: 'alphabet_chrs', }
+    # debug 'Ωbsk___5', @data
+    return @fail "an alphabet must have 2 chrs or more" unless @data.alphabet_chrs.length >= 2
+    return true
+
 
 #===========================================================================================================
 _test_monotony = ( x, cmp ) ->
