@@ -79,6 +79,7 @@ class Hollerith_typespace extends Typespace
     return ( @fail "Ωbsk___3 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs_reversed', }
     return ( @fail "Ωbsk___4 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
     return ( @fail "Ωbsk___5 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
+    return ( @fail "Ωbsk___6 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
     #.......................................................................................................
     nmag      = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
     pmag      = @[CFG].blank + pmag_bare

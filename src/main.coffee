@@ -141,13 +141,10 @@ class Hollerith
     R.zpuns         = T.uniliterals.data.zpuns
     R.nun_chrs      = T.uniliterals.data.nun_chrs
     R.zpun_chrs     = T.uniliterals.data.zpun_chrs
-    # [ nmag_bare_reversed,
-    #   nmag_bare,  ] = magnifiers.split /\s+/
-    # nmag            = ' ' + nmag_bare_reversed.reverse()
-    # pmag            = ' ' + pmag_bare
-    # max_integer     = ( base ** dimension ) - 1
-    # min_integer     = -max_integer
-    # min_integer     = -max_integer
+    R.dimension     = T.dimension.validate cfg.dimension
+    R.max_digits    = R.pmag_chrs.length - 1
+    R.max_integer   = ( R.base ** R.max_digits ) - 1
+    R.min_integer   = -max_integer
     return R
 
   #---------------------------------------------------------------------------------------------------------
