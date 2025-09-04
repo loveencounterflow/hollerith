@@ -123,14 +123,15 @@ class Hollerith
     ### Validations: ###
     ### Derivations: ###
 
-      base            = alphabet.length
-      [ nmag_bare_reversed,
-        nmag_bare,  ] = magnifiers.split /\s+/
-      nmag            = ' ' + nmag_bare_reversed.reverse()
-      pmag            = ' ' + pmag_bare
-      max_integer     = ( base ** dimension ) - 1
-      min_integer     = -max_integer
-      min_integer     = -max_integer
+    base            = alphabet.length
+    [ nmag_bare_reversed,
+      nmag_bare,  ] = magnifiers.split /\s+/
+    nmag            = ' ' + nmag_bare_reversed.reverse()
+    pmag            = ' ' + pmag_bare
+    max_integer     = ( base ** dimension ) - 1
+    min_integer     = -max_integer
+    min_integer     = -max_integer
+    return null
 
   #---------------------------------------------------------------------------------------------------------
   compile_sortkey_lexer: ( cfg ) ->

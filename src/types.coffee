@@ -79,7 +79,6 @@ class Hollerith_typespace extends Typespace
     return false unless @T.text.isa x
     # @assign { iam: 'incremental_text', }
     @assign { chrs: ( Array.from x ), }
-    debug 'Ωbsk___5', @data
     return _test_monotony.call @, x, '<'
 
   #---------------------------------------------------------------------------------------------------------
@@ -119,7 +118,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___7 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk___5 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
