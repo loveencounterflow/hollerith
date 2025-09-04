@@ -69,8 +69,8 @@ class Type
     #.......................................................................................................
     if data?
       if mapping?     then  clean_assign data, ( remap ( clean_assign {}, @data ), mapping )  ### d1 m1 ###
-      else                  clean_assign data, @data                                          ### d1 m0 ###
-    else if mapping?  then  remap @data, mapping                                              ### d0 m1 ###
+      else                  clean_assign data,                            @data               ### d1 m0 ###
+    else if mapping?  then                       remap                    @data,   mapping    ### d0 m1 ###
     return R                                                                                  ### d0 m0 ###
 
   #---------------------------------------------------------------------------------------------------------
