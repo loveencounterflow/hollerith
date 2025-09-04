@@ -82,25 +82,25 @@ sortable representation
 
 ## Invariants
 
-* `blank`:        `' '`                     # separator used in `magnifiers` and `uniliterals`
-* `alphabet`:     `'0123456789'`            # digits; length of `alphabet` is the `base`
-* `magnifiers`:   `'ABC XYZ'`               #
-* `uniliterals`:  `'EFGHIJKLM N OPQRSTUVW'` # negative uniliterals, blank, zero uniliteral, blank, positive uniliterals
-* `dimension`:     `3`                      # number of indices supported
+* **`blank`**:        `' '`                     # separator used in `magnifiers` and `uniliterals`
+* **`alphabet`**:     `'0123456789'`            # digits; length of `alphabet` is the `base`
+* **`magnifiers`**:   `'ABC XYZ'`               #
+* **`uniliterals`**:  `'EFGHIJKLM N OPQRSTUVW'` # negative uniliterals, blank, zero uniliteral, blank, positive uniliterals
+* **`dimension`**:     `3`                      # number of indices supported
 
-* `zpuns`:              `'NOPQRSTUVW'`    # DERIVED # zero and positive uniliteral numbers
-* `nuns`:               `'EFGHIJKLM'`     # DERIVED # negative          uniliteral numbers
-* `max_integer`:        `+999`            # DERIVED
-* `min_integer`:        `-999`            # DERIVED
-* `zpun_max`:           `+9`              # DERIVED # biggest   number representable as uniliteral
-* `nun_min`:            `-9`              # DERIVED # smallest  number representable as uniliteral
-* `zero_pad_length`:    `3`               # DERIVED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! > 3
-* `base`:               `10`              # DERIVED from length of alphabet
-* `nmag_chrs_reversed`: `'ABC'`           # DERIVED from first part of `magnifiers`
-* `pmag_chrs`:          `'XYZ'`           # DERIVED from latter part of `magnifiers`
-* `pmag`:               `'  XYZ'`         # DERIVED from magnifiers  # positive 'magnifier' for 1 to 3 positive digits
-* `nmag`:               `'  CBA'`         # DERIVED from magnifiers  # negative 'magnifier' for 1 to 3 negative digits
-* `nlead_re`:           `/^9*(?=[0-9])/`  # DERIVED # 'negative leader', discardable leading digits of lifted negative numbers
+* **`zpuns`**:              `'NOPQRSTUVW'`    # DERIVED # zero and positive uniliteral numbers
+* **`nuns`**:               `'EFGHIJKLM'`     # DERIVED # negative          uniliteral numbers
+* **`max_integer`**:        `+999`            # DERIVED
+* **`min_integer`**:        `-999`            # DERIVED
+* **`zpun_max`**:           `+9`              # DERIVED # biggest   number representable as uniliteral
+* **`nun_min`**:            `-9`              # DERIVED # smallest  number representable as uniliteral
+* **`zero_pad_length`**:    `3`               # DERIVED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! > 3
+* **`base`**:               `10`              # DERIVED from length of alphabet
+* **`nmag_chrs_reversed`**: `'ABC'`           # DERIVED from first part of `magnifiers`
+* **`pmag_chrs`**:          `'XYZ'`           # DERIVED from latter part of `magnifiers`
+* **`pmag`**:               `'  XYZ'`         # DERIVED from magnifiers  # positive 'magnifier' for 1 to 3 positive digits
+* **`nmag`**:               `'  CBA'`         # DERIVED from magnifiers  # negative 'magnifier' for 1 to 3 negative digits
+* **`nlead_re`**:           `/^9*(?=[0-9])/`  # DERIVED # 'negative leader', discardable leading digits of lifted negative numbers
 
 * no codepoint is repeated
 * only codepoints between U+0000 and U+10ffff are supported;
