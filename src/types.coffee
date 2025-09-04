@@ -13,6 +13,7 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { clean_assign,         } = SFMODULES.unstable.require_clean_assign()
 { remap,
   omit,                 } = SFMODULES.unstable.require_remap()
+{ freeze,               } = Object
 
 
 #===========================================================================================================
@@ -78,13 +79,13 @@ class Hollerith_typespace extends Typespace
   @incremental_text: ( x ) ->
     return false unless @T.text.isa x
     # @assign { iam: 'incremental_text', }
-    @assign { chrs: ( Array.from x ), }
+    @assign { chrs: ( freeze Array.from x ), }
     return _test_monotony.call @, x, '<'
 
   #---------------------------------------------------------------------------------------------------------
   @decremental_text: ( x ) ->
     return false unless @T.text.isa x
-    @assign { chrs: ( Array.from x ), }
+    @assign { chrs: ( freeze Array.from x ), }
     return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
