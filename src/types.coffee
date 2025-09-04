@@ -102,7 +102,7 @@ class Hollerith_typespace extends Typespace
     return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
     return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
     #.......................................................................................................
-    nmag            = ' ' + nmag_bare_reversed.reverse()
+    nmag            = ' ' + @data.nmag_chrs.reverse().join ''
     pmag            = ' ' + pmag_bare
     @assign { nmag, pmag, }
     return true
