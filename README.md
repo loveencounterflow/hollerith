@@ -123,4 +123,5 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 * **`[—]`** in `Hollerith_typespace.magnifiers`, `nmag_bare_reversed` and `pmag_bare` are derived as
   `x.split @[CFG].blank` where a RegEx compiled from `@[CFG].blank` (roughly as `new RegExp
   "(?:#{RegExp.escape @[CFG].blank})+", 'v'`) should be used
+* **`[—]`** remove restriction that negative and positive magnifiers must have same length
 
