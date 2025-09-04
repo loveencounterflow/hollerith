@@ -66,11 +66,11 @@ class Hollerith_typespace extends Typespace
 
   #=========================================================================================================
   @text:           ( x ) -> ( type_of x ) is 'text'
-  @nonempty_text:  ( x ) -> ( @T.text.isa x ) and x.length > 0
+  @nonempty_text:  ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
   @float:          ( x ) -> Number.isFinite x
   @integer:        ( x ) -> Number.isSafeInteger x
-  @pinteger:       ( x ) -> ( @T.integer.isa x ) and x > 0
-  @zpinteger:      ( x ) -> ( @T.integer.isa x ) and x >= 0
+  @pinteger:       ( x ) -> ( @T.integer.isa x ) and ( x >  0 )
+  @zpinteger:      ( x ) -> ( @T.integer.isa x ) and ( x >= 0 )
   @cardinal:       ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
   @dimension:      ( x ) -> @T.pinteger.isa  x
@@ -78,7 +78,6 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
     return false unless @T.text.isa x
-    # @assign { iam: 'incremental_text', }
     @assign { chrs: ( freeze Array.from x ), }
     return _test_monotony.call @, x, '<'
 
@@ -113,7 +112,7 @@ class Hollerith_typespace extends Typespace
 _test_monotony = ( x, cmp ) ->
   { chrs, } = @data # = @create data
   return ( @fail "empty is not monotonic" ) if chrs.length is 0
-  return true   if chrs.length is 1
+  return true                               if chrs.length is 1
   for idx in [ 1 ... chrs.length ]
     prv_chr = chrs[ idx - 1 ]
     chr     = chrs[ idx     ]
