@@ -71,14 +71,21 @@ class Typespace
 class Hollerith_typespace extends Typespace
 
   #=========================================================================================================
+  @[CFG]:
+    blank: ' '
+
+  #=========================================================================================================
   @text:           ( x ) -> ( type_of x ) is 'text'
   @nonempty_text:  ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
+  @character:      ( x ) -> ( @T.text.isa x ) and ( /^.$/v.test x )
   @float:          ( x ) -> Number.isFinite x
   @integer:        ( x ) -> Number.isSafeInteger x
   @pinteger:       ( x ) -> ( @T.integer.isa x ) and ( x >  0 )
   @zpinteger:      ( x ) -> ( @T.integer.isa x ) and ( x >= 0 )
   @cardinal:       ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
+  ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
+  @blank:          ( x ) -> ( @T.character x ) and ( x is @[CFG].blank )
   @dimension:      ( x ) -> @T.pinteger.isa  x
 
   #---------------------------------------------------------------------------------------------------------
@@ -101,15 +108,15 @@ class Hollerith_typespace extends Typespace
   @magnifiers: ( x ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
     [ nmag_bare_reversed,
-      pmag_bare,  ] = x.split /\s+/v
+      pmag_bare,  ] = x.split @[CFG].blank
     #.......................................................................................................
     # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
-    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs', }
+    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs_reversed', }
     return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
     return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
     #.......................................................................................................
-    nmag            = ' ' + @data.nmag_chrs.reverse().join ''
-    pmag            = ' ' + pmag_bare
+    nmag            = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
+    pmag            = @[CFG].blank + pmag_bare
     @assign { nmag, pmag, }
     return true
 
