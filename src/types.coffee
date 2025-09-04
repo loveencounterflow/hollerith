@@ -41,8 +41,11 @@ class Hollerith_typespace extends Typespace
   @cardinal:        ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
-  @blank:          ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
-  @dimension:      ( x ) -> @T.pinteger.isa  x
+  @blank:           ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
+  # @blank_setting:   ( x ) -> ( @T.character.isa x )
+  # @blank_usage:     ( x ) -> ( x is @[CFG].blank )
+  @dimension:       ( x ) -> ( @T.pinteger.isa x )
+  @base:            ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
@@ -79,10 +82,9 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @alphabet: ( x ) ->
     return false unless @T.incremental_text.isa x, @data, { chrs: 'alphabet_chrs', }
-    # debug 'Ωbsk___5', @data
-    return @fail "an alphabet must have 2 chrs or more" unless @data.alphabet_chrs.length >= 2
+    @assign { base: @data.alphabet_chrs.length, }
+    return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa @data.base
     return true
-
 
 #===========================================================================================================
 _test_monotony = ( x, cmp ) ->

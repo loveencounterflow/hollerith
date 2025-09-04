@@ -127,11 +127,10 @@ class Hollerith
       blank:  '\x20'
     R               = { hollerith_cfg_template..., cfg..., }
     T               = new Hollerith_typespace { blank: R.blank, }
-    T.alphabet.validate cfg.alphabet
-    debug 'Ωhll__10', T.alphabet.data
-    R.alphabet      = cfg.alphabet
+    R.blank         = cfg.blank
+    R.alphabet      = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs = T.alphabet.data.alphabet_chrs
-    # base            = alphabet.length
+    R.base          = T.alphabet.data.base
     # [ nmag_bare_reversed,
     #   nmag_bare,  ] = magnifiers.split /\s+/
     # nmag            = ' ' + nmag_bare_reversed.reverse()
