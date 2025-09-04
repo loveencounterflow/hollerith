@@ -110,7 +110,7 @@ class Hollerith_typespace extends Typespace
     [ nuns,
       zero,
       puns, ] = parts
-    zpuns = zero + puns
+    zpuns     = zero + puns
     @assign { nuns, zpuns, }
     return false unless @T.incremental_text.isa nuns,  @data, { chrs: 'nun_chrs', }
     return false unless @T.incremental_text.isa zpuns, @data, { chrs: 'zpun_chrs', }

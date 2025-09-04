@@ -137,6 +137,10 @@ class Hollerith
     R.pmag_chrs     = T.magnifiers.data.pmag_chrs
     R.nmag_chrs     = T.magnifiers.data.nmag_chrs
     R.uniliterals   = T.uniliterals.validate cfg.uniliterals
+    R.nuns          = T.uniliterals.data.nuns
+    R.zpuns         = T.uniliterals.data.zpuns
+    R.nun_chrs      = T.uniliterals.data.nun_chrs
+    R.zpun_chrs     = T.uniliterals.data.zpun_chrs
     # [ nmag_bare_reversed,
     #   nmag_bare,  ] = magnifiers.split /\s+/
     # nmag            = ' ' + nmag_bare_reversed.reverse()
