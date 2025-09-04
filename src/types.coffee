@@ -34,7 +34,7 @@ class Hollerith_typespace extends Typespace
   @cardinal:       ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
-  @blank:          ( x ) -> ( @T.character x ) and ( x is @[CFG].blank )
+  @blank:          ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
   @dimension:      ( x ) -> @T.pinteger.isa  x
 
   #---------------------------------------------------------------------------------------------------------
