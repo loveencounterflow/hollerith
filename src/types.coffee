@@ -14,6 +14,7 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { remap,
   omit,                 } = SFMODULES.unstable.require_remap()
 { freeze,               } = Object
+CFG                       = Symbol.for 'cfg'
 
 
 #===========================================================================================================
@@ -22,10 +23,11 @@ class Type
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( typespace, name, isa ) ->
-    hide @, 'name',   name
-    hide @, 'T',      typespace
-    hide @, '_isa',   isa
-    @data           = {} # new Bounded_list()
+    hide @, 'name',     name
+    hide @, 'T',        typespace
+    hide @, '_isa',     isa
+    set_getter @, CFG,  => @T[CFG]
+    @data             = {} # new Bounded_list()
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -50,8 +52,12 @@ class Type
 class Typespace
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    clasz = @constructor
+  @[CFG]: null
+
+  #=========================================================================================================
+  constructor: ( cfg = null ) ->
+    clasz   = @constructor
+    @[CFG]  = freeze clean_assign {}, ( clasz[CFG] ? undefined ), ( cfg ? undefined )
     for name in Object.getOwnPropertyNames clasz
       class Typeclass extends Type
       nameit name, Typeclass
