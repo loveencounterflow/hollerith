@@ -79,6 +79,32 @@ sortable representation
 
 +000      0   n
 
+## Invariants
+
+* `max_integer`:  `+999`            # TO BE DERIVED
+* `min_integer`:  `-999`            # TO BE DERIVED
+* `zpuns`:        `'NOPQRSTUVW'`    #                           # zero and positive uniliteral numbers
+* `nuns`:         `'EFGHIJKLM'`     #                           # negative          uniliteral numbers
+* `zpun_max`:     `+9`              # TO BE DERIVED             # biggest   number representable as uniliteral
+* `nun_min`:      `-9`              # TO BE DERIVED             # smallest  number representable as uniliteral
+* `dimension`:     `3`              #                           # number of indices supported
+* `zero_pad_length`:  `3`           # TO BE DERIVED from number of places supported
+* `alphabet`:     `'0123456789'`
+* `base`:         `10`              # TO BE DERIVED from length of alphabet
+* `blank`:        `' '`             # separator used in `magnifiers` (and potentially elsewhere)
+* `magnifiers`:   `'ABC XYZ'`
+* `nmag_chrs_reversed`:    `'ABC'`  # TO BE DERIVED
+* `pmag_chrs`:    `'XYZ'`           # TO BE DERIVED
+* `pmag`:         `'  XYZ'`         # TO BE DERIVED from magnifiers  # positive 'magnifier' for 1 to 8 positive digits
+* `nmag`:         `'  CBA'`         # TO BE DERIVED from magnifiers  # negative 'magnifier' for 1 to 8 negative digits
+* `nlead_re`:     `/^9*(?=[0-9])/`  # TO BE DERIVED             # 'negative leader', discardable leading digits of lifted negative numbers
+
+* no codepoint is repeated
+* only codepoints between U+0000 and U+10ffff are supported;
+  * **NOTE** this needs re-writing string index access to array index access
+* all codepoints must be be given in monotonically ascending order, both individually and when concatenated
+  as `alphabet + nmag_chrs_reversed + nuns + zpuns` (with `blank`s elided)
+
 
 
 # See Also
