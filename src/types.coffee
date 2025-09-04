@@ -24,14 +24,14 @@ class Hollerith_typespace extends Typespace
     blank: ' '
 
   #=========================================================================================================
-  @text:           ( x ) -> ( type_of x ) is 'text'
-  @nonempty_text:  ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
-  @character:      ( x ) -> ( @T.text.isa x ) and ( /^.$/v.test x )
-  @float:          ( x ) -> Number.isFinite x
-  @integer:        ( x ) -> Number.isSafeInteger x
-  @pinteger:       ( x ) -> ( @T.integer.isa x ) and ( x >  0 )
-  @zpinteger:      ( x ) -> ( @T.integer.isa x ) and ( x >= 0 )
-  @cardinal:       ( x ) -> @T.zpinteger.isa x
+  @text:            ( x ) -> ( type_of x ) is 'text'
+  @nonempty_text:   ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
+  @character:       ( x ) -> ( @T.text.isa x ) and ( /^.$/v.test x )
+  @float:           ( x ) -> Number.isFinite x
+  @integer:         ( x ) -> Number.isSafeInteger x
+  @pinteger:        ( x ) -> ( @T.integer.isa x ) and ( x >  0 )
+  @zpinteger:       ( x ) -> ( @T.integer.isa x ) and ( x >= 0 )
+  @cardinal:        ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
   @blank:          ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
