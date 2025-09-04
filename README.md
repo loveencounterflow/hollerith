@@ -10,6 +10,7 @@
 - [Hollerith](#hollerith)
   - [Compact Encoding](#compact-encoding)
     - [Motivation](#motivation)
+  - [Invariants](#invariants)
 - [See Also](#see-also)
   - [To Do](#to-do)
 
