@@ -88,8 +88,8 @@ class Hollerith_typespace extends Typespace
     return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
-  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isa2 x, @data
-  @pmag_bare:           ( x ) -> @T.incremental_text.isa2 x, @data
+  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isa x, @data
+  @pmag_bare:           ( x ) -> @T.incremental_text.isa x, @data
 
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
@@ -97,9 +97,10 @@ class Hollerith_typespace extends Typespace
     [ nmag_bare_reversed,
       pmag_bare,  ] = x.split /\s+/v
     #.......................................................................................................
-    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___6', @data
-    return ( @fail "???" ) unless  @T.nmag_bare_reversed.isa2 nmag_bare_reversed, @data, { chrs: 'nmag_chrs', }
-    return ( @fail "???" ) unless  @T.pmag_bare.isa2          pmag_bare,          @data, { chrs: 'pmag_chrs', }
+    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
+    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs', }
+    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
+    return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
     #.......................................................................................................
     nmag            = ' ' + nmag_bare_reversed.reverse()
     pmag            = ' ' + pmag_bare
