@@ -131,6 +131,12 @@ class Hollerith
     R.alphabet      = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs = T.alphabet.data.alphabet_chrs
     R.base          = T.alphabet.data.base
+    R.magnifiers    = T.magnifiers.validate cfg.magnifiers
+    R.pmag          = T.magnifiers.data.pmag
+    R.nmag          = T.magnifiers.data.nmag
+    R.pmag_chrs     = T.magnifiers.data.pmag_chrs
+    R.nmag_chrs     = T.magnifiers.data.nmag_chrs
+    R.uniliterals   = T.uniliterals.validate cfg.uniliterals
     # [ nmag_bare_reversed,
     #   nmag_bare,  ] = magnifiers.split /\s+/
     # nmag            = ' ' + nmag_bare_reversed.reverse()

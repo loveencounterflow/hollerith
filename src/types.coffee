@@ -23,6 +23,9 @@ class Hollerith_typespace extends Typespace
   constructor: ( cfg ) ->
     super cfg
     @blank.validate @[CFG].blank
+    blank_esc       = RegExp.escape @[CFG].blank
+    blank_splitter  = new RegExp "(?:#{blank_esc})+", 'v'
+    @[CFG]          = freeze { @[CFG]..., blank_splitter, }
     return undefined
 
 
@@ -66,17 +69,22 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
+    parts                   = x.split @[CFG].blank_splitter
+    unless parts.length is 2
+      return ( @fail "Ωbsk___1 magnifiers must have exactly 1 blank, got #{parts.length - 1} blanks")
     [ nmag_bare_reversed,
-      pmag_bare,  ] = x.split @[CFG].blank
+      pmag_bare,          ] = parts
     #.......................................................................................................
-    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
-    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs_reversed', }
-    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
-    return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
+    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___2', @data
+    return ( @fail "Ωbsk___3 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs_reversed', }
+    return ( @fail "Ωbsk___4 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
+    return ( @fail "Ωbsk___5 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
     #.......................................................................................................
-    nmag            = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
-    pmag            = @[CFG].blank + pmag_bare
-    @assign { nmag, pmag, }
+    nmag      = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
+    pmag      = @[CFG].blank + pmag_bare
+    nmag_chrs = freeze Array.from nmag
+    pmag_chrs = freeze Array.from pmag
+    @assign { nmag, pmag, nmag_chrs, pmag_chrs, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -85,6 +93,29 @@ class Hollerith_typespace extends Typespace
     @assign { base: @data.alphabet_chrs.length, }
     return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa @data.base
     return true
+
+  #---------------------------------------------------------------------------------------------------------
+  @uniliterals: ( x ) ->
+    return false unless @T.nonempty_text.isa x
+    if @T.character.isa x
+      nuns      = ''
+      zpuns     = x
+      nun_chrs  = freeze []
+      zpun_chrs = freeze [ x, ]
+      @assign { nuns, zpuns, nun_chrs, zpun_chrs, }
+      return true
+    parts = x.split @[CFG].blank_splitter
+    unless parts.length is 3
+      return ( @fail "Ωbsk___6 uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
+    [ nuns,
+      zero,
+      puns, ] = parts
+    zpuns = zero + puns
+    @assign { nuns, zpuns, }
+    return false unless @T.incremental_text.isa nuns,  @data, { chrs: 'nun_chrs', }
+    return false unless @T.incremental_text.isa zpuns, @data, { chrs: 'zpun_chrs', }
+    return true
+
 
 #===========================================================================================================
 _test_monotony = ( x, cmp ) ->
@@ -97,7 +128,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk___8 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
