@@ -123,6 +123,7 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 ### Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer
 
 
+```
 | L base   | H base  | digits  |
 | -------: | ------: | ------: |
 | 2        |         | 52      |
@@ -142,6 +143,7 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 | 40       | 59      | 9       |
 | 60       | 98      | 8       |
 | 99       | 128     | 7       |
+```
 
 *Ex. for digits `01234` i.e. base 5 you can write out at most 22 'nines' (in the sense of 'highest
 single-digit number in that base'; that's a `4`) before getting an integer that is greater than
