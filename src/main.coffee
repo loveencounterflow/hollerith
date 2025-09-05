@@ -16,6 +16,7 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 types                     = require './types'
 { CFG,
   Hollerith_typespace,  } = types
+{ clean_assign,         } = SFMODULES.unstable.require_clean_assign()
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -126,9 +127,9 @@ class Hollerith
     ### Derivations: ###
     hollerith_cfg_template =
       blank:  '\x20'
-    R               = { hollerith_cfg_template..., cfg..., }
+    R               = clean_assign {}, hollerith_cfg_template, cfg
+    # debug 'Ωhll___1', R
     T               = new Hollerith_typespace { blank: R.blank, }
-    R.blank         = cfg.blank
     R.alphabet      = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs = T.alphabet.data.alphabet_chrs
     R.base          = T.alphabet.data.base
