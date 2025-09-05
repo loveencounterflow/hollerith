@@ -147,18 +147,22 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
   complete, ordered, `blank`-separated list of characters used to define a given Hollerith number format
 
 * **`[—]`** (-> Bric-A-Brac) implement a character analyzer that, given a string (or list, or set) of
-  characters, returns a set of (RegEx-compatible) Unicode attributes thst is common to all the characters in
+  characters, returns a set of (RegEx-compatible) Unicode attributes that is common to all the characters in
   the input
 
-  * **`[—]`** implement a way to declare alphabets with **Unicode ranges**. A range is declared as `[a-z]`,
-    with a lower and a higher single codepoint embedded in between `[`, `-`, `]` (there's no clash with `-`
-    being used literally in an alphabet because `-` (U+002d) comes before `[` (U+005b), and the only
-    character between `[` and `]` (U+005d) is `\\` (U+005c), thus `XYZ[\\-]]^_` can only be taken to mean
-    `XYZ\\]^_`, `XYZ[[-]]^_` can only be taken to mean `XYZ[\\]^_`, and so on).
+* **`[—]`** implement a way to declare alphabets with **Unicode ranges**. A range is declared as `[a-z]`,
+  with a lower and a higher single codepoint embedded in between `[`, `-`, `]` (there's no clash with `-`
+  being used literally in an alphabet because `-` (U+002d) comes before `[` (U+005b), and the only character
+  between `[` and `]` (U+005d) is `\\` (U+005c), thus `XYZ[\\-]]^_` can only be taken to mean `XYZ\\]^_`,
+  `XYZ[[-]]^_` can only be taken to mean `XYZ[\\]^_`, and so on).
 
-  * **`[—]`** implement a way to declare a RegEx that should apply to all H.letters and/or silently exclude
-    non-conformant letters from the sets (such that `[\x00-\x7f]` in conjunction with `{ skip_unless:
-    /\p{L}/v, }`) gives the set of US 7bit ASCII letters
+* **`[—]`** implement a way to declare RegExes...
+
+  * **`[—]`** ... that should apply to *all* declared Hollerith letters and cause errors where not matched
+
+  * **`[—]`** ... that cause non-conformant letters from the declared sets are silently skipped (such that a
+    declaration of `'[\x00-\x7f]'` in conjunction with `{ skip_unless: /\p{L}/v, }`) gives the set of US
+    7bit ASCII letters, how many there may ever be
 
 ## Don't
 
