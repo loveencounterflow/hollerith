@@ -14,7 +14,8 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
   Token
   Lexeme                } = require 'interlex'
 types                     = require './types'
-{ Hollerith_typespace,  } = types
+{ CFG,
+  Hollerith_typespace,  } = types
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -145,7 +146,16 @@ class Hollerith
     R.max_digits    = R.pmag_chrs.length - 1
     R.max_integer   = ( R.base ** R.max_digits ) - 1
     R.min_integer   = -R.max_integer
-    # R.gamut / palette / chrset
+    #.......................................................................................................
+    ### TAINT this can be greatly simplified with To Dos implemented ###
+    # R.TMP_alphabet  = T.TMP_alphabet.validate ( R.alphabet + ( \
+    R.TMP_alphabet  = ( R.alphabet + ( \
+      [ R.nmag_chrs..., ].reverse().join '' ) + \
+      R.nuns                                  + \
+      R.zpuns                                   ).replace T[CFG].blank_splitter, ''
+    T.TMP_alphabet.isa R.TMP_alphabet
+    debug 'Ωhll__10', T.TMP_alphabet.data
+    R.TMP_alphabet  = T.TMP_alphabet.validate R.TMP_alphabet
     return R
 
   #---------------------------------------------------------------------------------------------------------
