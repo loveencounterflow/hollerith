@@ -156,14 +156,14 @@ class Hollerith
       pmag,
       alphabet,     } = cfg
     # base              = alphabet.length
-    #.....................................................................................................
+    #.......................................................................................................
     nuns_letters  = nuns
     puns_letters  = zpuns[  1 ..  ]
     nmag_letters  = nmag[   1 ..  ]
     pmag_letters  = pmag[   1 ..  ]
     zero_letters  = zpuns[  0     ]
     max_digit     = alphabet.at -1
-    #.....................................................................................................
+    #.......................................................................................................
     fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
     fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
     fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
@@ -172,7 +172,7 @@ class Hollerith
     fit_zero      = regex"(?<letters> [ #{zero_letters} ]  (?= .* [^ #{zero_letters} ] ) )     "
     fit_other     = regex"(?<letters> .                    )                                  "
     all_zero_re   = regex"^ #{zero_letters}+ $"
-    #.....................................................................................................
+    #.......................................................................................................
     cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
     cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
@@ -182,7 +182,7 @@ class Hollerith
     cast_zero     = ({ data: d, }) -> d.index = 0
     cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
     cast_other    = null
-    #.....................................................................................................
+    #.......................................................................................................
     R           = new Grammar { emit_signals: false, }
     first       = R.new_level { name: 'first', }
     first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      }
@@ -192,7 +192,7 @@ class Hollerith
     first.new_token   { name: 'padding',  fit: fit_padding,              cast: cast_padding,  }
     first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,     }
     first.new_token   { name: 'other',    fit: fit_other, merge: 'list', cast: cast_other,    }
-    #.....................................................................................................
+    #.......................................................................................................
     return R
 
   #---------------------------------------------------------------------------------------------------------
