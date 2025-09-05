@@ -121,6 +121,7 @@ class Hollerith_typespace extends Typespace
   @TMP_alphabet: ( x ) ->
     return false unless @T.nonempty_text.isa    x, @data
     return false unless @T.incremental_text.isa x, @data
+    return true
 
 
 #===========================================================================================================
