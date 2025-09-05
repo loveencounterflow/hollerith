@@ -13,6 +13,7 @@
   - [Invariants](#invariants)
 - [See Also](#see-also)
   - [To Do](#to-do)
+  - [Don't](#dont)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -117,16 +118,51 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 
 ## To Do
 
-* **`[—]`** support codepoints beyonf `U+ffff`; this needs re-writing string index access to frozen array index access
+
+* **`[—]`** support codepoints beyond `U+ffff`; this needs re-writing string index access to frozen array
+  index access
+
 * **`[—]`** in `compile_sortkey_lexer`, fix derivation of `nuns_letters`, `puns_letters`, `nmag_letters`,
   `pmag_letters`, `zero_letters` to work for non-BMP codepoints
+
 * **`[—]`** in `Hollerith_typespace.magnifiers`, `nmag_bare_reversed` and `pmag_bare` are derived as
   `x.split @[CFG].blank` where a RegEx compiled from `@[CFG].blank` (roughly as `new RegExp
   "(?:#{RegExp.escape @[CFG].blank})+", 'v'`) should be used
+
 * **`[—]`** remove restriction that negative and positive magnifiers must have same length
+
 * **`[—]`** replace `Hollerith_typespace.incremental_text()`, `Hollerith_typespace.decremental_text()` with
   `Hollerith_typespace.incremental()`, `Hollerith_typespace.decremental()` that
   * accept texts (to be turned into lists) and lists-of-characters
   * skip over `Hollerith_typespace[CFG].blank`s
+
 * **`[—]`** avoid padding and reversing of character lists, rather, use appropriate indexes
+
 * **`[—]`** avoid having to declare magnifiers that are entirely covered by uniliterals
+
+* **`[—]`** re-implement `unstable-anybase-brics.coffee#encode()`, `unstable-anybase-brics.coffee#decode()`
+  to avoid building intermediate values
+
+* **`[—]`** re-name `Hollerith_typespace[CFG].alphabet` to `digits`, which frees `alphabet` to signify the
+  complete, ordered, `blank`-separated list of characters used to define a given Hollerith number format
+
+* **`[—]`** (-> Bric-A-Brac) implement a character analyzer that, given a string (or list, or set) of
+  characters, returns a set of (RegEx-compatible) Unicode attributes thst is common to all the characters in
+  the input
+
+  * **`[—]`** implement a way to declare alphabets with **Unicode ranges**. A range is declared as `[a-z]`,
+    with a lower and a higher single codepoint embedded in between `[`, `-`, `]` (there's no clash with `-`
+    being used literally in an alphabet because `-` (U+002d) comes before `[` (U+005b), and the only
+    character between `[` and `]` (U+005d) is `\\` (U+005c), thus `XYZ[\\-]]^_` can only be taken to mean
+    `XYZ\\]^_`, `XYZ[[-]]^_` can only be taken to mean `XYZ[\\]^_`, and so on).
+
+  * **`[—]`** implement a way to declare a RegEx that should apply to all H.letters and/or silently exclude
+    non-conformant letters from the sets (such that `[\x00-\x7f]` in conjunction with `{ skip_unless:
+    /\p{L}/v, }`) gives the set of US 7bit ASCII letters
+
+## Don't
+
+* **`[🚫]`** <del>implement a way to declare alphabets with Unicode ranges as in `a..z` or `[a..z]`, e.g. `{
+  digits: 'A..DF..Z', }` is equivalent to uppercase ASCII `A` thru `Z` with `E` excluded (this still
+  leaves room for doubt how to interpret `&...5`: is it `/[[&-.]5]/v` i.e. `"&'()*+,-.5"` or is it
+  `/[&[.-5]]/v` i.e. `"&./012345"`?)</del>
