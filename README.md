@@ -13,6 +13,8 @@
   - [Invariants](#invariants)
 - [See Also](#see-also)
   - [To Do](#to-do)
+    - [Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer](#digits-needed-to-represent-an-all-9s-number-less-than-max-safe-integer)
+    - [Other](#other)
   - [Don't](#dont)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -118,6 +120,40 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 
 ## To Do
 
+### Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer
+
+
+| L base   | H base  | digits  |
+| -------: | ------: | ------: |
+| 2        |         | 52      |
+| 3        |         | 33      |
+| 4        |         | 26      |
+| 5        |         | 22      |
+| 6        |         | 20      |
+| 7        |         | 18      |
+| 8        |         | 17      |
+| 9        |         | 16      |
+| 10       | 11      | 15      |
+| 12       | 13      | 14      |
+| 14       | 16      | 13      |
+| 17       | 21      | 12      |
+| 22       | 28      | 11      |
+| 29       | 39      | 10      |
+| 40       | 59      | 9       |
+| 60       | 98      | 8       |
+| 99       | 128     | 7       |
+
+*Ex. for digits `01234` i.e. base 5 you can write out at most 22 'nines' (in the sense of 'highest
+single-digit number in that base'; that's a `4`) before getting an integer that is greater than
+`Number.MAX_SAFE_INTEGER`; adding a 23rd digit `4` will cross that limit.*
+
+*The largest base supported by JS is 36 which has `z` for its biggest digit, you can have integers up to 10
+`z`s, so `zzzzzzzzzz` (3656158440062975) is the largest 'all-Nines' safe integer in that system; all bases
+from 29 up to and including 39 have that same 10-digit limit. Bases 14, 15, and 16 all have a limit of 15
+'Nines', so their biggest safe 'all-Niners' are `ddddddddddddddd`, `eeeeeeeeeeeeeee`, and `fffffffffffffff`,
+respectively.*
+
+### Other
 
 * **`[—]`** support codepoints beyond `U+ffff`; this needs re-writing string index access to frozen array
   index access
@@ -163,6 +199,11 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
   * **`[—]`** ... that cause non-conformant letters from the declared sets are silently skipped (such that a
     declaration of `'[\x00-\x7f]'` in conjunction with `{ skip_unless: /\p{L}/v, }`) gives the set of US
     7bit ASCII letters, how many there may ever be
+
+* **`[—]`** since integers beyond `Number.MAX_SAFE_INTEGER` can not be reliably used to count in steps of
+  one, both the inclusion of `max_integer` and `min_integer` in a Hollerith numbering alphabet and the
+  derivation of `max_integer` and `min_integer` from the base and the declared magnifiers must take this
+  limit into account
 
 ## Don't
 
