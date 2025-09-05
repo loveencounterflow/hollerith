@@ -149,11 +149,12 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 single-digit number in that base'; that's a `4`) before getting an integer that is greater than
 `Number.MAX_SAFE_INTEGER`; adding a 23rd digit `4` will cross that limit.*
 
-*The largest base supported by JS is 36 which has `z` for its biggest digit, you can have integers up to 10
-`z`s, so `zzzzzzzzzz` (3656158440062975) is the largest 'all-Nines' safe integer in that system; all bases
-from 29 up to and including 39 have that same 10-digit limit. Bases 14, 15, and 16 all have a limit of 15
-'Nines', so their biggest safe 'all-Niners' are `ddddddddddddddd`, `eeeeeeeeeeeeeee`, and `fffffffffffffff`,
-respectively.*
+*The largest base supported by JS is 36 which has `z` for its biggest digit. As per the above table, you can
+have integers of up to 10 `z`s, so `zzzzzzzzzz` (3,656,158,440,062,975) is the largest 'all-Nines' safe
+integer in that system. All bases from 29 up to and including 39 have that same 10-digit limit.*
+
+*Bases 14, 15, and 16 all have a limit of 15 'Nines', so their biggest safe 'all-Niners' are
+`ddddddddddddddd`, `eeeeeeeeeeeeeee`, and `fffffffffffffff`, respectively.*
 
 ### Other
 
