@@ -9,9 +9,9 @@
 
 - [Hollerith](#hollerith)
   - [Compact Encoding](#compact-encoding)
-    - [Motivation](#motivation)
+  - [Motivation](#motivation)
   - [Invariants](#invariants)
-- [See Also](#see-also)
+  - [See Also](#see-also)
   - [To Do](#to-do)
     - [Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer](#digits-needed-to-represent-an-all-9s-number-less-than-max-safe-integer)
     - [Other](#other)
@@ -26,7 +26,7 @@ sortable representation
 
 ## Compact Encoding
 
-### Motivation
+## Motivation
 
 
 
@@ -113,7 +113,7 @@ sortable representation
 
 
 
-# See Also
+## See Also
 
 inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-database-keys/
 
