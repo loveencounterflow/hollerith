@@ -24,7 +24,7 @@ class Hollerith_typespace extends Typespace
     super cfg
     @blank.validate @[CFG].blank
     blank_esc       = RegExp.escape @[CFG].blank
-    blank_splitter  = new RegExp "(?:#{blank_esc})+", 'v'
+    blank_splitter  = new RegExp "(?:#{blank_esc})+", 'gv'
     @[CFG]          = freeze { @[CFG]..., blank_splitter, }
     return undefined
 
@@ -116,6 +116,11 @@ class Hollerith_typespace extends Typespace
     return false unless @T.incremental_text.isa nuns,  @data, { chrs: 'nun_chrs', }
     return false unless @T.incremental_text.isa zpuns, @data, { chrs: 'zpun_chrs', }
     return true
+
+  #---------------------------------------------------------------------------------------------------------
+  @TMP_alphabet: ( x ) ->
+    return false unless @T.nonempty_text.isa    x, @data
+    return false unless @T.incremental_text.isa x, @data
 
 
 #===========================================================================================================
