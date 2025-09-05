@@ -124,4 +124,9 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
   `x.split @[CFG].blank` where a RegEx compiled from `@[CFG].blank` (roughly as `new RegExp
   "(?:#{RegExp.escape @[CFG].blank})+", 'v'`) should be used
 * **`[—]`** remove restriction that negative and positive magnifiers must have same length
-
+* **`[—]`** replace `Hollerith_typespace.incremental_text()`, `Hollerith_typespace.decremental_text()` with
+  `Hollerith_typespace.incremental()`, `Hollerith_typespace.decremental()` that
+  * accept texts (to be turned into lists) and lists-of-characters
+  * skip over `Hollerith_typespace[CFG].blank`s
+* **`[—]`** avoid padding and reversing of character lists, rather, use appropriate indexes
+* **`[—]`** avoid having to declare magnifiers that are entirely covered by uniliterals
