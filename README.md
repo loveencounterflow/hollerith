@@ -124,36 +124,37 @@ inspired by & thx to https://stately.cloud/blog/encoding-sortable-binary-databas
 
 
 ```
-| L base   | H base  | digits  |
-| -------: | ------: | ------: |
-| 2        |         | 52      |
-| 3        |         | 33      |
-| 4        |         | 26      |
-| 5        |         | 22      |
-| 6        |         | 20      |
-| 7        |         | 18      |
-| 8        |         | 17      |
-| 9        |         | 16      |
-| 10       | 11      | 15      |
-| 12       | 13      | 14      |
-| 14       | 16      | 13      |
-| 17       | 21      | 12      |
-| 22       | 28      | 11      |
-| 29       | 39      | 10      |
-| 40       | 59      | 9       |
-| 60       | 98      | 8       |
-| 99       | 128     | 7       |
+| from base | to base | max_niners |
+| -------:  | ------: | ---------: |
+|        2  |         |       52   |
+|        3  |         |       33   |
+|        4  |         |       26   |
+|        5  |         |       22   |
+|        6  |         |       20   |
+|        7  |         |       18   |
+|        8  |         |       17   |
+|        9  |         |       16   |
+|       10  |     11  |       15   |
+|       12  |     13  |       14   |
+|       14  |     16  |       13   |
+|       17  |     21  |       12   |
+|       22  |     28  |       11   |
+|       29  |     39  |       10   |
+|       40  |     59  |        9   |
+|       60  |     98  |        8   |
+|       99  |    128  |        7   |
 ```
 
-*Ex. for digits `01234` i.e. base 5 you can write out at most 22 'nines' (in the sense of 'highest
+*Ex. for digits `01234` i.e. base 5 you can write out at most 22 'Niners' (in the sense of 'highest
 single-digit number in that base'; that's a `4`) before getting an integer that is greater than
 `Number.MAX_SAFE_INTEGER`; adding a 23rd digit `4` will cross that limit.*
 
-*The largest base supported by JS is 36 which has `z` for its biggest digit. As per the above table, you can
-have integers of up to 10 `z`s, so `zzzzzzzzzz` (3,656,158,440,062,975) is the largest 'all-Nines' safe
-integer in that system. All bases from 29 up to and including 39 have that same 10-digit limit.*
+*The largest base supported by JS (in `parseInt( s, base )` and `Number::toString( base )`) is 36 which has
+`z` for its 'niner' (biggest digit). As per the above table, you can have integers of up to 10 `z`s, so
+`zzzzzzzzzz` (3,656,158,440,062,975) is the largest 'all-Niners' safe integer in that system. All bases from
+29 up to and including 39 have that same 10-digit limit.*
 
-*Bases 14, 15, and 16 all have a limit of 15 'Nines', so their biggest safe 'all-Niners' are
+*Bases 14, 15, and 16 all have a limit of 15 'Niners', so their biggest safe 'all-Niners' are
 `ddddddddddddddd`, `eeeeeeeeeeeeeee`, and `fffffffffffffff`, respectively.*
 
 *These numbers are calculated with the following formulas / functions:*
