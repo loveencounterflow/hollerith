@@ -156,6 +156,27 @@ integer in that system. All bases from 29 up to and including 39 have that same 
 *Bases 14, 15, and 16 all have a limit of 15 'Nines', so their biggest safe 'all-Niners' are
 `ddddddddddddddd`, `eeeeeeeeeeeeeee`, and `fffffffffffffff`, respectively.*
 
+*These numbers are calculated with the following formulas / functions:*
+
+* *Logarithm to a given `base` of a given number `n`:*
+
+  ```coffee
+  log_to_base = ( n, base ) -> ( Math.log n ) / ( Math.log base )
+  ```
+
+* *Number of digits required to write a given number `n` in a positional system with a given `base`:*
+
+  ```coffee
+  required_digits = ( n, base ) -> Math.ceil log_to_base n, base
+  ```
+
+* *Maximum number of highest-value digits (i.e. `base - 1`) to write a number that does not exceed a given
+  number `n`:*
+
+  ```coffee
+  max_niners  = ( n, base ) -> ( required_digits n, base ) - 1
+  ```
+
 ### Other
 
 * **`[—]`** support codepoints beyond `U+ffff`; this needs re-writing string index access to frozen array
