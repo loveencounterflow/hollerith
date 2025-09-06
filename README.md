@@ -14,6 +14,7 @@
   - [See Also](#see-also)
   - [To Do](#to-do)
     - [Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer](#digits-needed-to-represent-an-all-9s-number-less-than-max-safe-integer)
+    - [Why not VarInts, LEB128?](#why-not-varints-leb128)
     - [Other](#other)
   - [Don't](#dont)
 
@@ -177,6 +178,51 @@ single-digit number in that base'; that's a `4`) before getting an integer that 
   ```coffee
   max_niners  = ( n, base ) -> ( required_digits n, base ) - 1
   ```
+
+### Why not VarInts, LEB128?
+
+Using https://github.com/joeltg/big-varint, we can easily see that, with Signed BigInt VarInts, negative
+numbers get interspersed as odd byte values in between the positive integers, which get represented as even
+byte values such that, for the numbers `-3` to `+3`, you get the single-byte encodings `[ 5, 3, 1, 0, 2, 4,
+6, ]`, in that order. This entails that encoded values will be sorted according to their absolute value, not
+their signed value, with each negative number (like `-3`) directly preceding its positive counterpart
+(`+3`). This runs counter the properties we need for Vectorial Indexes.
+
+Other than that, VarInt is also an explicitly binary encoding in the sense that it uses sequences of bytes
+with intentional disregard for how those bytes could be turned into manageable chunks of printable text.
+That's great for some situations, but if you want to have textual (a.k.a. 'human-readable') input and
+output, there's always some extra encoding-decoding step necessary *in addition* to the necessity to encode
+and decode between index arrays and their sortable version.
+
+```coffee
+{ encode,
+  decode,     } = ( require 'big-varint' ).signed
+#...........................................................................................................
+numbers = [ -3 .. +3 ]
+varints = ( encode ( BigInt n ) for n in numbers )
+#...........................................................................................................
+numbers.sort ( a, b ) ->
+  return +1 if a > b
+  return -1 if a < b
+  return  0
+#...........................................................................................................
+varints.sort ( a, b ) ->
+  return +1 if a[ 0 ] > b[ 0 ]
+  return -1 if a[ 0 ] < b[ 0 ]
+  return  0
+```
+
+```
+| numbers | varints |
+| ------: | ------: |
+|      -3 |      0n |
+|      -2 |     -1n |
+|      -1 |      1n |
+|       0 |     -2n |
+|      +1 |      2n |
+|      +2 |     -3n |
+|      +3 |      3n |
+```
 
 ### Other
 
