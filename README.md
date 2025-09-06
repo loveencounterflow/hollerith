@@ -169,14 +169,14 @@ single-digit number in that base'; that's a `4`) before getting an integer that 
 * *Number of digits required to write a given number `n` in a positional system with a given `base`:*
 
   ```coffee
-  required_digits = ( n, base ) -> Math.ceil log_to_base n, base
+  get_required_digits = ( n, base ) -> Math.ceil log_to_base n, base
   ```
 
 * *Maximum number of highest-value digits (i.e. `base - 1`) to write a number that does not exceed a given
   number `n`:*
 
   ```coffee
-  max_niners  = ( n, base ) -> ( required_digits n, base ) - 1
+  get_max_niners  = ( n, base ) -> ( required_digits n, base ) - 1
   ```
 
 ### Why not VarInts, LEB128?
@@ -223,6 +223,10 @@ varints.sort ( a, b ) ->
 |      +2 |     -3n |
 |      +3 |      3n |
 ```
+
+Using [LEB128]() is similarly unsuited; sorting the LEB128 encodings of the BigInt sequence `[ -127n, -3,
+-2, -1, 0, 1, 2, 3, 127n ]` yields `[ 0n, 1n, 2n, 3n, -3n, -2n, -1n, -127n, 127n, ]`, which is not conducive
+to VDX sorting as described here.
 
 ### Other
 
