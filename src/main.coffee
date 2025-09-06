@@ -5,7 +5,6 @@
 # { encodeBigInt,
 #   decodeBigInt,   } = TMP_require_encode_in_alphabet()
 SFMODULES                 = require 'bricabrac-single-file-modules'
-{ encode, decode,       } = SFMODULES.unstable.require_anybase()
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { debug,                } = console
@@ -17,6 +16,12 @@ types                     = require './types'
 { CFG,
   Hollerith_typespace,  } = types
 { clean_assign,         } = SFMODULES.unstable.require_clean_assign()
+{ encode,
+  decode,
+  log_to_base,
+  get_required_digits,
+  get_max_niners,
+  get_max_integer,      } = SFMODULES.unstable.require_anybase()
 
 
 #-----------------------------------------------------------------------------------------------------------
