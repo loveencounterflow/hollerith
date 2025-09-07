@@ -151,6 +151,8 @@ class Hollerith
     R.max_digits    = R.pmag_chrs.length - 1
     R.max_integer   = ( R.base ** R.max_digits ) - 1
     R.min_integer   = -R.max_integer
+    R.niner               = T.alphabet.data.niner
+    R.leading_niner_re    = T.alphabet.data.leading_niner_re
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
     R.TMP_alphabet  = T.TMP_alphabet.validate ( R.alphabet + ( \

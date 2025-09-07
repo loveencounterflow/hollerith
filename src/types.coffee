@@ -6,7 +6,7 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { debug,                } = console
-# { regex,                } = require 'regex'
+{ regex,                } = require 'regex'
 { freeze,               } = Object
 { Type,
   Typespace,
@@ -91,8 +91,11 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @alphabet: ( x ) ->
     return false unless @T.incremental_text.isa x, @data, { chrs: 'alphabet_chrs', }
-    @assign { base: @data.alphabet_chrs.length, }
-    return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa @data.base
+    base              = @data.alphabet_chrs.length
+    return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
+    niner             = @data.alphabet_chrs.at -1
+    leading_niner_re  = ( regex 'g' )""" ^ #{niner}*? (?= . $ ) """
+    @assign { base, niner, leading_niner_re, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
