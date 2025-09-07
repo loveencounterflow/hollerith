@@ -132,27 +132,27 @@ class Hollerith
     ### Derivations: ###
     hollerith_cfg_template =
       blank:  '\x20'
-    R               = clean_assign {}, hollerith_cfg_template, cfg
-    T               = new Hollerith_typespace { blank: R.blank, }
-    R.alphabet      = T.alphabet.validate cfg.alphabet
-    R.alphabet_chrs = T.alphabet.data.alphabet_chrs
-    R.base          = T.alphabet.data.base
-    R.magnifiers    = T.magnifiers.validate cfg.magnifiers
-    R.pmag          = T.magnifiers.data.pmag
-    R.nmag          = T.magnifiers.data.nmag
-    R.pmag_chrs     = T.magnifiers.data.pmag_chrs
-    R.nmag_chrs     = T.magnifiers.data.nmag_chrs
-    R.uniliterals   = T.uniliterals.validate cfg.uniliterals
-    R.nuns          = T.uniliterals.data.nuns
-    R.zpuns         = T.uniliterals.data.zpuns
-    R.nun_chrs      = T.uniliterals.data.nun_chrs
-    R.zpun_chrs     = T.uniliterals.data.zpun_chrs
-    R.dimension     = T.dimension.validate cfg.dimension
-    R.max_digits    = R.pmag_chrs.length - 1
-    R.max_integer   = ( R.base ** R.max_digits ) - 1
-    R.min_integer   = -R.max_integer
+    R                     = clean_assign {}, hollerith_cfg_template, cfg
+    T                     = new Hollerith_typespace { blank: R.blank, }
+    R.alphabet            = T.alphabet.validate cfg.alphabet
+    R.alphabet_chrs       = T.alphabet.data.alphabet_chrs
     R.niner               = T.alphabet.data.niner
     R.leading_niner_re    = T.alphabet.data.leading_niner_re
+    R.base                = T.alphabet.data.base
+    R.magnifiers          = T.magnifiers.validate cfg.magnifiers
+    R.pmag                = T.magnifiers.data.pmag
+    R.nmag                = T.magnifiers.data.nmag
+    R.pmag_chrs           = T.magnifiers.data.pmag_chrs
+    R.nmag_chrs           = T.magnifiers.data.nmag_chrs
+    R.uniliterals         = T.uniliterals.validate cfg.uniliterals
+    R.nuns                = T.uniliterals.data.nuns
+    R.zpuns               = T.uniliterals.data.zpuns
+    R.nun_chrs            = T.uniliterals.data.nun_chrs
+    R.zpun_chrs           = T.uniliterals.data.zpun_chrs
+    R.dimension           = T.dimension.validate cfg.dimension
+    R.max_digits          = R.pmag_chrs.length - 1
+    R.max_integer         = ( R.base ** R.max_digits ) - 1
+    R.min_integer         = -R.max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
     R.TMP_alphabet  = T.TMP_alphabet.validate ( R.alphabet + ( \
