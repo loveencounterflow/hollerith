@@ -104,7 +104,7 @@ sortable representation
 * **`pmag_chrs`**:          `'XYZ'`           # DERIVED from latter part of `magnifiers`
 * **`pmag`**:               `'  XYZ'`         # DERIVED from magnifiers  # positive 'magnifier' for 1 to 3 positive digits
 * **`nmag`**:               `'  CBA'`         # DERIVED from magnifiers  # negative 'magnifier' for 1 to 3 negative digits
-* **`nlead_re`**:           `/^9*(?=[0-9])/`  # DERIVED # 'negative leader', discardable leading digits of lifted negative numbers
+* **`leading_niners_re`**:  `/// ^ (?: 9 )*? (?= . $ ) ///gv`  # DERIVED # 'negative leader', discardable leading highest digits ('niners') of lifted negative numbers
 
 * no codepoint is repeated
 * only codepoints between U+0000 and U+10ffff are supported;
