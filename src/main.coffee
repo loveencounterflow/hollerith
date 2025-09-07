@@ -137,7 +137,7 @@ class Hollerith
     R.alphabet            = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs       = T.alphabet.data.alphabet_chrs
     R.niner               = T.alphabet.data.niner
-    R.leading_niner_re    = T.alphabet.data.leading_niner_re
+    R.leading_niners_re   = T.alphabet.data.leading_niners_re
     R.base                = T.alphabet.data.base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
     R.pmag                = T.magnifiers.data.pmag

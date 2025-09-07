@@ -94,8 +94,8 @@ class Hollerith_typespace extends Typespace
     base              = @data.alphabet_chrs.length
     return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
     niner             = @data.alphabet_chrs.at -1
-    leading_niner_re  = ( regex 'g' )""" ^ #{niner}*? (?= . $ ) """
-    @assign { base, niner, leading_niner_re, }
+    leading_niners_re = ( regex 'g' )""" ^ #{niner}*? (?= . $ ) """
+    @assign { base, niner, leading_niners_re, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
