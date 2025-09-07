@@ -28,8 +28,7 @@ types                     = require './types'
 constants_128 = Object.freeze
   max_integer:  Number.MAX_SAFE_INTEGER + 1
   min_integer:  Number.MIN_SAFE_INTEGER - 1
-  zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
-  nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
+  uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   zpun_max:     +20
   nun_min:      -20
   zero_pad_length: 8
@@ -41,16 +40,14 @@ constants_128 = Object.freeze
                 '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
   ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
   be used, thus can be freed for other(?) things ###
-  pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
-  nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
-  nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128b = Object.freeze
   max_integer:  Number.MAX_SAFE_INTEGER + 1
   min_integer:  Number.MIN_SAFE_INTEGER - 1
-  zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
-  nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
+  uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   zpun_max:     +0
   nun_min:      -0
   zero_pad_length: 8
@@ -62,51 +59,44 @@ constants_128b = Object.freeze
                 '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
   ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
   be used, thus can be freed for other(?) things ###
-  pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
-  nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
-  nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10 = Object.freeze
   max_integer:  +999
   min_integer:  -999
-  zpuns:        'ãäåæ' # zero and positive uniliteral numbers
-  nuns:         'ÏÐÑ'  # negative          uniliteral numbers
+  uniliterals:  'ÏÐÑ ã äåæ'
   zpun_max:     +3
   nun_min:      -3
   zero_pad_length:  3
   alphabet:     '0123456789'
-  pmag:         ' øùúûüýþÿ'   # positive 'magnifier' for 1 to 8 positive digits
-  nmag:         ' ÎÍÌËÊÉÈÇ'   # negative 'magnifier' for 1 to 8 negative digits
-  nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp = Object.freeze
   max_integer:  +999
   min_integer:  -999
-  zpuns:        'N' # zero and positive uniliteral numbers
-  nuns:         ''  # negative          uniliteral numbers
+  uniliterals:  'N'
   zpun_max:     +0
   nun_min:      -0
   zero_pad_length:  3
   alphabet:     '0123456789'
-  pmag:         ' OPQR'   # positive 'magnifier' for 1 to 8 positive digits
-  nmag:         ' MLKJ'   # negative 'magnifier' for 1 to 8 negative digits
-  nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+  magnifiers:   'JKLM OPQR'
+  dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp2 = Object.freeze
   max_integer:  +999
   min_integer:  -999
-  zpuns:        'NOPQRSTUVW' # zero and positive uniliteral numbers
-  nuns:         'EFGHIJKLM'  # negative          uniliteral numbers
+  uniliterals:  'EFGHIJKLM N OPQRSTUVW'
   zpun_max:     +9
   nun_min:      -9
   zero_pad_length:  3
   alphabet:     '0123456789'
-  pmag:         '  XYZ'   # positive 'magnifier' for 1 to 8 positive digits
-  nmag:         '  CBA'   # negative 'magnifier' for 1 to 8 negative digits
-  nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+  magnifiers:   'ABC XYZ'
+  dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
@@ -120,9 +110,9 @@ internals = Object.freeze { constants, types, }
 class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ( _TMP_constants ) ->
-    cfg             = { _TMP_constants..., }
-    @cfg            = Object.freeze cfg
+  constructor: ( cfg ) ->
+    clasz           = @constructor
+    @cfg            = Object.freeze clasz.validate_and_compile_cfg cfg
     @lexer          = @compile_sortkey_lexer @cfg
     return undefined
 
@@ -149,6 +139,8 @@ class Hollerith
     R.zpuns               = T.uniliterals.data.zpuns
     R.nun_chrs            = T.uniliterals.data.nun_chrs
     R.zpun_chrs           = T.uniliterals.data.zpun_chrs
+    R.nun_min             = -R.nun_chrs.length
+    R.zpun_max            = R.zpun_chrs.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
     R.max_digits          = R.pmag_chrs.length - 1
     R.max_integer         = ( R.base ** R.max_digits ) - 1
@@ -248,7 +240,7 @@ class Hollerith
       R = R.padStart @cfg.zero_pad_length, @cfg.alphabet.at 0
       # debug 'Ωhll___5', { n, R, }
     else
-      R = R.replace @cfg.nlead_re, ''
+      R = R.replace @cfg.leading_niners_re, ''
       # debug 'Ωhll___6', { n, R, }
     return ( @cfg.nmag.at R.length ) + R
 
