@@ -133,7 +133,6 @@ class Hollerith
     hollerith_cfg_template =
       blank:  '\x20'
     R               = clean_assign {}, hollerith_cfg_template, cfg
-    # debug 'Ωhll___1', R
     T               = new Hollerith_typespace { blank: R.blank, }
     R.alphabet      = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs = T.alphabet.data.alphabet_chrs
