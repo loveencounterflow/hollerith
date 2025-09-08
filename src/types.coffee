@@ -13,6 +13,11 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
   CFG,                  } = SFMODULES.unstable.require_nanotypes()
 
 
+#===========================================================================================================
+internals = Object.assign { Type, Typespace, },
+
+  #---------------------------------------------------------------------------------------------------------
+  get_niners_re: ( niner ) -> ( regex 'g' )""" ^ #{niner}* (?= .+ $ ) """
 
 
 
@@ -96,7 +101,7 @@ class Hollerith_typespace extends Typespace
     base              = @data.alphabet_chrs.length
     return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
     niner             = @data.alphabet_chrs.at -1
-    leading_niners_re = ( regex 'g' )""" ^ #{niner}*? (?= . $ ) """
+    leading_niners_re = internals.get_niners_re niner
     @assign { base, niner, leading_niners_re, }
     return true
 
@@ -150,4 +155,4 @@ _test_monotony = ( x, cmp ) ->
 Object.assign module.exports, {
   Hollerith_typespace,
   CFG:                  CFG,
-  internals:            { Type, Typespace, }, }
+  internals, }
