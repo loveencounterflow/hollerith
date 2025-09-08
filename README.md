@@ -280,6 +280,13 @@ to VDX sorting as described here.
   derivation of `max_integer` and `min_integer` from the base and the declared magnifiers must take this
   limit into account
 
+* **`[—]`** regularize settings (CFG) keys:
+  * keys that start with a letter are user-settable
+  * so are keys starting with an `_` underscore, which are considered 'pro' or 'advanced' level ('know what
+    you're doing')
+  * keys that start with a `$` dollar sign are not to be set by users but are to be derived or otherwise
+    set by the app; when they are encountered while compiling the CFG object, they cause an error
+
 ## Don't
 
 * **`[🚫]`** <del>implement a way to declare alphabets with Unicode ranges as in `a..z` or `[a..z]`, e.g. `{
