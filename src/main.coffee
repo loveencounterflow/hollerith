@@ -26,8 +26,6 @@ types                     = require './types'
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
-  max_integer:  Number.MAX_SAFE_INTEGER + 1
-  min_integer:  Number.MIN_SAFE_INTEGER - 1
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   zpun_max:     +20
   nun_min:      -20
@@ -45,8 +43,6 @@ constants_128 = Object.freeze
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128b = Object.freeze
-  max_integer:  Number.MAX_SAFE_INTEGER + 1
-  min_integer:  Number.MIN_SAFE_INTEGER - 1
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   zpun_max:     +0
   nun_min:      -0
@@ -64,8 +60,6 @@ constants_128b = Object.freeze
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10 = Object.freeze
-  max_integer:  +999
-  min_integer:  -999
   uniliterals:  'ÏÐÑ ã äåæ'
   zpun_max:     +3
   nun_min:      -3
@@ -76,8 +70,6 @@ constants_10 = Object.freeze
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp = Object.freeze
-  max_integer:  +999
-  min_integer:  -999
   uniliterals:  'N'
   zpun_max:     +0
   nun_min:      -0
@@ -88,8 +80,6 @@ constants_10mvp = Object.freeze
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp2 = Object.freeze
-  max_integer:  +999
-  min_integer:  -999
   uniliterals:  'EFGHIJKLM N OPQRSTUVW'
   zpun_max:     +9
   nun_min:      -9
