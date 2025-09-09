@@ -133,8 +133,11 @@ class Hollerith
     R.zpun_max            = R.zpun_chrs.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
     R.max_digits          = R.pmag_chrs.length - 1
-    R.max_integer         = ( R.base ** R.max_digits ) - 1
-    R.min_integer         = -R.max_integer
+    #.......................................................................................................
+    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$for_base.validate [ cfg._max_integer,               R.base, ]
+    else                        R._max_integer  = T._max_integer_$for_base.validate [ ( R.base ** R.max_digits ) - 1, R.base, ]
+    #.......................................................................................................
+    R._min_integer        = -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
     R.TMP_alphabet  = T.TMP_alphabet.validate ( R.alphabet + ( \
