@@ -20,15 +20,14 @@ types                     = require './types'
   decode,
   log_to_base,
   get_required_digits,
-  get_max_niners,
   get_max_integer,      } = SFMODULES.unstable.require_anybase()
 
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = Object.freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  zpun_max:     +20
-  nun_min:      -20
+  # zpun_max:     +20
+  # nun_min:      -20
   zero_pad_length: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
@@ -42,10 +41,8 @@ constants_128 = Object.freeze
   dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
-constants_128b = Object.freeze
+constants_128_16383 = Object.freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  zpun_max:     +0
-  nun_min:      -0
   zero_pad_length: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
@@ -57,6 +54,7 @@ constants_128b = Object.freeze
   be used, thus can be freed for other(?) things ###
   magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
   dimension:    5
+  _max_integer: ( 128 ** 2 ) - 1 # 16383
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10 = Object.freeze
@@ -87,6 +85,7 @@ constants_10mvp2 = Object.freeze
   alphabet:     '0123456789'
   magnifiers:   'ABC XYZ'
   dimension:    5
+  _max_integer: 999
 
 #-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
@@ -134,8 +133,8 @@ class Hollerith
     R.dimension           = T.dimension.validate cfg.dimension
     R.max_digits          = R.pmag_chrs.length - 1
     #.......................................................................................................
-    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$for_base.validate [ cfg._max_integer,               R.base, ]
-    else                        R._max_integer  = T._max_integer_$for_base.validate [ ( R.base ** R.max_digits ) - 1, R.base, ]
+    if cfg._max_integer?  then  R._max_integer  = ( T._max_integer_$x_for_$base.validate { x: cfg._max_integer, base: R.base, } ).x
+    else                        R._max_integer  = T.create_max_integer_$x_for_$base { base: R.base, digits: R.max_digits, }
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
@@ -277,16 +276,16 @@ class Hollerith
 
 #===========================================================================================================
 module.exports = do =>
-  hollerith_10      = new Hollerith constants_10
-  hollerith_10mvp   = new Hollerith constants_10mvp
-  hollerith_10mvp2  = new Hollerith constants_10mvp2
-  hollerith_128     = new Hollerith constants_128
-  hollerith_128b    = new Hollerith constants_128b
+  hollerith_10        = new Hollerith constants_10
+  hollerith_10mvp     = new Hollerith constants_10mvp
+  hollerith_10mvp2    = new Hollerith constants_10mvp2
+  hollerith_128       = new Hollerith constants_128
+  hollerith_128_16383 = new Hollerith constants_128_16383
   return {
     Hollerith,
     hollerith_10,
     hollerith_10mvp,
     hollerith_10mvp2,
     hollerith_128,
-    hollerith_128b,
+    hollerith_128_16383,
     internals, }

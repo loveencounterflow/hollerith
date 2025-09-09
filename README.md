@@ -176,7 +176,7 @@ single-digit number in that base'; that's a `4`) before getting an integer that 
   number `n`:*
 
   ```coffee
-  get_max_niners  = ( n, base ) -> ( required_digits n, base ) - 1
+  get_max_niner_digit_count  = ( n, base ) -> ( required_digits n, base ) - 1
   ```
 
 ### Why not VarInts, LEB128?

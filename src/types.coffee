@@ -13,12 +13,12 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
   CFG,                  } = SFMODULES.unstable.require_nanotypes()
 { is_positive_integer_power_of,
   is_positive_all_niner,
+  get_max_integer,
+  # get_max_niner_digit_count,
   # encode,
   # decode,
   # log_to_base,
   # get_required_digits,
-  # get_max_niners,
-  # get_max_integer,
                         } = SFMODULES.unstable.require_anybase()
 
 
@@ -65,6 +65,7 @@ class Hollerith_typespace extends Typespace
   # @blank_usage:     ( x ) -> ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
   @base:            ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
+  @digits:          ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
@@ -143,11 +144,20 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_integer_$for_base: ([ x, base, ]) ->
-    return @fail "Ωbsk___8 x not a positive integer"            unless @T.pinteger.isa        x
-    return @fail "Ωbsk___9 base not an integer greater than 1"  unless @T.base.isa            base
-    return @fail "Ωbsk__10 x not a positive all-niners"         unless is_positive_all_niner  x, base
+  @_max_integer_$x_for_$base: ({ x, base, }) ->
+    return @fail "Ωbsk___8 x not a positive safe integer"           unless @T.pinteger.isa        x
+    return @fail "Ωbsk___9 base not a safe integer greater than 1"  unless @T.base.isa            base
+    return @fail "Ωbsk__10 x not a positive all-niners"             unless is_positive_all_niner  x, base
     return true
+
+  #---------------------------------------------------------------------------------------------------------
+  ### TAINT should be method of `T._max_integer_$x_for_$base` ###
+  create_max_integer_$x_for_$base: ({ base, digits }) ->
+    @base.validate    base
+    @digits.validate  digits
+    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, base ), ( ( base ** digits ) - 1 )
+    @_max_integer_$x_for_$base.validate { x: R, base, }
+    return R
 
 
 #===========================================================================================================
@@ -161,7 +171,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk__11 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk__12 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
