@@ -11,6 +11,15 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
 { Type,
   Typespace,
   CFG,                  } = SFMODULES.unstable.require_nanotypes()
+{ is_positive_integer_power_of,
+  is_positive_all_niner,
+  # encode,
+  # decode,
+  # log_to_base,
+  # get_required_digits,
+  # get_max_niners,
+  # get_max_integer,
+                        } = SFMODULES.unstable.require_anybase()
 
 
 #===========================================================================================================
@@ -131,6 +140,13 @@ class Hollerith_typespace extends Typespace
   @TMP_alphabet: ( x ) ->
     return false unless @T.nonempty_text.isa    x, @data
     return false unless @T.incremental_text.isa x, @data
+    return true
+
+  #---------------------------------------------------------------------------------------------------------
+  @_max_integer_$for_base: ([ x, base, ]) ->
+    return @fail "Ωbsk___8 x not a positive integer"            unless @T.pinteger.isa        x
+    return @fail "Ωbsk___9 base not an integer greater than 1"  unless @T.base.isa            base
+    return @fail "Ωbsk__10 x not a positive all-niners"         unless is_positive_all_niner  x, base
     return true
 
 
