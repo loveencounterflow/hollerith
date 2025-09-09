@@ -74,9 +74,9 @@ sortable representation
     lexicographically bigger magnifier.
 
 * For negative numbers greater than zero:
-  * **−A**: Add `max_integer` plus one; this 'lifts' −999 to +1
+  * **−A**: Add `_max_integer` plus one; this 'lifts' −999 to +1
   * **−B**: Do two things:
-    * pad with leading zeroes up to the length of `max_integer` and
+    * pad with leading zeroes up to the length of `_max_integer` and
     * remove leading nines.
   * **−C**: ; Now absolutely small negative integers have few digits again while absolutely large ones have
     many digits again. Prepend a magnifier corresponding to the number of digits; numbers with more digits
@@ -94,8 +94,8 @@ sortable representation
 
 * **`zpuns`**:              `'NOPQRSTUVW'`    # DERIVED # zero and positive uniliteral numbers
 * **`nuns`**:               `'EFGHIJKLM'`     # DERIVED # negative          uniliteral numbers
-* **`max_integer`**:        `+999`            # DERIVED
-* **`min_integer`**:        `-999`            # DERIVED
+* **`_max_integer`**:        `+999`            # DERIVED
+* **`_min_integer`**:        `-999`            # DERIVED
 * **`zpun_max`**:           `+9`              # DERIVED # biggest   number representable as uniliteral
 * **`nun_min`**:            `-9`              # DERIVED # smallest  number representable as uniliteral
 * **`zero_pad_length`**:    `3`               # DERIVED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! > 3
@@ -276,8 +276,8 @@ to VDX sorting as described here.
     7bit ASCII letters, how many there may ever be
 
 * **`[—]`** since integers beyond `Number.MAX_SAFE_INTEGER` can not be reliably used to count in steps of
-  one, both the inclusion of `max_integer` and `min_integer` in a Hollerith numbering alphabet and the
-  derivation of `max_integer` and `min_integer` from the base and the declared magnifiers must take this
+  one, both the inclusion of `_max_integer` and `_min_integer` in a Hollerith numbering alphabet and the
+  derivation of `_max_integer` and `_min_integer` from the base and the declared magnifiers must take this
   limit into account
 
 * **`[—]`** regularize settings (CFG) keys:
