@@ -173,7 +173,7 @@ class Hollerith
     cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
       mantissa  = d.mantissa.padStart cfg.zero_pad_length, max_digit
-      d.index   = ( decode mantissa, alphabet ) - cfg.max_integer
+      d.index   = ( decode mantissa, alphabet ) - cfg._max_integer
     cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
     cast_zero     = ({ data: d, }) -> d.index = 0
     cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
@@ -201,8 +201,8 @@ class Hollerith
     unless Number.isFinite n
       type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
       throw new Error "Ωhll___2 expected a float, got a #{type}"
-    unless @cfg.min_integer <= n <= @cfg.max_integer
-      throw new Error "Ωhll___3 expected a float between #{@cfg.min_integer} and #{@cfg.max_integer}, got #{n}"
+    unless @cfg._min_integer <= n <= @cfg._max_integer
+      throw new Error "Ωhll___3 expected a float between #{@cfg._min_integer} and #{@cfg._max_integer}, got #{n}"
     #.......................................................................................................
     return @encode_integer n
 
@@ -223,8 +223,8 @@ class Hollerith
     #.......................................................................................................
     # Big negative:
     ### NOTE plus one or not plus one?? ###
-    # R = ( encode ( n + @cfg.max_integer + 1 ), @cfg.alphabet )
-    R = ( encode ( n + @cfg.max_integer     ), @cfg.alphabet )
+    # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.alphabet )
+    R = ( encode ( n + @cfg._max_integer     ), @cfg.alphabet )
     # debug 'Ωhll___4', { n, R, }
     if R.length < @cfg.zero_pad_length
       R = R.padStart @cfg.zero_pad_length, @cfg.alphabet.at 0
