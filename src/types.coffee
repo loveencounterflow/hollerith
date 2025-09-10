@@ -159,6 +159,11 @@ class Hollerith_typespace extends Typespace
     @_max_integer_$x_for_$base.validate { x: R, base, }
     return R
 
+  #---------------------------------------------------------------------------------------------------------
+  @_max_digits_per_idx: ({ x, pmag_chrs, }) ->
+    return @fail "Ωbsk__11 x not a positive safe integer"           unless @T.pinteger.isa x
+    return @fail "Ωbsk__12 x #{x} exceeds limit set by magnifiers"  unless x <= pmag_chrs.length
+    return true
 
 #===========================================================================================================
 _test_monotony = ( x, cmp ) ->

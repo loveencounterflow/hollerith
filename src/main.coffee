@@ -28,7 +28,7 @@ constants_128 = Object.freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   # zpun_max:     +20
   # nun_min:      -20
-  zero_pad_length: 8
+  _max_digits_per_idx: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
   alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
@@ -43,7 +43,7 @@ constants_128 = Object.freeze
 #-----------------------------------------------------------------------------------------------------------
 constants_128_16383 = Object.freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  zero_pad_length: 8
+  _max_digits_per_idx: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
   alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
@@ -61,7 +61,7 @@ constants_10 = Object.freeze
   uniliterals:  'ÏÐÑ ã äåæ'
   zpun_max:     +3
   nun_min:      -3
-  zero_pad_length:  3
+  _max_digits_per_idx:  3
   alphabet:     '0123456789'
   magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
   dimension:    5
@@ -71,7 +71,7 @@ constants_10mvp = Object.freeze
   uniliterals:  'N'
   zpun_max:     +0
   nun_min:      -0
-  zero_pad_length:  3
+  _max_digits_per_idx:  3
   alphabet:     '0123456789'
   magnifiers:   'JKLM OPQR'
   dimension:    5
@@ -81,7 +81,7 @@ constants_10mvp2 = Object.freeze
   uniliterals:  'EFGHIJKLM N OPQRSTUVW'
   zpun_max:     +9
   nun_min:      -9
-  zero_pad_length:  3
+  _max_digits_per_idx:  3
   alphabet:     '0123456789'
   magnifiers:   'ABC XYZ'
   dimension:    5
@@ -131,10 +131,12 @@ class Hollerith
     R.nun_min             = -R.nun_chrs.length
     R.zpun_max            = R.zpun_chrs.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
-    R.max_digits          = R.pmag_chrs.length - 1
+    #.......................................................................................................
+    _max_digits_per_idx   = Math.min ( R.pmag_chrs.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
+    R._max_digits_per_idx = ( T._max_digits_per_idx.validate { x: _max_digits_per_idx, pmag_chrs: R.pmag_chrs, } ).x
     #.......................................................................................................
     if cfg._max_integer?  then  R._max_integer  = ( T._max_integer_$x_for_$base.validate { x: cfg._max_integer, base: R.base, } ).x
-    else                        R._max_integer  = T.create_max_integer_$x_for_$base { base: R.base, digits: R.max_digits, }
+    else                        R._max_integer  = T.create_max_integer_$x_for_$base { base: R.base, digits: R._max_digits_per_idx, }
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
@@ -174,7 +176,7 @@ class Hollerith
     cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
     cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
-      mantissa  = d.mantissa.padStart cfg.zero_pad_length, max_digit
+      mantissa  = d.mantissa.padStart cfg._max_digits_per_idx, max_digit
       d.index   = ( decode mantissa, alphabet ) - cfg._max_integer
     cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
     cast_zero     = ({ data: d, }) -> d.index = 0
@@ -227,9 +229,9 @@ class Hollerith
     ### NOTE plus one or not plus one?? ###
     # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.alphabet )
     R = ( encode ( n + @cfg._max_integer     ), @cfg.alphabet )
-    if R.length < @cfg.zero_pad_length
-      R = R.padStart @cfg.zero_pad_length, @cfg.alphabet.at 0
     # debug 'Ωhll___3', { n, R, }
+    if R.length < @cfg._max_digits_per_idx
+      R = R.padStart @cfg._max_digits_per_idx, @cfg.alphabet.at 0
       # debug 'Ωhll___4', { n, R, }
     else
       R = R.replace @cfg.leading_niners_re, ''
