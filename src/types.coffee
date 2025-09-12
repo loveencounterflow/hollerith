@@ -80,8 +80,8 @@ class Hollerith_typespace extends Typespace
     return _test_monotony.call @, x, '>'
 
   #---------------------------------------------------------------------------------------------------------
-  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.isa x, @data
-  @pmag_bare:           ( x ) -> @T.incremental_text.isa x, @data
+  @nmag_bare_reversed:  ( x ) -> @T.incremental_text.dm_isa @data, null, x
+  @pmag_bare:           ( x ) -> @T.incremental_text.dm_isa @data, null, x
 
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
@@ -92,11 +92,11 @@ class Hollerith_typespace extends Typespace
     [ nmag_bare_reversed,
       pmag_bare,          ] = parts
     #.......................................................................................................
-    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___2', @data
-    return ( @fail "Ωbsk___3 ???" ) unless  @T.nmag_bare_reversed.isa nmag_bare_reversed, @data, { chrs: 'nmag_chrs_reversed', }
-    return ( @fail "Ωbsk___4 ???" ) unless  @T.pmag_bare.isa          pmag_bare,          @data, { chrs: 'pmag_chrs', }
-    return ( @fail "Ωbsk___5 ???" ) unless  @T.incremental_text.isa   nmag_bare_reversed + pmag_bare
-    return ( @fail "Ωbsk___6 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
+    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
+    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.dm_isa @data, { chrs: 'nmag_chrs_reversed', },  nmag_bare_reversed
+    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: 'pmag_chrs', },           pmag_bare
+    return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
+    return ( @fail "Ωbsk___5 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
     #.......................................................................................................
     nmag      = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
     pmag      = @[CFG].blank + pmag_bare
@@ -107,7 +107,7 @@ class Hollerith_typespace extends Typespace
 
   #---------------------------------------------------------------------------------------------------------
   @alphabet: ( x ) ->
-    return false unless @T.incremental_text.isa x, @data, { chrs: 'alphabet_chrs', }
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'alphabet_chrs', }, x
     base              = @data.alphabet_chrs.length
     return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
     niner             = @data.alphabet_chrs.at -1
@@ -133,14 +133,14 @@ class Hollerith_typespace extends Typespace
       puns, ] = parts
     zpuns     = zero + puns
     @assign { nuns, zpuns, }
-    return false unless @T.incremental_text.isa nuns,  @data, { chrs: 'nun_chrs', }
-    return false unless @T.incremental_text.isa zpuns, @data, { chrs: 'zpun_chrs', }
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'nun_chrs', },  nuns
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'zpun_chrs', }, zpuns
     return true
 
   #---------------------------------------------------------------------------------------------------------
   @TMP_alphabet: ( x ) ->
-    return false unless @T.nonempty_text.isa    x, @data
-    return false unless @T.incremental_text.isa x, @data
+    return false unless @T.nonempty_text.dm_isa    @data, null, x
+    return false unless @T.incremental_text.dm_isa @data, null, x
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -151,12 +151,12 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT should be method of `T._max_integer_$x_for_$base` ###
-  create_max_integer_$x_for_$base: ({ base, digits }) ->
+  ### TAINT should be method of `T._max_integer_$` ###
+  create_max_integer_$: ({ base, digits }) ->
     @base.validate    base
     @digits.validate  digits
     R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, base ), ( ( base ** digits ) - 1 )
-    @_max_integer_$x_for_$base.validate { x: R, base, }
+    @_max_integer_$.validate R, base
     return R
 
   #---------------------------------------------------------------------------------------------------------

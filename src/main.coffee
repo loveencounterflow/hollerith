@@ -133,10 +133,10 @@ class Hollerith
     R.dimension           = T.dimension.validate cfg.dimension
     #.......................................................................................................
     _max_digits_per_idx   = Math.min ( R.pmag_chrs.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
-    R._max_digits_per_idx = ( T._max_digits_per_idx.validate { x: _max_digits_per_idx, pmag_chrs: R.pmag_chrs, } ).x
+    R._max_digits_per_idx = T._max_digits_per_idx_$.validate _max_digits_per_idx, R.pmag_chrs
     #.......................................................................................................
-    if cfg._max_integer?  then  R._max_integer  = ( T._max_integer_$x_for_$base.validate { x: cfg._max_integer, base: R.base, } ).x
-    else                        R._max_integer  = T.create_max_integer_$x_for_$base { base: R.base, digits: R._max_digits_per_idx, }
+    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R.base
+    else                        R._max_integer  = T.create_max_integer_$ { base: R.base, digits: R._max_digits_per_idx, }
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
