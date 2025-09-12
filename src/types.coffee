@@ -88,7 +88,7 @@ class Hollerith_typespace extends Typespace
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
     parts                   = x.split @[CFG].blank_splitter
     unless parts.length is 2
-      return ( @fail "Ωbsk___1 magnifiers must have exactly 1 blank, got #{parts.length - 1} blanks")
+      return ( @fail "magnifiers must have exactly 1 blank, got #{parts.length - 1} blanks")
     [ nmag_bare_reversed,
       pmag_bare,          ] = parts
     #.......................................................................................................
@@ -127,7 +127,7 @@ class Hollerith_typespace extends Typespace
       return true
     parts = x.split @[CFG].blank_splitter
     unless parts.length is 3
-      return ( @fail "Ωbsk___7 uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
+      return ( @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
     [ nuns,
       zero,
       puns, ] = parts
@@ -144,10 +144,10 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_integer_$x_for_$base: ({ x, base, }) ->
-    return @fail "Ωbsk___8 x not a positive safe integer"           unless @T.pinteger.isa        x
-    return @fail "Ωbsk___9 base not a safe integer greater than 1"  unless @T.base.isa            base
-    return @fail "Ωbsk__10 x not a positive all-niners"             unless is_positive_all_niner  x, base
+  @_max_integer_$: ( x, base ) ->
+    return @fail "x not a positive safe integer"           unless @T.pinteger.isa        x
+    return @fail "base not a safe integer greater than 1"  unless @T.base.isa            base
+    return @fail "x not a positive all-niners"             unless is_positive_all_niner  x, base
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -160,9 +160,9 @@ class Hollerith_typespace extends Typespace
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_digits_per_idx: ({ x, pmag_chrs, }) ->
-    return @fail "Ωbsk__11 x not a positive safe integer"           unless @T.pinteger.isa x
-    return @fail "Ωbsk__12 x #{x} exceeds limit set by magnifiers"  unless x <= pmag_chrs.length
+  @_max_digits_per_idx_$: ( x, pmag_chrs ) ->
+    return @fail "x not a positive safe integer"           unless @T.pinteger.isa x
+    return @fail "x #{x} exceeds limit set by magnifiers"  unless x <= pmag_chrs.length
     return true
 
 #===========================================================================================================
@@ -176,7 +176,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk__13 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
