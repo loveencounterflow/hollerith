@@ -287,6 +287,8 @@ to VDX sorting as described here.
   * keys that start with a `$` dollar sign are not to be set by users but are to be derived or otherwise
     set by the app; when they are encountered while compiling the CFG object, they cause an error
 
+* **`[—]`** why are there two zeroes? necessary?
+
 ## Don't
 
 * **`[🚫]`** <del>implement a way to declare alphabets with Unicode ranges as in `a..z` or `[a..z]`, e.g. `{
