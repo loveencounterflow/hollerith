@@ -237,7 +237,14 @@ to VDX sorting as described here.
   zero (`constants_10mvp2`: `0`, intermittingly call `_digit_zero`)
   * **`[—]`** add settings to retrieve both
 
-* **`[—]`** clarify, rename `_max_digits_per_idx`, `_max_digits_per_vdx` -> `_idx_width`, `_vdx_width`
+* **`[—]`** clarify, rename `_max_digits_per_idx`, `_max_digits_per_vdx` -> `_max_idx_digits`,
+  `_max_idx_width`, `_vdx_width`
+  * **`[—]`** `Hollerith::encode()` resolves to `encode_idx()` or `encode_vdx()`, depending on whether input
+    is number or list
+  * **`[—]`** `Hollerith::encode_idx()` encodes a single integer between inclusive `cfg._min_integer` and
+    `cfg._max_integer` without zero-padding; the maximum length of the returned value is given by
+    `_max_idx_width` (one uniliteral / magnifier plus `_max_idx_digits`)
+  * **`[—]`** `Hollerith::encode_vdx()`
   * **`[—]`** depending on use case, there's a case to be made for `_idx_width` both to exclude and to
     include the magnifier, so `constants_10mvp2._idx_width` is `3` (because its longest representable
     numbers are `-999` and `+999`) and `4` (because its longest representable numbers are written out as
