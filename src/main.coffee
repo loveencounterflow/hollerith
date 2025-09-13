@@ -116,7 +116,8 @@ class Hollerith
     T                     = new Hollerith_typespace { blank: R.blank, }
     R.alphabet            = T.alphabet.validate cfg.alphabet
     R.alphabet_chrs       = T.alphabet.data.alphabet_chrs
-    R.niner               = T.alphabet.data.niner
+    R._naught             = T.alphabet.data._naught
+    R._nova               = T.alphabet.data._nova
     R.leading_niners_re   = T.alphabet.data.leading_niners_re
     R.base                = T.alphabet.data.base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
@@ -125,6 +126,7 @@ class Hollerith
     R.pmag_chrs           = T.magnifiers.data.pmag_chrs
     R.nmag_chrs           = T.magnifiers.data.nmag_chrs
     R.uniliterals         = T.uniliterals.validate cfg.uniliterals
+    R._cipher             = T.uniliterals.data._cipher
     R.nuns                = T.uniliterals.data.nuns
     R.zpuns               = T.uniliterals.data.zpuns
     R.nun_chrs            = T.uniliterals.data.nun_chrs

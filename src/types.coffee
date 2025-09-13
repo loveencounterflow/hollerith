@@ -26,7 +26,7 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
 internals = Object.assign { Type, Typespace, },
 
   #---------------------------------------------------------------------------------------------------------
-  get_niners_re: ( niner ) -> ( regex 'g' )""" ^ #{niner}* (?= .+ $ ) """
+  get_niners_re: ( _nova ) -> ( regex 'g' )""" ^ #{_nova}* (?= .+ $ ) """
 
 
 
@@ -110,9 +110,10 @@ class Hollerith_typespace extends Typespace
     return false unless @T.incremental_text.dm_isa @data, { chrs: 'alphabet_chrs', }, x
     base              = @data.alphabet_chrs.length
     return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
-    niner             = @data.alphabet_chrs.at -1
-    leading_niners_re = internals.get_niners_re niner
-    @assign { base, niner, leading_niners_re, }
+    _naught           = @data.alphabet_chrs.at  0
+    _nova             = @data.alphabet_chrs.at -1
+    leading_niners_re = internals.get_niners_re _nova
+    @assign { base, _naught, _nova, leading_niners_re, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -129,10 +130,10 @@ class Hollerith_typespace extends Typespace
     unless parts.length is 3
       return ( @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
     [ nuns,
-      zero,
+      _cipher,
       puns, ] = parts
-    zpuns     = zero + puns
-    @assign { nuns, zpuns, }
+    zpuns     = _cipher + puns
+    @assign { nuns, zpuns, _cipher, }
     return false unless @T.incremental_text.dm_isa @data, { chrs: 'nun_chrs', },  nuns
     return false unless @T.incremental_text.dm_isa @data, { chrs: 'zpun_chrs', }, zpuns
     return true
