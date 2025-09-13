@@ -87,6 +87,7 @@ constants_10mvp2 = freeze
   magnifiers:   'ABC XYZ'
   dimension:    5
   _max_integer: 999
+  vdx_length:   3
 
 #-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
@@ -111,7 +112,8 @@ class Hollerith
     ### Validations: ###
     ### Derivations: ###
     hollerith_cfg_template =
-      blank:  '\x20'
+      blank:        '\x20'
+      vdx_length:   5
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     T                     = new Hollerith_typespace { blank: R.blank, }
     R.alphabet            = T.alphabet.validate cfg.alphabet
@@ -149,8 +151,12 @@ class Hollerith
     else if R.pmag_chrs.length > R._max_digits_per_idx
       R.pmag_chrs = freeze R.pmag_chrs[ .. R._max_digits_per_idx ]
     #.......................................................................................................
+    R.vdx_length          = T.vdx_length.validate R.vdx_length
+    #.......................................................................................................
     R.pmag                = R.pmag_chrs.join ''
     R.nmag                = R.nmag_chrs.join ''
+    R._max_idx_width      = R._max_digits_per_idx + 1
+    R._sortkey_width      = R._max_idx_width * R.vdx_length
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
