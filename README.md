@@ -15,6 +15,7 @@
   - [To Do](#to-do)
     - [Digits Needed to Represent an 'All-9s Number' Less Than Max Safe Integer](#digits-needed-to-represent-an-all-9s-number-less-than-max-safe-integer)
     - [Why not VarInts, LEB128?](#why-not-varints-leb128)
+    - [Configuration](#configuration)
     - [Other](#other)
   - [Don't](#dont)
 
@@ -227,6 +228,20 @@ varints.sort ( a, b ) ->
 Using [LEB128]() is similarly unsuited; sorting the LEB128 encodings of the BigInt sequence `[ -127n, -3,
 -2, -1, 0, 1, 2, 3, 127n ]` yields `[ 0n, 1n, 2n, 3n, -3n, -2n, -1n, -127n, 127n, ]`, which is not conducive
 to VDX sorting as described here.
+
+### Configuration
+
+* **`[—]`** validate that `_max_digits_per_idx` and `_max_integer`, when both set, don't contradict each other
+
+* **`[—]`** devise terminology to distinguish uniliteral for zero (`constants_10mvp2`: `N`) and digit for
+  zero (`constants_10mvp2`: `0`, intermittingly call `_digit_zero`)
+  * **`[—]`** add settings to retrieve both
+
+* **`[—]`** clarify, rename `_max_digits_per_idx`, `_max_digits_per_vdx` -> `_idx_width`, `_vdx_width`
+  * **`[—]`** depending on use case, there's a case to be made for `_idx_width` both to exclude and to
+    include the magnifier, so `constants_10mvp2._idx_width` is `3` (because its longest representable
+    numbers are `-999` and `+999`) and `4` (because its longest representable numbers are written out as
+    `A000` and `Z999`, respectively).
 
 ### Other
 
