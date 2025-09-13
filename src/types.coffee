@@ -66,7 +66,6 @@ class Hollerith_typespace extends Typespace
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
   @base:            ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
   @digits:          ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
-  @vdx_length:      ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
