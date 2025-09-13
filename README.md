@@ -17,6 +17,7 @@
     - [Why not VarInts, LEB128?](#why-not-varints-leb128)
     - [Configuration](#configuration)
     - [Other](#other)
+  - [Is Done](#is-done)
   - [Don't](#dont)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -241,9 +242,9 @@ to VDX sorting as described here.
   * **`[—]`** add settings to retrieve both
 
 * **`[—]`** clarify, rename `_max_digits_per_idx` -> `_max_idx_digits`; `_max_idx_width` is derived as
-  `_max_idx_digits + 1`; `vdx_length` is the (maximum) count of indexes per vector(ial index);
+  `_max_idx_digits + 1`; `dimension` is the (maximum) count of indexes per vector(ial index);
   `_sortkey_width` is number of code units (i.e. string length, *not* number of characters) of all sortkeys
-  produced by `Hollerith::encode_vdx()`, derived as `_max_idx_width * vdx_length`
+  produced by `Hollerith::encode_vdx()`, derived as `_max_idx_width * dimension`
 
 * **`[—]`** `Hollerith::encode()` resolves to `encode_idx()` or `encode_vdx()`, depending on whether input
     is number or list
@@ -315,7 +316,12 @@ to VDX sorting as described here.
   * keys that start with a `$` dollar sign are not to be set by users but are to be derived or otherwise
     set by the app; when they are encountered while compiling the CFG object, they cause an error
 
-* **`[—]`** why are there two zeroes? necessary?
+* **`[—]`** Allow composite VDXs, especially allow high-capacity encoder for first index, low-capacity
+  encoder for trailing digits (as those are used for revisions)
+
+## Is Done
+
+* **`[+]`** why are there two zeroes? necessary?
 
 ## Don't
 
