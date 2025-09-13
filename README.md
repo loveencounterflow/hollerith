@@ -240,8 +240,10 @@ to VDX sorting as described here.
   * **`[—]`** uniliteral zero: 'cipher'
   * **`[—]`** add settings to retrieve both
 
-* **`[—]`** clarify, rename `_max_digits_per_idx`, `_max_digits_per_vdx` -> `_max_idx_digits`,
-  `_max_idx_width`, `_vdx_width`
+* **`[—]`** clarify, rename `_max_digits_per_idx` -> `_max_idx_digits`; `_max_idx_width` is derived as
+  `_max_idx_digits + 1`; `vdx_length` is the (maximum) count of indexes per vector(ial index);
+  `_sortkey_width` is number of code units (i.e. string length, *not* number of characters) of all sortkeys
+  produced by `Hollerith::encode_vdx()`, derived as `_max_idx_width * vdx_length`
 
 * **`[—]`** `Hollerith::encode()` resolves to `encode_idx()` or `encode_vdx()`, depending on whether input
     is number or list
