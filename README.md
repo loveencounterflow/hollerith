@@ -235,11 +235,15 @@ to VDX sorting as described here.
 
 * **`[—]`** devise terminology to distinguish uniliteral for zero (`constants_10mvp2`: `N`) and digit for
   zero (`constants_10mvp2`: `0`, intermittingly call `_digit_zero`)
+  * **`[—]`** digit nine ('novenary digit'): 'nova'
+  * **`[—]`** digit zero: 'nought'
+  * **`[—]`** uniliteral zero: 'cipher'
   * **`[—]`** add settings to retrieve both
 
 * **`[—]`** clarify, rename `_max_digits_per_idx`, `_max_digits_per_vdx` -> `_max_idx_digits`,
   `_max_idx_width`, `_vdx_width`
-  * **`[—]`** `Hollerith::encode()` resolves to `encode_idx()` or `encode_vdx()`, depending on whether input
+
+* **`[—]`** `Hollerith::encode()` resolves to `encode_idx()` or `encode_vdx()`, depending on whether input
     is number or list
   * **`[—]`** `Hollerith::encode_idx()` encodes a single integer between inclusive `cfg._min_integer` and
     `cfg._max_integer` without zero-padding; the maximum length of the returned value is given by
