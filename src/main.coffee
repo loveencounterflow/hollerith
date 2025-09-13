@@ -21,10 +21,11 @@ types                     = require './types'
   log_to_base,
   get_required_digits,
   get_max_integer,      } = SFMODULES.unstable.require_anybase()
+{ freeze,               } = Object
 
 
 #-----------------------------------------------------------------------------------------------------------
-constants_128 = Object.freeze
+constants_128 = freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   # zpun_max:     +20
   # nun_min:      -20
@@ -41,7 +42,7 @@ constants_128 = Object.freeze
   dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
-constants_128_16383 = Object.freeze
+constants_128_16383 = freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
   _max_digits_per_idx: 2
   ###                     1         2         3       ###
@@ -57,7 +58,7 @@ constants_128_16383 = Object.freeze
   _max_integer: ( 128 ** 2 ) - 1 # 16383
 
 #-----------------------------------------------------------------------------------------------------------
-constants_10 = Object.freeze
+constants_10 = freeze
   uniliterals:  'ÏÐÑ ã äåæ'
   zpun_max:     +3
   nun_min:      -3
@@ -67,7 +68,7 @@ constants_10 = Object.freeze
   dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
-constants_10mvp = Object.freeze
+constants_10mvp = freeze
   uniliterals:  'N'
   zpun_max:     +0
   nun_min:      -0
@@ -77,7 +78,7 @@ constants_10mvp = Object.freeze
   dimension:    5
 
 #-----------------------------------------------------------------------------------------------------------
-constants_10mvp2 = Object.freeze
+constants_10mvp2 = freeze
   uniliterals:  'EFGHIJKLM N OPQRSTUVW'
   zpun_max:     +9
   nun_min:      -9
@@ -92,7 +93,7 @@ constants_10mvp2 = Object.freeze
 constants = C = constants_10
 
 #-----------------------------------------------------------------------------------------------------------
-internals = Object.freeze { constants, types, }
+internals = freeze { constants, types, }
 
 
 #===========================================================================================================
@@ -101,7 +102,7 @@ class Hollerith
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     clasz           = @constructor
-    @cfg            = Object.freeze clasz.validate_and_compile_cfg cfg
+    @cfg            = freeze clasz.validate_and_compile_cfg cfg
     @lexer          = @compile_sortkey_lexer @cfg
     return undefined
 
