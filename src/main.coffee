@@ -205,9 +205,9 @@ class Hollerith
     n = integer_or_list
     unless Number.isFinite n
       type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-      throw new Error "Ωhll___1 expected a float, got a #{type}"
+      throw new Error "Ωhll___4 expected a float, got a #{type}"
     unless @cfg._min_integer <= n <= @cfg._max_integer
-      throw new Error "Ωhll___2 expected a float between #{@cfg._min_integer} and #{@cfg._max_integer}, got #{n}"
+      throw new Error "Ωhll___5 expected a float between #{@cfg._min_integer} and #{@cfg._max_integer}, got #{n}"
     #.......................................................................................................
     return @encode_integer n
 
@@ -230,13 +230,10 @@ class Hollerith
     ### NOTE plus one or not plus one?? ###
     # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.alphabet )
     R = ( encode ( n + @cfg._max_integer     ), @cfg.alphabet )
-    # debug 'Ωhll___3', { n, R, }
     if R.length < @cfg._max_digits_per_idx
       R = R.padStart @cfg._max_digits_per_idx, @cfg.alphabet.at 0
-      # debug 'Ωhll___4', { n, R, }
     else
       R = R.replace @cfg.leading_niners_re, ''
-      # debug 'Ωhll___5', { n, R, }
     return ( @cfg.nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
@@ -262,13 +259,13 @@ class Hollerith
   decode: ( sortkey ) ->
     ### TAINT use proper validation ###
     unless ( type = type_of sortkey ) is 'text'
-      throw new Error "Ωhll___6 expected a text, got a #{type}"
+      throw new Error "Ωhll___9 expected a text, got a #{type}"
     unless sortkey.length > 0
-      throw new Error "Ωhll___7 expected a non-empty text, got #{rpr sortkey}"
+      throw new Error "Ωhll__10 expected a non-empty text, got #{rpr sortkey}"
     R = []
     for unit in @parse sortkey
       if unit.name is 'other'
-        message   = "Ωhll___8 not a valid sortkey: unable to parse #{rpr unit.letters}"
+        message   = "Ωhll__11 not a valid sortkey: unable to parse #{rpr unit.letters}"
         message  += " in #{rpr sortkey}" if sortkey isnt unit.letters
         throw new Error message
       R.push unit.index if unit.index?
@@ -276,7 +273,7 @@ class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   decode_integer: ( n ) ->
-    throw new Error "Ωhll___9 not implemented"
+    throw new Error "Ωhll__12 not implemented"
 
 #===========================================================================================================
 module.exports = do =>
