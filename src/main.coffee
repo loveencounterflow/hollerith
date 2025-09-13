@@ -121,8 +121,6 @@ class Hollerith
     R.leading_niners_re   = T.alphabet.data.leading_niners_re
     R.base                = T.alphabet.data.base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
-    R.pmag                = T.magnifiers.data.pmag
-    R.nmag                = T.magnifiers.data.nmag
     R.pmag_chrs           = T.magnifiers.data.pmag_chrs
     R.nmag_chrs           = T.magnifiers.data.nmag_chrs
     R.uniliterals         = T.uniliterals.validate cfg.uniliterals
@@ -140,6 +138,19 @@ class Hollerith
     #.......................................................................................................
     if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R.base
     else                        R._max_integer  = T.create_max_integer_$ { base: R.base, digits: R._max_digits_per_idx, }
+    #.......................................................................................................
+    if R.nmag_chrs.length < R._max_digits_per_idx
+      throw new Error "Ωhll___1 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.nmag_chrs.length} positive magnifiers"
+    else if R.nmag_chrs.length > R._max_digits_per_idx
+      R.nmag_chrs = freeze R.nmag_chrs[ .. R._max_digits_per_idx ]
+    #.......................................................................................................
+    if R.pmag_chrs.length < R._max_digits_per_idx
+      throw new Error "Ωhll___3 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.pmag_chrs.length} positive magnifiers"
+    else if R.pmag_chrs.length > R._max_digits_per_idx
+      R.pmag_chrs = freeze R.pmag_chrs[ .. R._max_digits_per_idx ]
+    #.......................................................................................................
+    R.pmag                = R.pmag_chrs.join ''
+    R.nmag                = R.nmag_chrs.join ''
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
