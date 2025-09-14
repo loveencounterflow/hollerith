@@ -107,11 +107,11 @@ class Hollerith_typespace extends Typespace
 
   #---------------------------------------------------------------------------------------------------------
   @digitset: ( x ) ->
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'digits_lstof', }, x
-    base              = @data.digits_lstof.length
+    return false unless @T.incremental_text.dm_isa @data, { chrs: '_digits_list', }, x
+    base              = @data._digits_list.length
     return @fail "an digitset must have 2 chrs or more" unless @T.base.isa base
-    _naught           = @data.digits_lstof.at  0
-    _nova             = @data.digits_lstof.at -1
+    _naught           = @data._digits_list.at  0
+    _nova             = @data._digits_list.at -1
     leading_niners_re = internals.get_niners_re _nova
     @assign { base, _naught, _nova, leading_niners_re, }
     return true

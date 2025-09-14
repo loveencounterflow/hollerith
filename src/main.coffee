@@ -116,7 +116,7 @@ class Hollerith
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     T                     = new Hollerith_typespace { blank: R.blank, }
     R.digitset            = T.digitset.validate cfg.digitset
-    R.digits_lstof        = T.digitset.data.digits_lstof
+    R._digits_list        = T.digitset.data._digits_list
     R._naught             = T.digitset.data._naught
     R._nova               = T.digitset.data._nova
     R.leading_niners_re   = T.digitset.data.leading_niners_re
