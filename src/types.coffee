@@ -120,11 +120,11 @@ class Hollerith_typespace extends Typespace
   @uniliterals: ( x ) ->
     return false unless @T.nonempty_text.isa x
     if @T.character.isa x
-      _nuns     = ''
-      _zpuns    = x
-      nun_chrs  = freeze []
-      zpun_chrs = freeze [ x, ]
-      @assign { _nuns, _zpuns, nun_chrs, zpun_chrs, }
+      _nuns       = ''
+      _zpuns      = x
+      _nuns_list  = freeze []
+      _zpuns_list = freeze [ x, ]
+      @assign { _nuns, _zpuns, _nuns_list, _zpuns_list, }
       return true
     parts = x.split @[CFG].blank_splitter
     unless parts.length is 3
@@ -134,8 +134,8 @@ class Hollerith_typespace extends Typespace
       puns, ] = parts
     _zpuns     = _cipher + puns
     @assign { _nuns, _zpuns, _cipher, }
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'nun_chrs', },  _nuns
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'zpun_chrs', }, _zpuns
+    return false unless @T.incremental_text.dm_isa @data, { chrs: '_nuns_list', },  _nuns
+    return false unless @T.incremental_text.dm_isa @data, { chrs: '_zpuns_list', }, _zpuns
     return true
 
   #---------------------------------------------------------------------------------------------------------

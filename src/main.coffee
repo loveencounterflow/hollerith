@@ -126,12 +126,12 @@ class Hollerith
     R._nmag_list          = T.magnifiers.data._nmag_list
     R.uniliterals         = T.uniliterals.validate cfg.uniliterals
     R._cipher             = T.uniliterals.data._cipher
-    R._nuns                = T.uniliterals.data._nuns
-    R._zpuns               = T.uniliterals.data._zpuns
-    R.nun_chrs            = T.uniliterals.data.nun_chrs
-    R.zpun_chrs           = T.uniliterals.data.zpun_chrs
-    R.nun_min             = -R.nun_chrs.length
-    R.zpun_max            = R.zpun_chrs.length - 1
+    R._nuns               = T.uniliterals.data._nuns
+    R._zpuns              = T.uniliterals.data._zpuns
+    R._nuns_list          = T.uniliterals.data._nuns_list
+    R._zpuns_list         = T.uniliterals.data._zpuns_list
+    R.nun_min             = -R._nuns_list.length
+    R.zpun_max            = R._zpuns_list.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
     #.......................................................................................................
     _max_digits_per_idx   = Math.min ( R._pmag_list.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
