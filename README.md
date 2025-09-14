@@ -309,13 +309,6 @@ to VDX sorting as described here.
   derivation of `_max_integer` and `_min_integer` from the base and the declared magnifiers must take this
   limit into account
 
-* **`[—]`** regularize settings (CFG) keys:
-  * keys that start with a letter are user-settable
-  * so are keys starting with an `_` underscore, which are considered 'pro' or 'advanced' level ('know what
-    you're doing')
-  * keys that start with a `$` dollar sign are not to be set by users but are to be derived or otherwise
-    set by the app; when they are encountered while compiling the CFG object, they cause an error
-
 * **`[—]`** Allow composite VDXs, especially allow high-capacity encoder for first index, low-capacity
   encoder for trailing digits (as those are used for revisions)
 
@@ -324,6 +317,16 @@ to VDX sorting as described here.
 * **`[+]`** why are there two zeroes? necessary?
 
 * **`[+]`** clarify, rename `_max_digits_per_idx` -> `max_idx_digits`
+
+* **`[+]`** regularize settings (CFG) keys:
+  * keys that start with a letter are user-settable
+  * keys that start with an `_` underscore are treated as implementation details; unless mentioned in the
+    documentation, setting them has undefined effects (normally they will just be overwritten)
+  * <del>so are keys starting with an `_` underscore, which are considered 'pro' or 'advanced' level ('know
+    what you're doing')</del>
+  * <del>keys that start with a `$` dollar sign are not to be set by users but are to be derived or
+    otherwise set by the app; when they are encountered while compiling the CFG object, they cause an
+    error</del>
 
 
 ## Don't
