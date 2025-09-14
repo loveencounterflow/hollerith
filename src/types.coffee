@@ -120,9 +120,10 @@ class Hollerith_typespace extends Typespace
     if @T.character.isa x
       _nuns       = ''
       _zpuns      = x
+      _cipher     = x
       _nuns_list  = freeze []
       _zpuns_list = freeze [ x, ]
-      @assign { _nuns, _zpuns, _nuns_list, _zpuns_list, }
+      @assign { _nuns, _zpuns, _nuns_list, _zpuns_list, _cipher, }
       return true
     parts = x.split @[CFG].blank_splitter
     unless parts.length is 3
