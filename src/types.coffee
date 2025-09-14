@@ -139,7 +139,7 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @TMP_alphabet: ( x ) ->
+  @_alphabet: ( x ) ->
     return false unless @T.nonempty_text.dm_isa    @data, null, x
     return false unless @T.incremental_text.dm_isa @data, null, x
     return true

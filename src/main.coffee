@@ -158,7 +158,7 @@ class Hollerith
     R._min_integer        = -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
-    R.TMP_alphabet  = T.TMP_alphabet.validate ( R.digitset + ( \
+    R._alphabet           = T._alphabet.validate ( R.digitset + ( \
       [ R.nmag_chrs..., ].reverse().join '' ) + \
       R.nuns                                  + \
       R.zpuns                                 + \
