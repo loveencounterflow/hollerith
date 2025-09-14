@@ -63,7 +63,7 @@ class Hollerith_typespace extends Typespace
   @blank:           ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
   @_base:           ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
-  @digits_numof:    ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
+  # @digits_per_idx:  ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
@@ -150,17 +150,17 @@ class Hollerith_typespace extends Typespace
 
   #---------------------------------------------------------------------------------------------------------
   ### TAINT should be method of `T._max_integer_$` ###
-  create_max_integer_$: ({ _base, digits_numof, }) ->
-    @_base.validate        _base
-    @digits_numof.validate digits_numof
-    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, _base ), ( ( _base ** digits_numof ) - 1 )
+  create_max_integer: ({ _base, digits_per_idx, }) ->
+    @_base.validate           _base
+    @digits_per_idx.validate  digits_per_idx
+    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, _base ), ( ( _base ** digits_per_idx ) - 1 )
     @_max_integer_$.validate R, _base
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_digits_per_idx_$: ( x, _pmag_list ) ->
-    return @fail "x not a positive safe integer"           unless @T.pinteger.isa x
-    return @fail "x #{x} exceeds limit set by magnifiers"  unless x <= _pmag_list.length
+  @digits_per_idx: ( x, _pmag_list = null ) ->
+    return @fail "#{x} not a positive safe integer"                           unless @T.pinteger.isa x
+    return @fail "#{x} exceeds limit #{_pmag_list.length} set by magnifiers"  if _pmag_list? and not ( x <= _pmag_list.length )
     return true
 
 #===========================================================================================================
