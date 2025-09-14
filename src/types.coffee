@@ -94,15 +94,15 @@ class Hollerith_typespace extends Typespace
     #.......................................................................................................
     # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
     return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.dm_isa @data, { chrs: 'nmag_chrs_reversed', },  nmag_bare_reversed
-    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: 'pmag_chrs', },           pmag_bare
+    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
     return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
     return ( @fail "Ωbsk___5 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
     #.......................................................................................................
-    nmag      = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
-    pmag      = @[CFG].blank + pmag_bare
-    nmag_chrs = freeze Array.from nmag
-    pmag_chrs = freeze Array.from pmag
-    @assign { nmag, pmag, nmag_chrs, pmag_chrs, }
+    nmag        = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
+    pmag        = @[CFG].blank + pmag_bare
+    _nmag_list  = freeze Array.from nmag
+    _pmag_list  = freeze Array.from pmag
+    @assign { nmag, pmag, _nmag_list, _pmag_list, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -161,9 +161,9 @@ class Hollerith_typespace extends Typespace
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_digits_per_idx_$: ( x, pmag_chrs ) ->
+  @_max_digits_per_idx_$: ( x, _pmag_list ) ->
     return @fail "x not a positive safe integer"           unless @T.pinteger.isa x
-    return @fail "x #{x} exceeds limit set by magnifiers"  unless x <= pmag_chrs.length
+    return @fail "x #{x} exceeds limit set by magnifiers"  unless x <= _pmag_list.length
     return true
 
 #===========================================================================================================

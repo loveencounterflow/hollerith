@@ -122,8 +122,8 @@ class Hollerith
     R._leading_novas_re   = T.digitset.data._leading_novas_re
     R._base               = T.digitset.data._base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
-    R.pmag_chrs           = T.magnifiers.data.pmag_chrs
-    R.nmag_chrs           = T.magnifiers.data.nmag_chrs
+    R._pmag_list          = T.magnifiers.data._pmag_list
+    R._nmag_list          = T.magnifiers.data._nmag_list
     R.uniliterals         = T.uniliterals.validate cfg.uniliterals
     R._cipher             = T.uniliterals.data._cipher
     R.nuns                = T.uniliterals.data.nuns
@@ -134,24 +134,24 @@ class Hollerith
     R.zpun_max            = R.zpun_chrs.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
     #.......................................................................................................
-    _max_digits_per_idx   = Math.min ( R.pmag_chrs.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
-    R._max_digits_per_idx = T._max_digits_per_idx_$.validate _max_digits_per_idx, R.pmag_chrs
+    _max_digits_per_idx   = Math.min ( R._pmag_list.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
+    R._max_digits_per_idx = T._max_digits_per_idx_$.validate _max_digits_per_idx, R._pmag_list
     #.......................................................................................................
     if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R._base
     else                        R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_digits_per_idx, }
     #.......................................................................................................
-    if R.nmag_chrs.length < R._max_digits_per_idx
-      throw new Error "Ωhll___1 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.nmag_chrs.length} positive magnifiers"
-    else if R.nmag_chrs.length > R._max_digits_per_idx
-      R.nmag_chrs = freeze R.nmag_chrs[ .. R._max_digits_per_idx ]
+    if R._nmag_list.length < R._max_digits_per_idx
+      throw new Error "Ωhll___1 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
+    else if R._nmag_list.length > R._max_digits_per_idx
+      R._nmag_list = freeze R._nmag_list[ .. R._max_digits_per_idx ]
     #.......................................................................................................
-    if R.pmag_chrs.length < R._max_digits_per_idx
-      throw new Error "Ωhll___3 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.pmag_chrs.length} positive magnifiers"
-    else if R.pmag_chrs.length > R._max_digits_per_idx
-      R.pmag_chrs = freeze R.pmag_chrs[ .. R._max_digits_per_idx ]
+    if R._pmag_list.length < R._max_digits_per_idx
+      throw new Error "Ωhll___3 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R._pmag_list.length} positive magnifiers"
+    else if R._pmag_list.length > R._max_digits_per_idx
+      R._pmag_list = freeze R._pmag_list[ .. R._max_digits_per_idx ]
     #.......................................................................................................
-    R.pmag                = R.pmag_chrs.join ''
-    R.nmag                = R.nmag_chrs.join ''
+    R.pmag                = R._pmag_list.join ''
+    R.nmag                = R._nmag_list.join ''
     R._max_idx_width      = R._max_digits_per_idx + 1
     R._sortkey_width      = R._max_idx_width * R.dimension
     #.......................................................................................................
@@ -159,7 +159,7 @@ class Hollerith
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
     R._alphabet           = T._alphabet.validate ( R.digitset + ( \
-      [ R.nmag_chrs..., ].reverse().join '' ) + \
+      [ R._nmag_list..., ].reverse().join '' ) + \
       R.nuns                                  + \
       R.zpuns                                 + \
       R.pmag                                    ).replace T[CFG].blank_splitter, ''
