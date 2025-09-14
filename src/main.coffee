@@ -122,11 +122,9 @@ class Hollerith
     R._max_zpun           = R._zpuns_list.length - 1
     R.dimension           = T.dimension.validate R.dimension
     #.......................................................................................................
-    max_idx_digits       = Math.min ( R._pmag_list.length - 1 ), ( R.max_idx_digits ? Infinity )
-    R.max_idx_digits     = T._max_digits_per_idx_$.validate max_idx_digits, R._pmag_list
-    #.......................................................................................................
-    if R._max_integer?  then  R._max_integer  = T._max_integer_$.validate R._max_integer, R._base
-    else                      R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R.max_idx_digits, }
+    R.max_idx_digits     ?= Math.min ( R._pmag_list.length - 1 ), ( R.max_idx_digits ? Infinity )
+    R.max_idx_digits      = T._max_digits_per_idx_$.validate R.max_idx_digits, R._pmag_list
+    R._max_integer        = T.create_max_integer_$ { _base: R._base, digits_numof: R.max_idx_digits, }
     #.......................................................................................................
     if R._nmag_list.length < R.max_idx_digits
       throw new Error "Ωhll___1 max_idx_digits is #{R.max_idx_digits}, but there are only #{R._nmag_list.length} positive magnifiers"
