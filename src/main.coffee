@@ -78,11 +78,28 @@ constants_10mvp2 = freeze
   digits_per_idx:     3
 
 #-----------------------------------------------------------------------------------------------------------
+constants_10_cardinal = freeze
+  uniliterals:        'EFGHIJKLM N OPQRSTUVW'
+  digitset:           '0123456789'
+  magnifiers:         'ABC XYZ'
+  cardinals_only:     true # nonegatives
+  dimension:          3
+  digits_per_idx:     3
+
+#-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
 constants = C = constants_10
 
 #-----------------------------------------------------------------------------------------------------------
-internals = freeze { constants, types, }
+internals = freeze {
+  constants,
+  constants_128,
+  constants_128_16383,
+  constants_10,
+  constants_10mvp,
+  constants_10mvp2,
+  constants_10_cardinal,
+  types, }
 
 
 #===========================================================================================================
@@ -103,17 +120,19 @@ class Hollerith
     ### Validations: ###
     ### Derivations: ###
     hollerith_cfg_template =
-      blank:        '\x20'
-      dimension:   5
+      blank:          '\x20'
+      dimension:      5
+      cardinals_only: false
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     types                 = new Hollerith_typespace { blank: R.blank, }
+    R.cardinals_only      = types.cardinals_only.validate R.cardinals_only
     R.digitset            = types.digitset.validate R.digitset
     R._digits_list        = types.digitset.data._digits_list
     R._naught             = types.digitset.data._naught
     R._nova               = types.digitset.data._nova
     R._leading_novas_re   = types.digitset.data._leading_novas_re
     R._base               = types.digitset.data._base
-    R.magnifiers          = types.magnifiers.validate R.magnifiers
+    R.magnifiers          = types.magnifiers.validate R.magnifiers, { cardinals_only: R.cardinals_only, }
     R._pmag_list          = types.magnifiers.data._pmag_list
     R._nmag_list          = types.magnifiers.data._nmag_list
     R.uniliterals         = types.uniliterals.validate R.uniliterals
@@ -132,10 +151,11 @@ class Hollerith
     R.digits_per_idx      = types.digits_per_idx.validate R.digits_per_idx, R._pmag_list
     R._max_integer        = types.create_max_integer { _base: R._base, digits_per_idx: R.digits_per_idx, }
     #.......................................................................................................
-    if R._nmag_list.length < R.digits_per_idx
-      throw new Error "Ωhll___2 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
-    else if R._nmag_list.length > R.digits_per_idx
-      R._nmag_list = freeze R._nmag_list[ .. R.digits_per_idx ]
+    unless R.cardinals_only
+      if R._nmag_list.length < R.digits_per_idx
+        throw new Error "Ωhll___2 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
+      else if R._nmag_list.length > R.digits_per_idx
+        R._nmag_list = freeze R._nmag_list[ .. R.digits_per_idx ]
     #.......................................................................................................
     if R._pmag_list.length < R.digits_per_idx
       throw new Error "Ωhll___3 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._pmag_list.length} positive magnifiers"
@@ -143,18 +163,20 @@ class Hollerith
       R._pmag_list = freeze R._pmag_list[ .. R.digits_per_idx ]
     #.......................................................................................................
     R._pmag               = R._pmag_list.join ''
-    R._nmag               = R._nmag_list.join ''
+    R._nmag               = if R.cardinals_only then null else R._nmag_list.join ''
     R._max_idx_width      = R.digits_per_idx + 1
     R._sortkey_width      = R._max_idx_width * R.dimension
     #.......................................................................................................
     R._min_integer        = -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
-    R._alphabet           = types._alphabet.validate ( R.digitset + ( \
-      [ R._nmag_list..., ].reverse().join '' ) + \
-      R._nuns                                  + \
-      R._zpuns                                 + \
-      R._pmag                                    ).replace types[CFG].blank_splitter, ''
+    nmags                 = if R.cardinals_only then '' else [ R._nmag_list..., ].reverse().join ''
+    nuns                  = if R.cardinals_only then '' else R._nuns
+    R._alphabet           = types._alphabet.validate ( R.digitset + \
+      nmags                     + \
+      nuns                      + \
+      R._zpuns                  + \
+      R._pmag                     ).replace types[CFG].blank_splitter, ''
     return { cfg: R, types, }
 
   #---------------------------------------------------------------------------------------------------------
@@ -165,38 +187,41 @@ class Hollerith
       _pmag,
       digitset,     } = cfg
     # _base              = digitset.length
+    include_negatives = not cfg.cardinals_only
     #.......................................................................................................
-    nuns_letters  = _nuns
     puns_letters  = _zpuns[  1 ..  ]
-    nmag_letters  = _nmag[   1 ..  ]
     pmag_letters  = _pmag[   1 ..  ]
     zero_letters  = _zpuns[  0     ]
     max_digit     = digitset.at -1
     #.......................................................................................................
-    fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
     fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
-    fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{digitset}  ]* ) "
     fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{digitset}  ]* ) "
     fit_padding   = regex"(?<letters> [ #{zero_letters} ]+ ) $                                "
     fit_zero      = regex"(?<letters> [ #{zero_letters} ]  (?= .* [^ #{zero_letters} ] ) )     "
     fit_other     = regex"(?<letters> .                    )                                  "
     all_zero_re   = regex"^ #{zero_letters}+ $"
     #.......................................................................................................
-    cast_nun      = ({ data: d, }) -> d.index = ( cfg._nuns.indexOf d.letters ) - cfg._nuns.length
     cast_pun      = ({ data: d, }) -> d.index = +cfg._zpuns.indexOf  d.letters
-    cast_nnum     = ({ data: d, }) ->
-      mantissa  = d.mantissa.padStart cfg.digits_per_idx, max_digit
-      d.index   = ( decode mantissa, digitset ) - cfg._max_integer
     cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, digitset
     cast_zero     = ({ data: d, }) -> d.index = 0
     cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
     cast_other    = null
     #.......................................................................................................
+    if include_negatives
+      nuns_letters  = _nuns
+      nmag_letters  = _nmag[   1 ..  ]
+      fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
+      fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{digitset}  ]* ) "
+      cast_nun      = ({ data: d, }) -> d.index = ( cfg._nuns.indexOf d.letters ) - cfg._nuns.length
+      cast_nnum     = ({ data: d, }) ->
+        mantissa  = d.mantissa.padStart cfg.digits_per_idx, max_digit
+        d.index   = ( decode mantissa, digitset ) - cfg._max_integer
+    #.......................................................................................................
     R             = new Grammar { emit_signals: false, }
     first         = R.new_level { name: 'first', }
-    first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      }
+    first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      } if include_negatives
     first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,      }
-    first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,     }
+    first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,     } if include_negatives
     first.new_token   { name: 'pnum',     fit: fit_pnum,                 cast: cast_pnum,     }
     first.new_token   { name: 'padding',  fit: fit_padding,              cast: cast_padding,  }
     first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,     }
@@ -280,16 +305,18 @@ class Hollerith
 
 #===========================================================================================================
 module.exports = do =>
-  hollerith_10        = new Hollerith constants_10
-  hollerith_10mvp     = new Hollerith constants_10mvp
-  hollerith_10mvp2    = new Hollerith constants_10mvp2
-  hollerith_128       = new Hollerith constants_128
-  hollerith_128_16383 = new Hollerith constants_128_16383
+  hollerith_10          = new Hollerith constants_10
+  hollerith_10mvp       = new Hollerith constants_10mvp
+  hollerith_10mvp2      = new Hollerith constants_10mvp2
+  hollerith_10_cardinal = new Hollerith constants_10_cardinal
+  hollerith_128         = new Hollerith constants_128
+  hollerith_128_16383   = new Hollerith constants_128_16383
   return {
     Hollerith,
     hollerith_10,
     hollerith_10mvp,
     hollerith_10mvp2,
+    hollerith_10_cardinal,
     hollerith_128,
     hollerith_128_16383,
     internals, }

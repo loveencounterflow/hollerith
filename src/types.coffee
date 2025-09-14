@@ -50,6 +50,7 @@ class Hollerith_typespace extends Typespace
     blank: ' '
 
   #=========================================================================================================
+  @boolean:         ( x ) -> ( x is false ) or ( x is true )
   @list:            ( x ) -> ( type_of x ) is 'list'
   @text:            ( x ) -> ( type_of x ) is 'text'
   @nonempty_text:   ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
@@ -62,8 +63,9 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
   @blank:           ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
-  @dimension:       ( x ) -> ( @T.pinteger.isa x )
-  @_base:           ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
+  @dimension:       ( x ) -> ( @T.pinteger.isa  x )
+  @cardinals_only:  ( x ) -> ( @T.boolean.isa   x )
+  @_base:           ( x ) -> ( @T.pinteger.isa  x ) and ( x > 1 )
   # @digits_per_idx:  ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
@@ -83,23 +85,38 @@ class Hollerith_typespace extends Typespace
   @pmag_bare:           ( x ) -> @T.incremental_text.dm_isa @data, null, x
 
   #---------------------------------------------------------------------------------------------------------
-  @magnifiers: ( x ) ->
+  @magnifiers: ( x, { cardinals_only = false }={} ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
-    unless ( parts = x.split @[CFG].blank_splitter ).length is 2
-      return ( @fail "magnifiers must have exactly 1 blank, got #{parts.length - 1} blanks")
-    [ nmag_bare_reversed,
-      pmag_bare,          ] = parts
+    if cardinals_only
+      unless ( parts = x.split @[CFG].blank_splitter ).length in [ 1, 2, ]
+        return ( @fail "magnifiers for { cardinals_only: true } must have 0 or 1 blank, got #{parts.length - 1} blanks")
+    else
+      unless ( parts = x.split @[CFG].blank_splitter ).length is 2
+        return ( @fail "magnifiers for { cardinals_only: false } must have exactly 1 blank, got #{parts.length - 1} blanks")
+    if parts.length is 1
+      [ nmag_bare_reversed,
+        pmag_bare,          ] = [ null, parts..., ]
+    else
+      [ nmag_bare_reversed,
+        pmag_bare,          ] = parts
     #.......................................................................................................
-    # @assign { iam: 'magnifiers', }; debug 'Ωbsk___1', @data
-    return ( @fail "Ωbsk___2 ???" ) unless  @T.nmag_bare_reversed.dm_isa @data, { chrs: 'nmag_chrs_reversed', },  nmag_bare_reversed
-    return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
-    return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
-    return ( @fail "Ωbsk___5 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
+    if cardinals_only
+      return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
+      _nmag       = null
+      _pmag       = @[CFG].blank + pmag_bare
+      _nmag_list  = null
+      _pmag_list  = freeze Array.from _pmag
     #.......................................................................................................
-    _nmag       = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
-    _pmag       = @[CFG].blank + pmag_bare
-    _nmag_list  = freeze Array.from _nmag
-    _pmag_list  = freeze Array.from _pmag
+    else
+      return ( @fail "Ωbsk___6 ???" ) unless  @T.nmag_bare_reversed.dm_isa @data, { chrs: 'nmag_chrs_reversed', },  nmag_bare_reversed
+      return ( @fail "Ωbsk___7 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
+      return ( @fail "Ωbsk___8 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
+      return ( @fail "Ωbsk___9 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
+      _nmag       = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
+      _pmag       = @[CFG].blank + pmag_bare
+      _nmag_list  = freeze Array.from _nmag
+      _pmag_list  = freeze Array.from _pmag
+    #.......................................................................................................
     @assign { _nmag, _pmag, _nmag_list, _pmag_list, }
     return true
 
@@ -197,7 +214,7 @@ _test_monotony = ( x, cmp ) ->
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr
-      else throw new Error "Ωbsk___6 (internal) expected '>' or '<', got #{rpr cmp}"
+      else throw new Error "Ωbsk__10 (internal) expected '>' or '<', got #{rpr cmp}"
     continue if R
     @assign { fail: { x, idx, prv_chr, chr, }, }
     return false
