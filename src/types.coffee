@@ -50,6 +50,7 @@ class Hollerith_typespace extends Typespace
     blank: ' '
 
   #=========================================================================================================
+  @list:            ( x ) -> ( type_of x ) is 'list'
   @text:            ( x ) -> ( type_of x ) is 'text'
   @nonempty_text:   ( x ) -> ( @T.text.isa x ) and ( x.length > 0 )
   @character:       ( x ) -> ( @T.text.isa x ) and ( /^.$/v.test x )
@@ -142,19 +143,40 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_integer_$: ( x, _base ) ->
-    return @fail "x not a positive safe integer"           unless @T.pinteger.isa        x
+  @_max_integer: ( x, _base ) ->
+    return @fail "x not a positive safe integer"            unless @T.pinteger.isa        x
     return @fail "_base not a safe integer greater than 1"  unless @T._base.isa            _base
-    return @fail "x not a positive all-niners"             unless is_positive_all_niner  x, _base
+    return @fail "x not a positive all-niners"              unless is_positive_all_niner  x, _base
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT should be method of `T._max_integer_$` ###
+  @idx_or_vdx: ( x ) ->
+    switch true
+      when @T.integer.isa x
+        @assign { type: 'idx' }
+        return true
+      when @T.list.isa x
+        @assign { type: 'vdx' }
+        return true
+    return @fail "not a list or an integer"
+
+  #---------------------------------------------------------------------------------------------------------
+  @idx: ( x, _min_integer = null, _max_integer = null ) ->
+    return @fail "#{rpr x} not a safe integer"                    unless @T.integer.isa x
+    return @fail "#{rpr x} not greater or equal #{_min_integer}"  if _min_integer? and not ( x >= _min_integer )
+    return @fail "#{rpr x} not less or equal #{_min_integer}"     if _max_integer? and not ( x <= _max_integer )
+    return true
+
+  #---------------------------------------------------------------------------------------------------------
+  @vdx: ( x ) -> ( @T.list.isa x ) # and ( x.length > 0 )
+
+  #---------------------------------------------------------------------------------------------------------
+  ### TAINT should be method of `T._max_integer` ###
   create_max_integer: ({ _base, digits_per_idx, }) ->
     @_base.validate           _base
     @digits_per_idx.validate  digits_per_idx
     R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, _base ), ( ( _base ** digits_per_idx ) - 1 )
-    @_max_integer_$.validate R, _base
+    @_max_integer.validate R, _base
     return R
 
   #---------------------------------------------------------------------------------------------------------

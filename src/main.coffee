@@ -22,6 +22,8 @@ types                     = require './types'
   get_required_digits,
   get_max_integer,      } = SFMODULES.unstable.require_anybase()
 { freeze,               } = Object
+{ hide,
+  set_getter,           } = SFMODULES.require_managed_property_tools()
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -89,8 +91,11 @@ class Hollerith
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     clasz           = @constructor
-    @cfg            = freeze clasz.validate_and_compile_cfg cfg
+    { cfg,
+      types,      } = clasz.validate_and_compile_cfg cfg
+    @cfg            = freeze cfg
     @lexer          = @compile_sortkey_lexer @cfg
+    hide @, 'types',  types
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -101,29 +106,29 @@ class Hollerith
       blank:        '\x20'
       dimension:   5
     R                     = clean_assign {}, hollerith_cfg_template, cfg
-    T                     = new Hollerith_typespace { blank: R.blank, }
-    R.digitset            = T.digitset.validate R.digitset
-    R._digits_list        = T.digitset.data._digits_list
-    R._naught             = T.digitset.data._naught
-    R._nova               = T.digitset.data._nova
-    R._leading_novas_re   = T.digitset.data._leading_novas_re
-    R._base               = T.digitset.data._base
-    R.magnifiers          = T.magnifiers.validate R.magnifiers
-    R._pmag_list          = T.magnifiers.data._pmag_list
-    R._nmag_list          = T.magnifiers.data._nmag_list
-    R.uniliterals         = T.uniliterals.validate R.uniliterals
-    R._cipher             = T.uniliterals.data._cipher
-    R._nuns               = T.uniliterals.data._nuns
-    R._zpuns              = T.uniliterals.data._zpuns
-    R._nuns_list          = T.uniliterals.data._nuns_list
-    R._zpuns_list         = T.uniliterals.data._zpuns_list
+    types                 = new Hollerith_typespace { blank: R.blank, }
+    R.digitset            = types.digitset.validate R.digitset
+    R._digits_list        = types.digitset.data._digits_list
+    R._naught             = types.digitset.data._naught
+    R._nova               = types.digitset.data._nova
+    R._leading_novas_re   = types.digitset.data._leading_novas_re
+    R._base               = types.digitset.data._base
+    R.magnifiers          = types.magnifiers.validate R.magnifiers
+    R._pmag_list          = types.magnifiers.data._pmag_list
+    R._nmag_list          = types.magnifiers.data._nmag_list
+    R.uniliterals         = types.uniliterals.validate R.uniliterals
+    R._cipher             = types.uniliterals.data._cipher
+    R._nuns               = types.uniliterals.data._nuns
+    R._zpuns              = types.uniliterals.data._zpuns
+    R._nuns_list          = types.uniliterals.data._nuns_list
+    R._zpuns_list         = types.uniliterals.data._zpuns_list
     R._min_nun            = -R._nuns_list.length
     R._max_zpun           = R._zpuns_list.length - 1
-    R.dimension           = T.dimension.validate R.dimension
+    R.dimension           = types.dimension.validate R.dimension
     #.......................................................................................................
     R.digits_per_idx     ?= Math.min ( R._pmag_list.length - 1 ), ( R.digits_per_idx ? Infinity )
-    R.digits_per_idx      = T.digits_per_idx.validate R.digits_per_idx, R._pmag_list
-    R._max_integer        = T.create_max_integer { _base: R._base, digits_per_idx: R.digits_per_idx, }
+    R.digits_per_idx      = types.digits_per_idx.validate R.digits_per_idx, R._pmag_list
+    R._max_integer        = types.create_max_integer { _base: R._base, digits_per_idx: R.digits_per_idx, }
     #.......................................................................................................
     if R._nmag_list.length < R.digits_per_idx
       throw new Error "Ωhll___1 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
@@ -143,12 +148,12 @@ class Hollerith
     R._min_integer        = -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
-    R._alphabet           = T._alphabet.validate ( R.digitset + ( \
+    R._alphabet           = types._alphabet.validate ( R.digitset + ( \
       [ R._nmag_list..., ].reverse().join '' ) + \
       R._nuns                                  + \
       R._zpuns                                 + \
-      R._pmag                                    ).replace T[CFG].blank_splitter, ''
-    return R
+      R._pmag                                    ).replace types[CFG].blank_splitter, ''
+    return { cfg: R, types, }
 
   #---------------------------------------------------------------------------------------------------------
   compile_sortkey_lexer: ( cfg ) ->
@@ -198,35 +203,39 @@ class Hollerith
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  encode: ( integer_or_list ) ->
+  encode: ( idx_or_vdx ) ->
     ### TAINT use proper validation ###
-    if Array.isArray integer_or_list
-      return ( @encode n for n in integer_or_list ).join ''
-    #.......................................................................................................
-    n = integer_or_list
-    unless Number.isFinite n
-      type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-      throw new Error "Ωhll___4 expected a float, got a #{type}"
-    unless @cfg._min_integer <= n <= @cfg._max_integer
-      throw new Error "Ωhll___5 expected a float between #{@cfg._min_integer} and #{@cfg._max_integer}, got #{n}"
-    #.......................................................................................................
-    return @encode_integer n
+    @types.idx_or_vdx.validate idx_or_vdx
+    switch type = @types.idx_or_vdx.data.type
+      when 'idx' then return @encode_idx  idx_or_vdx
+      when 'vdx' then return @_encode_vdx idx_or_vdx
+    throw new Error "Ωhll__10 internal error: unknown type #{rpr type}"
 
   #---------------------------------------------------------------------------------------------------------
-  encode_integer: ( n ) ->
-    ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
+  encode_idx: ( idx ) -> @_encode_idx @types.idx.validate idx, @cfg._min_integer, @cfg._max_integer
+
+  #---------------------------------------------------------------------------------------------------------
+  _encode_idx: ( idx ) ->
+    ### NOTE call only where assured `idx` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
     #.......................................................................................................
-    return ( @cfg._zpuns.at n ) if 0              <= n <= @cfg._max_zpun  # Zero or small positive
-    return ( @cfg._nuns.at  n ) if @cfg._min_nun  <= n <  0               # Small negative
+    return ( @cfg._zpuns.at idx ) if 0              <= idx <= @cfg._max_zpun  # Zero or small positive
+    return ( @cfg._nuns.at  idx ) if @cfg._min_nun  <= idx <  0               # Small negative
     #.......................................................................................................
-    if n > @cfg._max_zpun                                                 # Big positive
-      R = encode n, @cfg.digitset
+    if idx > @cfg._max_zpun                                                 # Big positive
+      R = encode idx, @cfg.digitset
       return ( @cfg._pmag.at R.length ) + R
     #.......................................................................................................
-    R = ( encode ( n + @cfg._max_integer     ), @cfg.digitset )           # Big negative
+    R = ( encode ( idx + @cfg._max_integer     ), @cfg.digitset )           # Big negative
     if R.length < @cfg.digits_per_idx then R = R.padStart @cfg.digits_per_idx, @cfg.digitset.at 0
     else                                    R = R.replace @cfg._leading_novas_re, ''
     return ( @cfg._nmag.at R.length ) + R
+
+  #---------------------------------------------------------------------------------------------------------
+  encode_vdx: ( vdx ) -> @_encode_vdx @types.vdx.validate vdx
+
+  #---------------------------------------------------------------------------------------------------------
+  _encode_vdx: ( vdx ) -> \
+    ( ( @encode_idx idx for idx in vdx ).join '' ).padEnd @cfg._sortkey_width, @cfg._cipher
 
   #---------------------------------------------------------------------------------------------------------
   parse: ( sortkey ) ->
