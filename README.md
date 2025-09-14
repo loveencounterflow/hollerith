@@ -241,7 +241,7 @@ to VDX sorting as described here.
   * **`[—]`** uniliteral zero: 'cipher'
   * **`[—]`** add settings to retrieve both
 
-* **`[—]`** `_max_idx_width` is derived as `_max_idx_digits + 1`; `dimension` is the (maximum) count of
+* **`[—]`** `_max_idx_width` is derived as `max_idx_digits + 1`; `dimension` is the (maximum) count of
   indexes per vector(ial index); `_sortkey_width` is number of code units (i.e. string length, *not* number
   of characters) of all sortkeys produced by `Hollerith::encode_vdx()`, derived as `_max_idx_width *
   dimension`
@@ -250,7 +250,7 @@ to VDX sorting as described here.
     is number or list
   * **`[—]`** `Hollerith::encode_idx()` encodes a single integer between inclusive `cfg._min_integer` and
     `cfg._max_integer` without zero-padding; the maximum length of the returned value is given by
-    `_max_idx_width` (one uniliteral / magnifier plus `_max_idx_digits`)
+    `_max_idx_width` (one uniliteral / magnifier plus `max_idx_digits`)
   * **`[—]`** `Hollerith::encode_vdx()`
   * **`[—]`** depending on use case, there's a case to be made for `_idx_width` both to exclude and to
     include the magnifier, so `constants_10mvp2._idx_width` is `3` (because its longest representable
@@ -323,7 +323,7 @@ to VDX sorting as described here.
 
 * **`[+]`** why are there two zeroes? necessary?
 
-* **`[+]`** clarify, rename `_max_digits_per_idx` -> `_max_idx_digits`
+* **`[+]`** clarify, rename `_max_digits_per_idx` -> `max_idx_digits`
 
 
 ## Don't
