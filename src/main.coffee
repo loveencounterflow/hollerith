@@ -27,8 +27,8 @@ types                     = require './types'
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = freeze
   uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  # zpun_max:     +20
-  # nun_min:      -20
+  # _max_zpun:     +20
+  # _min_nun:      -20
   # _max_digits_per_idx: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
@@ -60,8 +60,8 @@ constants_128_16383 = freeze
 #-----------------------------------------------------------------------------------------------------------
 constants_10 = freeze
   uniliterals:  'ÏÐÑ ã äåæ'
-  zpun_max:     +3
-  nun_min:      -3
+  _max_zpun:     +3
+  _min_nun:      -3
   _max_digits_per_idx:  3
   digitset:     '0123456789'
   magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
@@ -70,8 +70,8 @@ constants_10 = freeze
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp = freeze
   uniliterals:  'N'
-  zpun_max:     +0
-  nun_min:      -0
+  _max_zpun:     +0
+  _min_nun:      -0
   _max_digits_per_idx:  3
   digitset:     '0123456789'
   magnifiers:   'JKLM OPQR'
@@ -80,8 +80,8 @@ constants_10mvp = freeze
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp2 = freeze
   uniliterals:  'EFGHIJKLM N OPQRSTUVW'
-  zpun_max:     +9
-  nun_min:      -9
+  _max_zpun:     +9
+  _min_nun:      -9
   _max_digits_per_idx:  3
   digitset:     '0123456789'
   magnifiers:   'ABC XYZ'
@@ -130,8 +130,8 @@ class Hollerith
     R._zpuns              = T.uniliterals.data._zpuns
     R._nuns_list          = T.uniliterals.data._nuns_list
     R._zpuns_list         = T.uniliterals.data._zpuns_list
-    R.nun_min             = -R._nuns_list.length
-    R.zpun_max            = R._zpuns_list.length - 1
+    R._min_nun             = -R._nuns_list.length
+    R._max_zpun            = R._zpuns_list.length - 1
     R.dimension           = T.dimension.validate cfg.dimension
     #.......................................................................................................
     _max_digits_per_idx   = Math.min ( R._pmag_list.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
@@ -232,13 +232,13 @@ class Hollerith
     ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
     #.......................................................................................................
     # Zero or small positive:
-    return ( @cfg._zpuns.at n ) if 0          <= n <= @cfg.zpun_max
+    return ( @cfg._zpuns.at n ) if 0          <= n <= @cfg._max_zpun
     #.......................................................................................................
     # Small negative:
-    return ( @cfg._nuns.at  n ) if @cfg.nun_min  <= n <  0
+    return ( @cfg._nuns.at  n ) if @cfg._min_nun  <= n <  0
     #.......................................................................................................
     # Big positive:
-    if n > @cfg.zpun_max
+    if n > @cfg._max_zpun
       R = encode n, @cfg.digitset
       return ( @cfg.pmag.at R.length ) + R
     #.......................................................................................................
