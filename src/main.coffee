@@ -122,6 +122,8 @@ class Hollerith
     R._zpuns              = types.uniliterals.data._zpuns
     R._nuns_list          = types.uniliterals.data._nuns_list
     R._zpuns_list         = types.uniliterals.data._zpuns_list
+    if R._cipher isnt R._zpuns_list[ 0 ]
+      throw new Error "Ωhll___1 internal error: _cipher #{rpr R._cipher} doesn't match _zpuns #{rpr R._zpuns}"
     R._min_nun            = -R._nuns_list.length
     R._max_zpun           = R._zpuns_list.length - 1
     R.dimension           = types.dimension.validate R.dimension
