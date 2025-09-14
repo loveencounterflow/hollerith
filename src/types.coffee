@@ -26,7 +26,7 @@ SFMODULES                 = require '../../bricabrac-single-file-modules'
 internals = Object.assign { Type, Typespace, },
 
   #---------------------------------------------------------------------------------------------------------
-  get_niners_re: ( _nova ) -> ( regex 'g' )""" ^ #{_nova}* (?= .+ $ ) """
+  get_leading_novas_re: ( _nova ) -> ( regex 'g' )""" ^ #{_nova}* (?= .+ $ ) """
 
 
 
@@ -112,7 +112,7 @@ class Hollerith_typespace extends Typespace
     return @fail "an digitset must have 2 chrs or more" unless @T.base.isa base
     _naught           = @data._digits_list.at  0
     _nova             = @data._digits_list.at -1
-    _leading_novas_re = internals.get_niners_re _nova
+    _leading_novas_re = internals.get_leading_novas_re _nova
     @assign { base, _naught, _nova, _leading_novas_re, }
     return true
 
