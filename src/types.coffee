@@ -64,7 +64,7 @@ class Hollerith_typespace extends Typespace
   # @blank_setting:   ( x ) -> ( @T.character.isa x )
   # @blank_usage:     ( x ) -> ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
-  @base:            ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
+  @_base:           ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
   @digits_numof:    ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
@@ -108,12 +108,12 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @digitset: ( x ) ->
     return false unless @T.incremental_text.dm_isa @data, { chrs: '_digits_list', }, x
-    base              = @data._digits_list.length
-    return @fail "an digitset must have 2 chrs or more" unless @T.base.isa base
+    _base             = @data._digits_list.length
+    return @fail "an digitset must have 2 chrs or more" unless @T._base.isa _base
     _naught           = @data._digits_list.at  0
     _nova             = @data._digits_list.at -1
     _leading_novas_re = internals.get_leading_novas_re _nova
-    @assign { base, _naught, _nova, _leading_novas_re, }
+    @assign { _base, _naught, _nova, _leading_novas_re, }
     return true
 
   #---------------------------------------------------------------------------------------------------------
@@ -145,19 +145,19 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @_max_integer_$: ( x, base ) ->
+  @_max_integer_$: ( x, _base ) ->
     return @fail "x not a positive safe integer"           unless @T.pinteger.isa        x
-    return @fail "base not a safe integer greater than 1"  unless @T.base.isa            base
-    return @fail "x not a positive all-niners"             unless is_positive_all_niner  x, base
+    return @fail "_base not a safe integer greater than 1"  unless @T._base.isa            _base
+    return @fail "x not a positive all-niners"             unless is_positive_all_niner  x, _base
     return true
 
   #---------------------------------------------------------------------------------------------------------
   ### TAINT should be method of `T._max_integer_$` ###
-  create_max_integer_$: ({ base, digits_numof, }) ->
-    @base.validate        base
+  create_max_integer_$: ({ _base, digits_numof, }) ->
+    @_base.validate        _base
     @digits_numof.validate digits_numof
-    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, base ), ( ( base ** digits_numof ) - 1 )
-    @_max_integer_$.validate R, base
+    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, _base ), ( ( _base ** digits_numof ) - 1 )
+    @_max_integer_$.validate R, _base
     return R
 
   #---------------------------------------------------------------------------------------------------------

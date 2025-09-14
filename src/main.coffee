@@ -120,7 +120,7 @@ class Hollerith
     R._naught             = T.digitset.data._naught
     R._nova               = T.digitset.data._nova
     R._leading_novas_re   = T.digitset.data._leading_novas_re
-    R.base                = T.digitset.data.base
+    R._base               = T.digitset.data._base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
     R.pmag_chrs           = T.magnifiers.data.pmag_chrs
     R.nmag_chrs           = T.magnifiers.data.nmag_chrs
@@ -137,8 +137,8 @@ class Hollerith
     _max_digits_per_idx   = Math.min ( R.pmag_chrs.length - 1 ), ( cfg._max_digits_per_idx ? Infinity )
     R._max_digits_per_idx = T._max_digits_per_idx_$.validate _max_digits_per_idx, R.pmag_chrs
     #.......................................................................................................
-    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R.base
-    else                        R._max_integer  = T.create_max_integer_$ { base: R.base, digits_numof: R._max_digits_per_idx, }
+    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R._base
+    else                        R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_digits_per_idx, }
     #.......................................................................................................
     if R.nmag_chrs.length < R._max_digits_per_idx
       throw new Error "Ωhll___1 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.nmag_chrs.length} positive magnifiers"
@@ -172,7 +172,7 @@ class Hollerith
       nmag,
       pmag,
       digitset,     } = cfg
-    # base              = digitset.length
+    # _base              = digitset.length
     #.......................................................................................................
     nuns_letters  = nuns
     puns_letters  = zpuns[  1 ..  ]
