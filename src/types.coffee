@@ -61,8 +61,6 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
   @blank:           ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
-  # @blank_setting:   ( x ) -> ( @T.character.isa x )
-  # @blank_usage:     ( x ) -> ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
   @_base:           ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
   @digits_numof:    ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
@@ -86,8 +84,7 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
-    parts                   = x.split @[CFG].blank_splitter
-    unless parts.length is 2
+    unless ( parts = x.split @[CFG].blank_splitter ).length is 2
       return ( @fail "magnifiers must have exactly 1 blank, got #{parts.length - 1} blanks")
     [ nmag_bare_reversed,
       pmag_bare,          ] = parts
@@ -131,8 +128,8 @@ class Hollerith_typespace extends Typespace
       return ( @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
     [ _nuns,
       _cipher,
-      puns, ] = parts
-    _zpuns     = _cipher + puns
+      _puns, ] = parts
+    _zpuns     = _cipher + _puns
     @assign { _nuns, _zpuns, _cipher, }
     return false unless @T.incremental_text.dm_isa @data, { chrs: '_nuns_list', },  _nuns
     return false unless @T.incremental_text.dm_isa @data, { chrs: '_zpuns_list', }, _zpuns
