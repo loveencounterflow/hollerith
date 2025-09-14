@@ -126,8 +126,8 @@ class Hollerith
     R._nmag_list          = T.magnifiers.data._nmag_list
     R.uniliterals         = T.uniliterals.validate cfg.uniliterals
     R._cipher             = T.uniliterals.data._cipher
-    R.nuns                = T.uniliterals.data.nuns
-    R.zpuns               = T.uniliterals.data.zpuns
+    R._nuns                = T.uniliterals.data._nuns
+    R._zpuns               = T.uniliterals.data._zpuns
     R.nun_chrs            = T.uniliterals.data.nun_chrs
     R.zpun_chrs           = T.uniliterals.data.zpun_chrs
     R.nun_min             = -R.nun_chrs.length
@@ -160,25 +160,25 @@ class Hollerith
     ### TAINT this can be greatly simplified with To Dos implemented ###
     R._alphabet           = T._alphabet.validate ( R.digitset + ( \
       [ R._nmag_list..., ].reverse().join '' ) + \
-      R.nuns                                  + \
-      R.zpuns                                 + \
+      R._nuns                                  + \
+      R._zpuns                                 + \
       R.pmag                                    ).replace T[CFG].blank_splitter, ''
     return R
 
   #---------------------------------------------------------------------------------------------------------
   compile_sortkey_lexer: ( cfg ) ->
-    { nuns,
-      zpuns,
+    { _nuns,
+      _zpuns,
       nmag,
       pmag,
       digitset,     } = cfg
     # _base              = digitset.length
     #.......................................................................................................
-    nuns_letters  = nuns
-    puns_letters  = zpuns[  1 ..  ]
+    nuns_letters  = _nuns
+    puns_letters  = _zpuns[  1 ..  ]
     nmag_letters  = nmag[   1 ..  ]
     pmag_letters  = pmag[   1 ..  ]
-    zero_letters  = zpuns[  0     ]
+    zero_letters  = _zpuns[  0     ]
     max_digit     = digitset.at -1
     #.......................................................................................................
     fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
@@ -190,8 +190,8 @@ class Hollerith
     fit_other     = regex"(?<letters> .                    )                                  "
     all_zero_re   = regex"^ #{zero_letters}+ $"
     #.......................................................................................................
-    cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
-    cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
+    cast_nun      = ({ data: d, }) -> d.index = ( cfg._nuns.indexOf d.letters ) - cfg._nuns.length
+    cast_pun      = ({ data: d, }) -> d.index = +cfg._zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
       mantissa  = d.mantissa.padStart cfg._max_digits_per_idx, max_digit
       d.index   = ( decode mantissa, digitset ) - cfg._max_integer
@@ -232,10 +232,10 @@ class Hollerith
     ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
     #.......................................................................................................
     # Zero or small positive:
-    return ( @cfg.zpuns.at n ) if 0          <= n <= @cfg.zpun_max
+    return ( @cfg._zpuns.at n ) if 0          <= n <= @cfg.zpun_max
     #.......................................................................................................
     # Small negative:
-    return ( @cfg.nuns.at  n ) if @cfg.nun_min  <= n <  0
+    return ( @cfg._nuns.at  n ) if @cfg.nun_min  <= n <  0
     #.......................................................................................................
     # Big positive:
     if n > @cfg.zpun_max

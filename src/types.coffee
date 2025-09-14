@@ -120,22 +120,22 @@ class Hollerith_typespace extends Typespace
   @uniliterals: ( x ) ->
     return false unless @T.nonempty_text.isa x
     if @T.character.isa x
-      nuns      = ''
-      zpuns     = x
+      _nuns     = ''
+      _zpuns    = x
       nun_chrs  = freeze []
       zpun_chrs = freeze [ x, ]
-      @assign { nuns, zpuns, nun_chrs, zpun_chrs, }
+      @assign { _nuns, _zpuns, nun_chrs, zpun_chrs, }
       return true
     parts = x.split @[CFG].blank_splitter
     unless parts.length is 3
       return ( @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
-    [ nuns,
+    [ _nuns,
       _cipher,
       puns, ] = parts
-    zpuns     = _cipher + puns
-    @assign { nuns, zpuns, _cipher, }
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'nun_chrs', },  nuns
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'zpun_chrs', }, zpuns
+    _zpuns     = _cipher + puns
+    @assign { _nuns, _zpuns, _cipher, }
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'nun_chrs', },  _nuns
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'zpun_chrs', }, _zpuns
     return true
 
   #---------------------------------------------------------------------------------------------------------
