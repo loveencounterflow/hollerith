@@ -26,67 +26,55 @@ types                     = require './types'
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128 = freeze
-  uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  # _max_zpun:     +20
-  # _min_nun:      -20
-  # _max_idx_digits: 8
-  ###                     1         2         3       ###
-  ###            12345678901234567890123456789012     ###
-  digitset:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
-                'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
-                'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
-                '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+  uniliterals:        'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
+  ###                           1         2         3       ###
+  ###                  12345678901234567890123456789012     ###
+  digitset:           '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+                      'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
+                      'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
+                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
   ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
   be used, thus can be freed for other(?) things ###
-  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
-  dimension:    5
+  magnifiers:         'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:          5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_128_16383 = freeze
-  uniliterals:  'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-  _max_idx_digits: 2
-  ###                     1         2         3       ###
-  ###            12345678901234567890123456789012     ###
-  digitset:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
-                'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
-                'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
-                '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+  uniliterals:        'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
+  ###                           1         2         3       ###
+  ###                  12345678901234567890123456789012     ###
+  digitset:           '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+                      'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
+                      'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
+                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
   ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
   be used, thus can be freed for other(?) things ###
-  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
-  dimension:    5
-  _max_integer: ( 128 ** 2 ) - 1 # 16383
+  magnifiers:         'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:          5
+  _max_idx_digits:    2
+  _max_integer:       ( 128 ** 2 ) - 1 # 16383
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10 = freeze
-  uniliterals:  'ÏÐÑ ã äåæ'
-  _max_zpun:     +3
-  _min_nun:      -3
-  _max_idx_digits:  3
-  digitset:     '0123456789'
-  magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
-  dimension:    5
+  uniliterals:        'ÏÐÑ ã äåæ'
+  digitset:           '0123456789'
+  magnifiers:         'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+  dimension:          5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp = freeze
-  uniliterals:  'N'
-  _max_zpun:     +0
-  _min_nun:      -0
-  _max_idx_digits:  3
-  digitset:     '0123456789'
-  magnifiers:   'JKLM OPQR'
-  dimension:    5
+  uniliterals:        'N'
+  digitset:           '0123456789'
+  magnifiers:         'JKLM OPQR'
+  dimension:          5
 
 #-----------------------------------------------------------------------------------------------------------
 constants_10mvp2 = freeze
-  uniliterals:  'EFGHIJKLM N OPQRSTUVW'
-  _max_zpun:     +9
-  _min_nun:      -9
-  _max_idx_digits:  3
-  digitset:     '0123456789'
-  magnifiers:   'ABC XYZ'
-  dimension:    3
-  _max_integer: 999
+  uniliterals:        'EFGHIJKLM N OPQRSTUVW'
+  digitset:           '0123456789'
+  magnifiers:         'ABC XYZ'
+  dimension:          3
+  _max_integer:       999
 
 #-----------------------------------------------------------------------------------------------------------
 # constants = C = constants_128
@@ -130,15 +118,15 @@ class Hollerith
     R._zpuns              = T.uniliterals.data._zpuns
     R._nuns_list          = T.uniliterals.data._nuns_list
     R._zpuns_list         = T.uniliterals.data._zpuns_list
-    R._min_nun             = -R._nuns_list.length
-    R._max_zpun            = R._zpuns_list.length - 1
+    R._min_nun            = -R._nuns_list.length
+    R._max_zpun           = R._zpuns_list.length - 1
     R.dimension           = T.dimension.validate R.dimension
     #.......................................................................................................
-    _max_idx_digits   = Math.min ( R._pmag_list.length - 1 ), ( R._max_idx_digits ? Infinity )
-    R._max_idx_digits = T._max_digits_per_idx_$.validate _max_idx_digits, R._pmag_list
+    _max_idx_digits       = Math.min ( R._pmag_list.length - 1 ), ( R._max_idx_digits ? Infinity )
+    R._max_idx_digits     = T._max_digits_per_idx_$.validate _max_idx_digits, R._pmag_list
     #.......................................................................................................
     if R._max_integer?  then  R._max_integer  = T._max_integer_$.validate R._max_integer, R._base
-    else                        R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_idx_digits, }
+    else                      R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_idx_digits, }
     #.......................................................................................................
     if R._nmag_list.length < R._max_idx_digits
       throw new Error "Ωhll___1 _max_idx_digits is #{R._max_idx_digits}, but there are only #{R._nmag_list.length} positive magnifiers"
@@ -200,8 +188,8 @@ class Hollerith
     cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
     cast_other    = null
     #.......................................................................................................
-    R           = new Grammar { emit_signals: false, }
-    first       = R.new_level { name: 'first', }
+    R             = new Grammar { emit_signals: false, }
+    first         = R.new_level { name: 'first', }
     first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      }
     first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,      }
     first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,     }
@@ -231,25 +219,16 @@ class Hollerith
   encode_integer: ( n ) ->
     ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
     #.......................................................................................................
-    # Zero or small positive:
-    return ( @cfg._zpuns.at n ) if 0          <= n <= @cfg._max_zpun
+    return ( @cfg._zpuns.at n ) if 0              <= n <= @cfg._max_zpun  # Zero or small positive
+    return ( @cfg._nuns.at  n ) if @cfg._min_nun  <= n <  0               # Small negative
     #.......................................................................................................
-    # Small negative:
-    return ( @cfg._nuns.at  n ) if @cfg._min_nun  <= n <  0
-    #.......................................................................................................
-    # Big positive:
-    if n > @cfg._max_zpun
+    if n > @cfg._max_zpun                                                 # Big positive
       R = encode n, @cfg.digitset
       return ( @cfg._pmag.at R.length ) + R
     #.......................................................................................................
-    # Big negative:
-    ### NOTE plus one or not plus one?? ###
-    # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.digitset )
-    R = ( encode ( n + @cfg._max_integer     ), @cfg.digitset )
-    if R.length < @cfg._max_idx_digits
-      R = R.padStart @cfg._max_idx_digits, @cfg.digitset.at 0
-    else
-      R = R.replace @cfg._leading_novas_re, ''
+    R = ( encode ( n + @cfg._max_integer     ), @cfg.digitset )           # Big negative
+    if R.length < @cfg._max_idx_digits then R = R.padStart @cfg._max_idx_digits, @cfg.digitset.at 0
+    else                                    R = R.replace @cfg._leading_novas_re, ''
     return ( @cfg._nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
