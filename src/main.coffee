@@ -115,16 +115,16 @@ class Hollerith
       dimension:   5
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     T                     = new Hollerith_typespace { blank: R.blank, }
-    R.digitset            = T.digitset.validate cfg.digitset
+    R.digitset            = T.digitset.validate R.digitset
     R._digits_list        = T.digitset.data._digits_list
     R._naught             = T.digitset.data._naught
     R._nova               = T.digitset.data._nova
     R._leading_novas_re   = T.digitset.data._leading_novas_re
     R._base               = T.digitset.data._base
-    R.magnifiers          = T.magnifiers.validate cfg.magnifiers
+    R.magnifiers          = T.magnifiers.validate R.magnifiers
     R._pmag_list          = T.magnifiers.data._pmag_list
     R._nmag_list          = T.magnifiers.data._nmag_list
-    R.uniliterals         = T.uniliterals.validate cfg.uniliterals
+    R.uniliterals         = T.uniliterals.validate R.uniliterals
     R._cipher             = T.uniliterals.data._cipher
     R._nuns               = T.uniliterals.data._nuns
     R._zpuns              = T.uniliterals.data._zpuns
@@ -132,12 +132,12 @@ class Hollerith
     R._zpuns_list         = T.uniliterals.data._zpuns_list
     R._min_nun             = -R._nuns_list.length
     R._max_zpun            = R._zpuns_list.length - 1
-    R.dimension           = T.dimension.validate cfg.dimension
+    R.dimension           = T.dimension.validate R.dimension
     #.......................................................................................................
-    _max_idx_digits   = Math.min ( R._pmag_list.length - 1 ), ( cfg._max_idx_digits ? Infinity )
+    _max_idx_digits   = Math.min ( R._pmag_list.length - 1 ), ( R._max_idx_digits ? Infinity )
     R._max_idx_digits = T._max_digits_per_idx_$.validate _max_idx_digits, R._pmag_list
     #.......................................................................................................
-    if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R._base
+    if R._max_integer?  then  R._max_integer  = T._max_integer_$.validate R._max_integer, R._base
     else                        R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_idx_digits, }
     #.......................................................................................................
     if R._nmag_list.length < R._max_idx_digits
