@@ -127,7 +127,7 @@ class Hollerith_typespace extends Typespace
       return true
     parts = x.split @[CFG].blank_splitter
     unless parts.length is 3
-      return ( @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks")
+      return @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks"
     [ _nuns,
       _cipher,
       _puns, ] = parts
