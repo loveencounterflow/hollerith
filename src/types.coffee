@@ -65,7 +65,7 @@ class Hollerith_typespace extends Typespace
   # @blank_usage:     ( x ) -> ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa x )
   @base:            ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
-  @digit_count:     ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
+  @digits_numof:    ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
@@ -153,10 +153,10 @@ class Hollerith_typespace extends Typespace
 
   #---------------------------------------------------------------------------------------------------------
   ### TAINT should be method of `T._max_integer_$` ###
-  create_max_integer_$: ({ base, digit_count, }) ->
+  create_max_integer_$: ({ base, digits_numof, }) ->
     @base.validate        base
-    @digit_count.validate digit_count
-    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, base ), ( ( base ** digit_count ) - 1 )
+    @digits_numof.validate digits_numof
+    R = Math.min ( get_max_integer Number.MAX_SAFE_INTEGER, base ), ( ( base ** digits_numof ) - 1 )
     @_max_integer_$.validate R, base
     return R
 

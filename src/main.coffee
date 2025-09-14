@@ -138,7 +138,7 @@ class Hollerith
     R._max_digits_per_idx = T._max_digits_per_idx_$.validate _max_digits_per_idx, R.pmag_chrs
     #.......................................................................................................
     if cfg._max_integer?  then  R._max_integer  = T._max_integer_$.validate cfg._max_integer, R.base
-    else                        R._max_integer  = T.create_max_integer_$ { base: R.base, digit_count: R._max_digits_per_idx, }
+    else                        R._max_integer  = T.create_max_integer_$ { base: R.base, digits_numof: R._max_digits_per_idx, }
     #.......................................................................................................
     if R.nmag_chrs.length < R._max_digits_per_idx
       throw new Error "Ωhll___1 _max_digits_per_idx is #{R._max_digits_per_idx}, but there are only #{R.nmag_chrs.length} positive magnifiers"
