@@ -51,7 +51,7 @@ constants_128_16383 = freeze
   be used, thus can be freed for other(?) things ###
   magnifiers:         'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
   dimension:          5
-  _max_idx_digits:    2
+  max_idx_digits:     2
   _max_integer:       ( 128 ** 2 ) - 1 # 16383
 
 #-----------------------------------------------------------------------------------------------------------
@@ -122,25 +122,25 @@ class Hollerith
     R._max_zpun           = R._zpuns_list.length - 1
     R.dimension           = T.dimension.validate R.dimension
     #.......................................................................................................
-    _max_idx_digits       = Math.min ( R._pmag_list.length - 1 ), ( R._max_idx_digits ? Infinity )
-    R._max_idx_digits     = T._max_digits_per_idx_$.validate _max_idx_digits, R._pmag_list
+    max_idx_digits       = Math.min ( R._pmag_list.length - 1 ), ( R.max_idx_digits ? Infinity )
+    R.max_idx_digits     = T._max_digits_per_idx_$.validate max_idx_digits, R._pmag_list
     #.......................................................................................................
     if R._max_integer?  then  R._max_integer  = T._max_integer_$.validate R._max_integer, R._base
-    else                      R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R._max_idx_digits, }
+    else                      R._max_integer  = T.create_max_integer_$ { _base: R._base, digits_numof: R.max_idx_digits, }
     #.......................................................................................................
-    if R._nmag_list.length < R._max_idx_digits
-      throw new Error "Ωhll___1 _max_idx_digits is #{R._max_idx_digits}, but there are only #{R._nmag_list.length} positive magnifiers"
-    else if R._nmag_list.length > R._max_idx_digits
-      R._nmag_list = freeze R._nmag_list[ .. R._max_idx_digits ]
+    if R._nmag_list.length < R.max_idx_digits
+      throw new Error "Ωhll___1 max_idx_digits is #{R.max_idx_digits}, but there are only #{R._nmag_list.length} positive magnifiers"
+    else if R._nmag_list.length > R.max_idx_digits
+      R._nmag_list = freeze R._nmag_list[ .. R.max_idx_digits ]
     #.......................................................................................................
-    if R._pmag_list.length < R._max_idx_digits
-      throw new Error "Ωhll___3 _max_idx_digits is #{R._max_idx_digits}, but there are only #{R._pmag_list.length} positive magnifiers"
-    else if R._pmag_list.length > R._max_idx_digits
-      R._pmag_list = freeze R._pmag_list[ .. R._max_idx_digits ]
+    if R._pmag_list.length < R.max_idx_digits
+      throw new Error "Ωhll___3 max_idx_digits is #{R.max_idx_digits}, but there are only #{R._pmag_list.length} positive magnifiers"
+    else if R._pmag_list.length > R.max_idx_digits
+      R._pmag_list = freeze R._pmag_list[ .. R.max_idx_digits ]
     #.......................................................................................................
     R._pmag               = R._pmag_list.join ''
     R._nmag               = R._nmag_list.join ''
-    R._max_idx_width      = R._max_idx_digits + 1
+    R._max_idx_width      = R.max_idx_digits + 1
     R._sortkey_width      = R._max_idx_width * R.dimension
     #.......................................................................................................
     R._min_integer        = -R._max_integer
@@ -181,7 +181,7 @@ class Hollerith
     cast_nun      = ({ data: d, }) -> d.index = ( cfg._nuns.indexOf d.letters ) - cfg._nuns.length
     cast_pun      = ({ data: d, }) -> d.index = +cfg._zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
-      mantissa  = d.mantissa.padStart cfg._max_idx_digits, max_digit
+      mantissa  = d.mantissa.padStart cfg.max_idx_digits, max_digit
       d.index   = ( decode mantissa, digitset ) - cfg._max_integer
     cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, digitset
     cast_zero     = ({ data: d, }) -> d.index = 0
@@ -227,7 +227,7 @@ class Hollerith
       return ( @cfg._pmag.at R.length ) + R
     #.......................................................................................................
     R = ( encode ( n + @cfg._max_integer     ), @cfg.digitset )           # Big negative
-    if R.length < @cfg._max_idx_digits then R = R.padStart @cfg._max_idx_digits, @cfg.digitset.at 0
+    if R.length < @cfg.max_idx_digits then R = R.padStart @cfg.max_idx_digits, @cfg.digitset.at 0
     else                                    R = R.replace @cfg._leading_novas_re, ''
     return ( @cfg._nmag.at R.length ) + R
 
