@@ -119,7 +119,7 @@ class Hollerith
     R._digits_list        = T.digitset.data._digits_list
     R._naught             = T.digitset.data._naught
     R._nova               = T.digitset.data._nova
-    R.leading_niners_re   = T.digitset.data.leading_niners_re
+    R._leading_novas_re   = T.digitset.data._leading_novas_re
     R.base                = T.digitset.data.base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
     R.pmag_chrs           = T.magnifiers.data.pmag_chrs
@@ -249,7 +249,7 @@ class Hollerith
     if R.length < @cfg._max_digits_per_idx
       R = R.padStart @cfg._max_digits_per_idx, @cfg.digitset.at 0
     else
-      R = R.replace @cfg.leading_niners_re, ''
+      R = R.replace @cfg._leading_novas_re, ''
     return ( @cfg.nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
