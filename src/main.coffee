@@ -131,7 +131,7 @@ class Hollerith
     R._max_integer        = types.create_max_integer { _base: R._base, digits_per_idx: R.digits_per_idx, }
     #.......................................................................................................
     if R._nmag_list.length < R.digits_per_idx
-      throw new Error "Ωhll___1 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
+      throw new Error "Ωhll___2 digits_per_idx is #{R.digits_per_idx}, but there are only #{R._nmag_list.length} positive magnifiers"
     else if R._nmag_list.length > R.digits_per_idx
       R._nmag_list = freeze R._nmag_list[ .. R.digits_per_idx ]
     #.......................................................................................................
@@ -209,7 +209,7 @@ class Hollerith
     switch type = @types.idx_or_vdx.data.type
       when 'idx' then return @encode_idx  idx_or_vdx
       when 'vdx' then return @_encode_vdx idx_or_vdx
-    throw new Error "Ωhll__10 internal error: unknown type #{rpr type}"
+    throw new Error "Ωhll___4 internal error: unknown type #{rpr type}"
 
   #---------------------------------------------------------------------------------------------------------
   encode_idx: ( idx ) -> @_encode_idx @types.idx.validate idx, @cfg._min_integer, @cfg._max_integer
@@ -260,13 +260,13 @@ class Hollerith
   decode: ( sortkey ) ->
     ### TAINT use proper validation ###
     unless ( type = type_of sortkey ) is 'text'
-      throw new Error "Ωhll___9 expected a text, got a #{type}"
+      throw new Error "Ωhll___5 expected a text, got a #{type}"
     unless sortkey.length > 0
-      throw new Error "Ωhll__10 expected a non-empty text, got #{rpr sortkey}"
+      throw new Error "Ωhll___6 expected a non-empty text, got #{rpr sortkey}"
     R = []
     for unit in @parse sortkey
       if unit.name is 'other'
-        message   = "Ωhll__11 not a valid sortkey: unable to parse #{rpr unit.letters}"
+        message   = "Ωhll___7 not a valid sortkey: unable to parse #{rpr unit.letters}"
         message  += " in #{rpr sortkey}" if sortkey isnt unit.letters
         throw new Error message
       R.push unit.index if unit.index?
@@ -274,7 +274,7 @@ class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   decode_integer: ( n ) ->
-    throw new Error "Ωhll__12 not implemented"
+    throw new Error "Ωhll___8 not implemented"
 
 #===========================================================================================================
 module.exports = do =>
