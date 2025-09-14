@@ -32,7 +32,7 @@ constants_128 = freeze
   # _max_digits_per_idx: 8
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
-  alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+  digitset:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
                 'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                 'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                 '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
@@ -47,7 +47,7 @@ constants_128_16383 = freeze
   _max_digits_per_idx: 2
   ###                     1         2         3       ###
   ###            12345678901234567890123456789012     ###
-  alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+  digitset:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
                 'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                 'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                 '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
@@ -63,7 +63,7 @@ constants_10 = freeze
   zpun_max:     +3
   nun_min:      -3
   _max_digits_per_idx:  3
-  alphabet:     '0123456789'
+  digitset:     '0123456789'
   magnifiers:   'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
   dimension:    5
 
@@ -73,7 +73,7 @@ constants_10mvp = freeze
   zpun_max:     +0
   nun_min:      -0
   _max_digits_per_idx:  3
-  alphabet:     '0123456789'
+  digitset:     '0123456789'
   magnifiers:   'JKLM OPQR'
   dimension:    5
 
@@ -83,7 +83,7 @@ constants_10mvp2 = freeze
   zpun_max:     +9
   nun_min:      -9
   _max_digits_per_idx:  3
-  alphabet:     '0123456789'
+  digitset:     '0123456789'
   magnifiers:   'ABC XYZ'
   dimension:    3
   _max_integer: 999
@@ -115,12 +115,12 @@ class Hollerith
       dimension:   5
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     T                     = new Hollerith_typespace { blank: R.blank, }
-    R.alphabet            = T.alphabet.validate cfg.alphabet
-    R.alphabet_chrs       = T.alphabet.data.alphabet_chrs
-    R._naught             = T.alphabet.data._naught
-    R._nova               = T.alphabet.data._nova
-    R.leading_niners_re   = T.alphabet.data.leading_niners_re
-    R.base                = T.alphabet.data.base
+    R.digitset            = T.digitset.validate cfg.digitset
+    R.digits_lstof        = T.digitset.data.digits_lstof
+    R._naught             = T.digitset.data._naught
+    R._nova               = T.digitset.data._nova
+    R.leading_niners_re   = T.digitset.data.leading_niners_re
+    R.base                = T.digitset.data.base
     R.magnifiers          = T.magnifiers.validate cfg.magnifiers
     R.pmag_chrs           = T.magnifiers.data.pmag_chrs
     R.nmag_chrs           = T.magnifiers.data.nmag_chrs
@@ -158,7 +158,7 @@ class Hollerith
     R._min_integer        = -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
-    R.TMP_alphabet  = T.TMP_alphabet.validate ( R.alphabet + ( \
+    R.TMP_alphabet  = T.TMP_alphabet.validate ( R.digitset + ( \
       [ R.nmag_chrs..., ].reverse().join '' ) + \
       R.nuns                                  + \
       R.zpuns                                 + \
@@ -171,20 +171,20 @@ class Hollerith
       zpuns,
       nmag,
       pmag,
-      alphabet,     } = cfg
-    # base              = alphabet.length
+      digitset,     } = cfg
+    # base              = digitset.length
     #.......................................................................................................
     nuns_letters  = nuns
     puns_letters  = zpuns[  1 ..  ]
     nmag_letters  = nmag[   1 ..  ]
     pmag_letters  = pmag[   1 ..  ]
     zero_letters  = zpuns[  0     ]
-    max_digit     = alphabet.at -1
+    max_digit     = digitset.at -1
     #.......................................................................................................
     fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
     fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
-    fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
-    fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
+    fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{digitset}  ]* ) "
+    fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{digitset}  ]* ) "
     fit_padding   = regex"(?<letters> [ #{zero_letters} ]+ ) $                                "
     fit_zero      = regex"(?<letters> [ #{zero_letters} ]  (?= .* [^ #{zero_letters} ] ) )     "
     fit_other     = regex"(?<letters> .                    )                                  "
@@ -194,8 +194,8 @@ class Hollerith
     cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
     cast_nnum     = ({ data: d, }) ->
       mantissa  = d.mantissa.padStart cfg._max_digits_per_idx, max_digit
-      d.index   = ( decode mantissa, alphabet ) - cfg._max_integer
-    cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
+      d.index   = ( decode mantissa, digitset ) - cfg._max_integer
+    cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, digitset
     cast_zero     = ({ data: d, }) -> d.index = 0
     cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
     cast_other    = null
@@ -239,15 +239,15 @@ class Hollerith
     #.......................................................................................................
     # Big positive:
     if n > @cfg.zpun_max
-      R = encode n, @cfg.alphabet
+      R = encode n, @cfg.digitset
       return ( @cfg.pmag.at R.length ) + R
     #.......................................................................................................
     # Big negative:
     ### NOTE plus one or not plus one?? ###
-    # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.alphabet )
-    R = ( encode ( n + @cfg._max_integer     ), @cfg.alphabet )
+    # R = ( encode ( n + @cfg._max_integer + 1 ), @cfg.digitset )
+    R = ( encode ( n + @cfg._max_integer     ), @cfg.digitset )
     if R.length < @cfg._max_digits_per_idx
-      R = R.padStart @cfg._max_digits_per_idx, @cfg.alphabet.at 0
+      R = R.padStart @cfg._max_digits_per_idx, @cfg.digitset.at 0
     else
       R = R.replace @cfg.leading_niners_re, ''
     return ( @cfg.nmag.at R.length ) + R

@@ -106,12 +106,12 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @alphabet: ( x ) ->
-    return false unless @T.incremental_text.dm_isa @data, { chrs: 'alphabet_chrs', }, x
-    base              = @data.alphabet_chrs.length
-    return @fail "an alphabet must have 2 chrs or more" unless @T.base.isa base
-    _naught           = @data.alphabet_chrs.at  0
-    _nova             = @data.alphabet_chrs.at -1
+  @digitset: ( x ) ->
+    return false unless @T.incremental_text.dm_isa @data, { chrs: 'digits_lstof', }, x
+    base              = @data.digits_lstof.length
+    return @fail "an digitset must have 2 chrs or more" unless @T.base.isa base
+    _naught           = @data.digits_lstof.at  0
+    _nova             = @data.digits_lstof.at -1
     leading_niners_re = internals.get_niners_re _nova
     @assign { base, _naught, _nova, leading_niners_re, }
     return true
