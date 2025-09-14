@@ -98,11 +98,11 @@ class Hollerith_typespace extends Typespace
     return ( @fail "Ωbsk___4 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
     return ( @fail "Ωbsk___5 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
     #.......................................................................................................
-    nmag        = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
-    pmag        = @[CFG].blank + pmag_bare
-    _nmag_list  = freeze Array.from nmag
-    _pmag_list  = freeze Array.from pmag
-    @assign { nmag, pmag, _nmag_list, _pmag_list, }
+    _nmag       = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
+    _pmag       = @[CFG].blank + pmag_bare
+    _nmag_list  = freeze Array.from _nmag
+    _pmag_list  = freeze Array.from _pmag
+    @assign { _nmag, _pmag, _nmag_list, _pmag_list, }
     return true
 
   #---------------------------------------------------------------------------------------------------------

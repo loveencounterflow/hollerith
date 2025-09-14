@@ -150,8 +150,8 @@ class Hollerith
     else if R._pmag_list.length > R._max_idx_digits
       R._pmag_list = freeze R._pmag_list[ .. R._max_idx_digits ]
     #.......................................................................................................
-    R.pmag                = R._pmag_list.join ''
-    R.nmag                = R._nmag_list.join ''
+    R._pmag               = R._pmag_list.join ''
+    R._nmag               = R._nmag_list.join ''
     R._max_idx_width      = R._max_idx_digits + 1
     R._sortkey_width      = R._max_idx_width * R.dimension
     #.......................................................................................................
@@ -162,22 +162,22 @@ class Hollerith
       [ R._nmag_list..., ].reverse().join '' ) + \
       R._nuns                                  + \
       R._zpuns                                 + \
-      R.pmag                                    ).replace T[CFG].blank_splitter, ''
+      R._pmag                                    ).replace T[CFG].blank_splitter, ''
     return R
 
   #---------------------------------------------------------------------------------------------------------
   compile_sortkey_lexer: ( cfg ) ->
     { _nuns,
       _zpuns,
-      nmag,
-      pmag,
+      _nmag,
+      _pmag,
       digitset,     } = cfg
     # _base              = digitset.length
     #.......................................................................................................
     nuns_letters  = _nuns
     puns_letters  = _zpuns[  1 ..  ]
-    nmag_letters  = nmag[   1 ..  ]
-    pmag_letters  = pmag[   1 ..  ]
+    nmag_letters  = _nmag[   1 ..  ]
+    pmag_letters  = _pmag[   1 ..  ]
     zero_letters  = _zpuns[  0     ]
     max_digit     = digitset.at -1
     #.......................................................................................................
@@ -240,7 +240,7 @@ class Hollerith
     # Big positive:
     if n > @cfg._max_zpun
       R = encode n, @cfg.digitset
-      return ( @cfg.pmag.at R.length ) + R
+      return ( @cfg._pmag.at R.length ) + R
     #.......................................................................................................
     # Big negative:
     ### NOTE plus one or not plus one?? ###
@@ -250,7 +250,7 @@ class Hollerith
       R = R.padStart @cfg._max_idx_digits, @cfg.digitset.at 0
     else
       R = R.replace @cfg._leading_novas_re, ''
-    return ( @cfg.nmag.at R.length ) + R
+    return ( @cfg._nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
   parse: ( sortkey ) ->
