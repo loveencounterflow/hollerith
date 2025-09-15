@@ -287,13 +287,13 @@ class Hollerith
   decode: ( sortkey ) ->
     ### TAINT use proper validation ###
     unless ( type = type_of sortkey ) is 'text'
-      throw new Error "Ωhll___5 expected a text, got a #{type}"
+      throw new Error "Ωhll___6 expected a text, got a #{type}"
     unless sortkey.length > 0
-      throw new Error "Ωhll___6 expected a non-empty text, got #{rpr sortkey}"
+      throw new Error "Ωhll___7 expected a non-empty text, got #{rpr sortkey}"
     R = []
     for unit in @parse sortkey
       if unit.name is 'other'
-        message   = "Ωhll___7 not a valid sortkey: unable to parse #{rpr unit.letters}"
+        message   = "Ωhll___8 not a valid sortkey: unable to parse #{rpr unit.letters}"
         message  += " in #{rpr sortkey}" if sortkey isnt unit.letters
         throw new Error message
       R.push unit.index if unit.index?
@@ -301,7 +301,7 @@ class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   decode_integer: ( n ) ->
-    throw new Error "Ωhll___8 not implemented"
+    throw new Error "Ωhll___9 not implemented"
 
 #===========================================================================================================
 module.exports = do =>
