@@ -12,9 +12,8 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { Grammar
   Token
   Lexeme                } = require 'interlex'
-types                     = require './types'
 { CFG,
-  Hollerith_typespace,  } = types
+  Hollerith_typespace,  } = require './types'
 { clean_assign,         } = SFMODULES.unstable.require_clean_assign()
 { encode,
   decode,
@@ -99,7 +98,7 @@ internals = freeze {
   constants_10mvp,
   constants_10mvp2,
   constants_10_cardinal,
-  types, }
+  types: ( require './types' ), }
 
 
 #===========================================================================================================
