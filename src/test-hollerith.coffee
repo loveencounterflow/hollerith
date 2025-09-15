@@ -4,12 +4,16 @@
 #===========================================================================================================
 { debug,                } = console
 #-----------------------------------------------------------------------------------------------------------
-SFMODULES                 = require 'bricabrac-single-file-modules'
+SFMODULES                 = require '../../bricabrac-single-file-modules'
+# SFMODULES                 = require 'bricabrac-single-file-modules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { Get_random,           } = SFMODULES.unstable.require_get_random()
 #-----------------------------------------------------------------------------------------------------------
 { Hollerith_typespace,  } = require './types'
+types                     = new Hollerith_typespace()
+#-----------------------------------------------------------------------------------------------------------
+{ isDeepStrictEqual: equals,  } = require 'node:util'
 
 
 # { regex,                } = require 'regex'
@@ -44,42 +48,45 @@ class test_hollerith
 
   #---------------------------------------------------------------------------------------------------------
   @test_sorting: ( codec ) ->
-    types = new Hollerith_typespace()
     types.hollerith.validate codec
-    return true
+    R =
+      success: true
+    #.......................................................................................................
+    Object.assign R, @__hollerith_128_big_shuffle codec
+    #.......................................................................................................
+    return R
 
   #---------------------------------------------------------------------------------------------------------
-  hollerith_128_big_shuffle: ->
+  @_walk_first_idxs: ( codec, delta, rnd_vdx_cfg ) ->
+    yield idx for idx in [ codec.cfg._min_integer         .. codec.cfg._min_integer + delta ]
+    yield idx for idx in [ rnd_vdx_cfg.min_idx            .. rnd_vdx_cfg.max_idx            ]
+    yield idx for idx in [ codec.cfg._max_integer - delta .. codec.cfg._max_integer         ]
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  @__hollerith_128_big_shuffle: ( codec ) ->
     rnd_vdx_cfg                 =
       seed:         null
       min_length:   1
       max_length:   codec.cfg.dimension - 1
       min_idx:      Math.max codec.cfg._min_integer, -2000
       max_idx:      Math.min codec.cfg._max_integer, +2000
-    # debug 'Ωhllt__98', rnd_vdx_cfg
-    # debug 'Ωhllt__99', codec.cfg._sortkey_width
-    get_random_vdx              = helpers.get_random_vdx_producer rnd_vdx_cfg
+    #.......................................................................................................
+    seed                        = 8475622
+    get_random                  = new Get_random { seed, }
+    get_random_vdx              = @get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
-    shuffle                     = GUY.rnd.get_shuffle 57, 88
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
     probes_sortkey              = []
-    # debug 'Ωhllt_100', rnd_vdx_cfg; process.exit 111
+    first_idx_walker            = @_walk_first_idxs codec, 500, rnd_vdx_cfg
     #.......................................................................................................
-    walk_first_idxs             = ->
-      yield idx for idx in [ codec.cfg._min_integer      .. codec.cfg._min_integer + 10 ]
-      yield idx for idx in [ rnd_vdx_cfg.min_idx         .. rnd_vdx_cfg.max_idx         ]
-      yield idx for idx in [ codec.cfg._max_integer - 10 .. codec.cfg._max_integer      ]
-      return null
-    #.......................................................................................................
-    for first_idx from walk_first_idxs()
-    # for first_idx in [ -100 .. +100 ]
-      # debug 'Ωhllt_101', { first_idx, }
+    for first_idx from first_idx_walker
       for _ in [ 1 .. probe_sub_count ]
         vdx = [ first_idx, get_random_vdx()..., ]
         sk  = encode vdx
         probes_sortkey.push { vdx, sk, }
     #.......................................................................................................
-    probes_sortkey    = shuffle probes_sortkey
+    probes_sortkey    = get_random.shuffle probes_sortkey
     probes_vdx        = probes_sortkey[ .. ]
     #.......................................................................................................
     sort_by_vdx       = ( a, b ) ->
@@ -100,14 +107,19 @@ class test_hollerith
       return -1 if a < b
       return +1
     #.......................................................................................................
+    hit_count   = 0
+    miss_count  = 0
+    #.......................................................................................................
     probes_vdx.sort     sort_by_vdx
     probes_sortkey.sort sort_by_sortkey
     for probe_vdx, idx in probes_vdx
       probe_sortkey = probes_sortkey[ idx ]
-      # whisper 'Ωhllt_102', ( gold probe_sortkey.sk ), ( red probe_vdx.vdx ), ( lime probe_sortkey.vdx )
-      @eq ( Ωhllt_103 = -> probe_sortkey.vdx ), probe_vdx.vdx
+      # whisper 'Ωhllt___4', ( gold probe_sortkey.sk ), ( red probe_vdx.vdx ), ( lime probe_sortkey.vdx )
+      is_equal = equals ( probe_sortkey.vdx ), probe_vdx.vdx
+      if is_equal then  hit_count++
+      else              miss_count++
     #.......................................................................................................
-    return null
+    return { probe_count: probes_sortkey.length, hit_count, miss_count, }
 
 
 #===========================================================================================================
