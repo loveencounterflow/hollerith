@@ -61,6 +61,8 @@ class Hollerith_typespace extends Typespace
   @zpinteger:       ( x ) -> ( @T.integer.isa x ) and ( x >= 0 )
   @cardinal:        ( x ) -> @T.zpinteger.isa x
   #---------------------------------------------------------------------------------------------------------
+  @hollerith:       ( x ) -> x instanceof ( require './main' ).Hollerith
+  #---------------------------------------------------------------------------------------------------------
   ### NOTE requiring `x` to be both a character and equal to `@[CFG].blank` means `@[CFG].blank` itself can be tested ###
   @blank:           ( x ) -> ( @T.character.isa x ) and ( x is @[CFG].blank )
   @dimension:       ( x ) -> ( @T.pinteger.isa  x )
