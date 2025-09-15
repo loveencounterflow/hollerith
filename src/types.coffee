@@ -87,11 +87,12 @@ class Hollerith_typespace extends Typespace
   #---------------------------------------------------------------------------------------------------------
   @magnifiers: ( x, { cardinals_only = false }={} ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
+    parts = x.split @[CFG].blank_splitter
     if cardinals_only
-      unless ( parts = x.split @[CFG].blank_splitter ).length in [ 1, 2, ]
+      unless parts.length in [ 1, 2, ]
         return ( @fail "magnifiers for { cardinals_only: true } must have 0 or 1 blank, got #{parts.length - 1} blanks")
     else
-      unless ( parts = x.split @[CFG].blank_splitter ).length is 2
+      unless parts.length is 2
         return ( @fail "magnifiers for { cardinals_only: false } must have exactly 1 blank, got #{parts.length - 1} blanks")
     if parts.length is 1
       [ nmag_bare_reversed,
@@ -132,25 +133,44 @@ class Hollerith_typespace extends Typespace
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  @uniliterals: ( x ) ->
+  @uniliterals: ( x, { cardinals_only = false, }={} ) ->
     return false unless @T.nonempty_text.isa x
     if @T.character.isa x
-      _nuns       = ''
+      _nuns       = null
       _zpuns      = x
       _cipher     = x
-      _nuns_list  = freeze []
+      _nuns_list  = freeze [] # null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       _zpuns_list = freeze [ x, ]
       @assign { _nuns, _zpuns, _nuns_list, _zpuns_list, _cipher, }
       return true
+    #.......................................................................................................
     parts = x.split @[CFG].blank_splitter
-    unless parts.length is 3
-      return @fail "uniliterals that are not a single character must have exactly 2 blank2, got #{parts.length - 1} blanks"
-    [ _nuns,
-      _cipher,
-      _puns, ] = parts
-    _zpuns     = _cipher + _puns
+    #.......................................................................................................
+    if cardinals_only
+      unless parts.length in [ 2, 3, ]
+        return @fail "uniliterals for { cardinals_only: true } that are not a single character must have 1 or 2 blanks, got #{parts.length - 1} blanks"
+    else
+      unless parts.length is 3
+        return @fail "uniliterals for { cardinals_only: false } that are not a single character must have exactly 2 blanks, got #{parts.length - 1} blanks"
+    #.......................................................................................................
+    if parts.length is 2
+      [ _nuns,
+        _cipher,
+        _puns,  ] = [ null, parts..., ]
+    else
+      [ _nuns,
+        _cipher,
+        _puns,  ] = parts
+      _nuns       = null if cardinals_only
+    #.......................................................................................................
+    _zpuns = _cipher + _puns
     @assign { _nuns, _zpuns, _cipher, }
-    return false unless @T.incremental_text.dm_isa @data, { chrs: '_nuns_list', },  _nuns
+    #.......................................................................................................
+    if cardinals_only
+      @assign { _nuns_list: null, }
+    else
+      return false unless @T.incremental_text.dm_isa @data, { chrs: '_nuns_list', },  _nuns
+    #.......................................................................................................
     return false unless @T.incremental_text.dm_isa @data, { chrs: '_zpuns_list', }, _zpuns
     return true
 

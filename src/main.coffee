@@ -135,7 +135,7 @@ class Hollerith
     R.magnifiers          = types.magnifiers.validate R.magnifiers, { cardinals_only: R.cardinals_only, }
     R._pmag_list          = types.magnifiers.data._pmag_list
     R._nmag_list          = types.magnifiers.data._nmag_list
-    R.uniliterals         = types.uniliterals.validate R.uniliterals
+    R.uniliterals         = types.uniliterals.validate R.uniliterals, { cardinals_only: R.cardinals_only, }
     R._cipher             = types.uniliterals.data._cipher
     R._nuns               = types.uniliterals.data._nuns
     R._zpuns              = types.uniliterals.data._zpuns
@@ -143,7 +143,7 @@ class Hollerith
     R._zpuns_list         = types.uniliterals.data._zpuns_list
     if R._cipher isnt R._zpuns_list[ 0 ]
       throw new Error "Ωhll___1 internal error: _cipher #{rpr R._cipher} doesn't match _zpuns #{rpr R._zpuns}"
-    R._min_nun            = -R._nuns_list.length
+    R._min_nun            = if R._nuns_list? then -R._nuns_list.length else 0
     R._max_zpun           = R._zpuns_list.length - 1
     R.dimension           = types.dimension.validate R.dimension
     #.......................................................................................................
@@ -167,14 +167,16 @@ class Hollerith
     R._max_idx_width      = R.digits_per_idx + 1
     R._sortkey_width      = R._max_idx_width * R.dimension
     #.......................................................................................................
-    R._min_integer        = -R._max_integer
+    R._min_integer        = if R.cardinals_only then 0 else -R._max_integer
     #.......................................................................................................
     ### TAINT this can be greatly simplified with To Dos implemented ###
+    ### TAINT while treatment of NUNs, ZPUNs is unsatisfactory they're scheduled to be removed anyways so
+        we refrain from improving that ###
     nmags                 = if R.cardinals_only then '' else [ R._nmag_list..., ].reverse().join ''
     nuns                  = if R.cardinals_only then '' else R._nuns
     R._alphabet           = types._alphabet.validate ( R.digitset + \
       nmags                     + \
-      nuns                      + \
+      ( nuns ? '' )             + \
       R._zpuns                  + \
       R._pmag                     ).replace types[CFG].blank_splitter, ''
     return { cfg: R, types, }
@@ -252,6 +254,8 @@ class Hollerith
       R = encode idx, @cfg.digitset
       return ( @cfg._pmag.at R.length ) + R
     #.......................................................................................................
+    if @cfg.cardinals_only
+      throw new Error "Ωhll___5 unable to encode negative idx #{idx} with cardinals-only codec"
     R = ( encode ( idx + @cfg._max_integer     ), @cfg.digitset )           # Big negative
     if R.length < @cfg.digits_per_idx then R = R.padStart @cfg.digits_per_idx, @cfg.digitset.at 0
     else                                    R = R.replace @cfg._leading_novas_re, ''
