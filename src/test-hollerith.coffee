@@ -32,10 +32,10 @@ types                     = new Hollerith_typespace()
 
 
 #===========================================================================================================
-class test_hollerith
+internals =
 
   #---------------------------------------------------------------------------------------------------------
-  @get_random_vdx_producer: ({
+  get_random_vdx_producer: ({
     seed        = null,
     min_length  = 1,
     max_length  = 5,
@@ -46,18 +46,17 @@ class test_hollerith
     get_rnd_idx     = get_random.integer_producer { min: min_idx,    max: max_idx,    }
     return get_rnd_vdx = -> ( get_rnd_idx() for _ in [ 1 .. get_rnd_length() ] )
 
-  #---------------------------------------------------------------------------------------------------------
-  @test_sorting: ( codec ) ->
-    types.hollerith.validate codec
-    R =
-      success: true
-    #.......................................................................................................
-    Object.assign R, @_test_sorting codec
-    #.......................................................................................................
-    return R
+
+#===========================================================================================================
+class Test_hollerith
 
   #---------------------------------------------------------------------------------------------------------
-  @_walk_first_idxs: ( codec, delta, rnd_vdx_cfg, get_random ) ->
+  constructor: ( codec ) ->
+    @codec = types.hollerith.validate codec
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  _walk_first_idxs: ( codec, delta, rnd_vdx_cfg, get_random ) ->
     yield idx for idx in [ codec.cfg._min_integer         .. codec.cfg._min_integer + delta ]
     yield idx for idx in [ rnd_vdx_cfg.min_idx            .. rnd_vdx_cfg.max_idx            ]
     yield idx for idx in [ codec.cfg._max_integer - delta .. codec.cfg._max_integer         ]
@@ -66,26 +65,25 @@ class test_hollerith
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  @_test_sorting: ( codec ) ->
+  test_sorting: ->
     rnd_vdx_cfg                 =
       seed:         null
       min_length:   1
-      max_length:   codec.cfg.dimension - 1
-      min_idx:      Math.max codec.cfg._min_integer, -2000
-      max_idx:      Math.min codec.cfg._max_integer, +2000
+      max_length:   @codec.cfg.dimension - 1
+      min_idx:      Math.max @codec.cfg._min_integer, -2000
+      max_idx:      Math.min @codec.cfg._max_integer, +2000
     #.......................................................................................................
     seed                        = 8475622
     get_random                  = new Get_random { seed, }
-    get_random_vdx              = @get_random_vdx_producer rnd_vdx_cfg
+    get_random_vdx              = internals.get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
-    encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
     probes_sortkey              = []
-    first_idx_walker            = @_walk_first_idxs codec, 500, rnd_vdx_cfg, get_random
+    first_idx_walker            = @_walk_first_idxs @codec, 500, rnd_vdx_cfg, get_random
     #.......................................................................................................
     for first_idx from first_idx_walker
       for _ in [ 1 .. probe_sub_count ]
         vdx = [ first_idx, get_random_vdx()..., ]
-        sk  = encode vdx
+        sk  = @codec.encode_vdx vdx
         probes_sortkey.push { vdx, sk, }
     #.......................................................................................................
     probes_sortkey    = get_random.shuffle probes_sortkey
@@ -119,11 +117,11 @@ class test_hollerith
       if probe_sortkey.sk is probe_vdx.sk then  hit_count++
       else                                      miss_count++
     #.......................................................................................................
-    R = { probe_count: probes_sortkey.length, hit_count, miss_count, }
+    R = { probe_count: probes_sortkey.length, hit_count, miss_count, success: ( miss_count is 0 ), }
     debug 'Ωvdx___1', "testing results"
     debug 'Ωvdx___2', R
     return R
 
 
 #===========================================================================================================
-module.exports = do => { test_hollerith, }
+module.exports = do => { Test_hollerith, internals, }

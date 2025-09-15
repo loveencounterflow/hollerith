@@ -23,7 +23,7 @@ SFMODULES                 = require 'bricabrac-single-file-modules'
 { freeze,               } = Object
 { hide,
   set_getter,           } = SFMODULES.require_managed_property_tools()
-{ test_hollerith,       } = require './test-hollerith'
+test                      = require './test-hollerith'
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -323,5 +323,5 @@ module.exports = do =>
     hollerith_10_cardinal,
     hollerith_128,
     hollerith_128_16383,
-    test_hollerith,
+    test,
     internals, }
