@@ -52,19 +52,21 @@ class test_hollerith
     R =
       success: true
     #.......................................................................................................
-    Object.assign R, @__hollerith_128_big_shuffle codec
+    Object.assign R, @_test_sorting codec
     #.......................................................................................................
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  @_walk_first_idxs: ( codec, delta, rnd_vdx_cfg ) ->
+  @_walk_first_idxs: ( codec, delta, rnd_vdx_cfg, get_random ) ->
     yield idx for idx in [ codec.cfg._min_integer         .. codec.cfg._min_integer + delta ]
     yield idx for idx in [ rnd_vdx_cfg.min_idx            .. rnd_vdx_cfg.max_idx            ]
     yield idx for idx in [ codec.cfg._max_integer - delta .. codec.cfg._max_integer         ]
+    get_random_idx = get_random.integer_producer { min: rnd_vdx_cfg.min_idx, max: rnd_vdx_cfg.max_idx, }
+    yield get_random_idx() for _ in [ 1 .. 1000 ]
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  @__hollerith_128_big_shuffle: ( codec ) ->
+  @_test_sorting: ( codec ) ->
     rnd_vdx_cfg                 =
       seed:         null
       min_length:   1
@@ -78,7 +80,7 @@ class test_hollerith
     probe_sub_count             = 3
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
     probes_sortkey              = []
-    first_idx_walker            = @_walk_first_idxs codec, 500, rnd_vdx_cfg
+    first_idx_walker            = @_walk_first_idxs codec, 500, rnd_vdx_cfg, get_random
     #.......................................................................................................
     for first_idx from first_idx_walker
       for _ in [ 1 .. probe_sub_count ]
@@ -114,12 +116,13 @@ class test_hollerith
     probes_sortkey.sort sort_by_sortkey
     for probe_vdx, idx in probes_vdx
       probe_sortkey = probes_sortkey[ idx ]
-      # whisper 'Ωhllt___4', ( gold probe_sortkey.sk ), ( red probe_vdx.vdx ), ( lime probe_sortkey.vdx )
-      is_equal = equals ( probe_sortkey.vdx ), probe_vdx.vdx
-      if is_equal then  hit_count++
-      else              miss_count++
+      if probe_sortkey.sk is probe_vdx.sk then  hit_count++
+      else                                      miss_count++
     #.......................................................................................................
-    return { probe_count: probes_sortkey.length, hit_count, miss_count, }
+    R = { probe_count: probes_sortkey.length, hit_count, miss_count, }
+    debug 'Ωvdx___1', "testing results"
+    debug 'Ωvdx___2', R
+    return R
 
 
 #===========================================================================================================
