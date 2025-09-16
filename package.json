@@ -1,6 +1,6 @@
 {
   "name": "hollerith",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "description": "vectorial indices (VDXs) that allow for arbitrary many interstitial elements with a binary sortable representation",
   "main": "lib/main.js",
   "directories": {
