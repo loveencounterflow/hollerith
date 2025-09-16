@@ -70,6 +70,20 @@ class Hollerith_typespace extends Typespace
   @_base:           ( x ) -> ( @T.pinteger.isa  x ) and ( x > 1 )
   # @digits_per_idx:  ( x ) -> ( @T.pinteger.isa x ) and ( x > 1 )
 
+  # #---------------------------------------------------------------------------------------------------------
+  # @placeholder: ( x ) ->
+  #   return false unless ( @T.character.isa x )
+  #   placeholder_esc   = RegExp.escape x
+  #   _placeholders_re  = new RegExp "(?:#{placeholder_esc})+", 'gv'
+  #   @assign { _placeholders_re, }
+  #   return true
+
+  # #---------------------------------------------------------------------------------------------------------
+  # @incremental_text: ( x, { placeholder = null }={} ) ->
+  #   return false unless @T.text.isa x
+  #   @assign { chrs: ( freeze Array.from x ), }
+  #   return _test_monotony.call @, x, '<', { placeholder, }
+
   #---------------------------------------------------------------------------------------------------------
   @incremental_text: ( x ) ->
     return false unless @T.text.isa x
@@ -84,10 +98,18 @@ class Hollerith_typespace extends Typespace
 
   #---------------------------------------------------------------------------------------------------------
   @nmag_bare_reversed:  ( x ) -> @T.incremental_text.dm_isa @data, null, x
-  @pmag_bare:           ( x ) -> @T.incremental_text.dm_isa @data, null, x
+
+  # #---------------------------------------------------------------------------------------------------------
+  # @pmag_bare: ( x, { placeholder = null }={} ) ->
+  #   return @T.incremental_text.dm_isa @data, null, x, { placeholder, }
 
   #---------------------------------------------------------------------------------------------------------
-  @magnifiers: ( x, { cardinals_only = false }={} ) ->
+  @pmag_bare: ( x ) ->
+    return @T.incremental_text.dm_isa @data, null, x
+
+  #---------------------------------------------------------------------------------------------------------
+  # @magnifiers: ( x, { cardinals_only = false, _placeholders_re = null }={} ) ->
+  @magnifiers: ( x, { cardinals_only = false, }={} ) ->
     return ( @fail "expected a magnifier, got an empty text" ) unless @T.nonempty_text.isa x
     parts = x.split @[CFG].blank_splitter
     if cardinals_only
@@ -104,7 +126,7 @@ class Hollerith_typespace extends Typespace
         pmag_bare,          ] = parts
     #.......................................................................................................
     if cardinals_only
-      return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
+      return ( @fail "Ωbsk___3 ???" ) unless  @T.pmag_bare.dm_isa @data, { chrs: '_pmag_list', }, pmag_bare # , { _placeholders_re, }
       _nmag       = null
       _pmag       = @[CFG].blank + pmag_bare
       _nmag_list  = null
@@ -112,8 +134,8 @@ class Hollerith_typespace extends Typespace
     #.......................................................................................................
     else
       return ( @fail "Ωbsk___6 ???" ) unless  @T.nmag_bare_reversed.dm_isa @data, { chrs: 'nmag_chrs_reversed', },  nmag_bare_reversed
-      return ( @fail "Ωbsk___7 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare
-      return ( @fail "Ωbsk___8 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare
+      return ( @fail "Ωbsk___7 ???" ) unless  @T.pmag_bare.dm_isa          @data, { chrs: '_pmag_list', },          pmag_bare # , { _placeholders_re, }
+      return ( @fail "Ωbsk___8 ???" ) unless  @T.incremental_text.isa                                               nmag_bare_reversed + pmag_bare # , { _placeholders_re, }
       return ( @fail "Ωbsk___9 ???" ) unless  nmag_bare_reversed.length is pmag_bare.length
       _nmag       = @[CFG].blank + [ @data.nmag_chrs_reversed..., ].reverse().join ''
       _pmag       = @[CFG].blank + pmag_bare
@@ -226,13 +248,14 @@ class Hollerith_typespace extends Typespace
     return true
 
 #===========================================================================================================
+# _test_monotony = ( x, cmp, { placeholder = null }={} ) ->
 _test_monotony = ( x, cmp ) ->
   { chrs, } = @data # = @create data
   return ( @fail "empty is not monotonic" ) if chrs.length is 0
   return true                               if chrs.length is 1
   for idx in [ 1 ... chrs.length ]
-    prv_chr = chrs[ idx - 1 ]
-    chr     = chrs[ idx     ]
+    prv_chr = chrs[ idx - 1 ] # ; continue if placeholder? and prv_chr is placeholder
+    chr     = chrs[ idx     ] # ; continue if placeholder? and     chr is placeholder
     R       = switch cmp
       when '>' then prv_chr > chr
       when '<' then prv_chr < chr

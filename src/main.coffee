@@ -117,30 +117,39 @@ class Hollerith
 
   #---------------------------------------------------------------------------------------------------------
   @validate_and_compile_cfg: ( cfg ) ->
-    ### Validations: ###
-    ### Derivations: ###
     hollerith_cfg_template =
+      # placeholder:    '\x00'
       blank:          '\x20'
       dimension:      5
       cardinals_only: false
+    #.......................................................................................................
     R                     = clean_assign {}, hollerith_cfg_template, cfg
     types                 = new Hollerith_typespace { blank: R.blank, }
+    #.......................................................................................................
+    # R.placeholder         = types.placeholder.validate R.placeholder
+    # R._placeholders_re    = types.placeholder.data._placeholders_re
+    #.......................................................................................................
     R.cardinals_only      = types.cardinals_only.validate R.cardinals_only
+    #.......................................................................................................
     R.digitset            = types.digitset.validate R.digitset
     R._digits_list        = types.digitset.data._digits_list
     R._naught             = types.digitset.data._naught
     R._nova               = types.digitset.data._nova
     R._leading_novas_re   = types.digitset.data._leading_novas_re
     R._base               = types.digitset.data._base
+    #.......................................................................................................
+    # R.magnifiers          = types.magnifiers.validate R.magnifiers, { cardinals_only: R.cardinals_only, _placeholders_re: R._placeholders_re, }
     R.magnifiers          = types.magnifiers.validate R.magnifiers, { cardinals_only: R.cardinals_only, }
     R._pmag_list          = types.magnifiers.data._pmag_list
     R._nmag_list          = types.magnifiers.data._nmag_list
+    #.......................................................................................................
     R.uniliterals         = types.uniliterals.validate R.uniliterals, { cardinals_only: R.cardinals_only, }
     R._cipher             = types.uniliterals.data._cipher
     R._nuns               = types.uniliterals.data._nuns
     R._zpuns              = types.uniliterals.data._zpuns
     R._nuns_list          = types.uniliterals.data._nuns_list
     R._zpuns_list         = types.uniliterals.data._zpuns_list
+    #.......................................................................................................
     if R._cipher isnt R._zpuns_list[ 0 ]
       throw new Error "Ωhll___1 internal error: _cipher #{rpr R._cipher} doesn't match _zpuns #{rpr R._zpuns}"
     R._min_nun            = if R._nuns_list? then -R._nuns_list.length else 0
@@ -174,11 +183,15 @@ class Hollerith
         we refrain from improving that ###
     nmags                 = if R.cardinals_only then '' else [ R._nmag_list..., ].reverse().join ''
     nuns                  = if R.cardinals_only then '' else R._nuns
-    R._alphabet           = types._alphabet.validate ( R.digitset + \
+    R._alphabet           =       \
+      R.digitset                + \
       nmags                     + \
       ( nuns ? '' )             + \
       R._zpuns                  + \
-      R._pmag                     ).replace types[CFG].blank_splitter, ''
+      R._pmag
+    R._alphabet           = R._alphabet.replace types[CFG].blank_splitter,  ''
+    # R._alphabet           = R._alphabet.replace R._placeholders_re,         ''
+    R._alphabet           = types._alphabet.validate R._alphabet
     return { cfg: R, types, }
 
   #---------------------------------------------------------------------------------------------------------
