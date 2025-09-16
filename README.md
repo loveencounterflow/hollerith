@@ -311,6 +311,9 @@ to VDX sorting as described here.
 
 * **`[—]`** Allow composite VDXs, especially allow high-capacity encoder for first index, low-capacity
   encoder for trailing digits (as those are used for revisions)
+  * a typical setup would have a cardinals-only codec allowing big positive line numbers in the first
+    position; since cardinals-only codecs start at zero, insertions before the first line are still possible,
+    line number zero being used for anything going to the top of a document
 
 ## Is Done
 
