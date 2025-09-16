@@ -4,7 +4,7 @@
 #===========================================================================================================
 { debug,                } = console
 #-----------------------------------------------------------------------------------------------------------
-SFMODULES                 = require '../../bricabrac-single-file-modules'
+SFMODULES                 = require 'bricabrac-single-file-modules'
 # SFMODULES                 = require 'bricabrac-single-file-modules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
