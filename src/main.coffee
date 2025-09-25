@@ -4,7 +4,7 @@
 #===========================================================================================================
 # { encodeBigInt,
 #   decodeBigInt,   } = TMP_require_encode_in_alphabet()
-SFMODULES                 = require 'bricabrac-single-file-modules'
+SFMODULES                 = require 'bricabrac-sfmodules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { debug,                } = console

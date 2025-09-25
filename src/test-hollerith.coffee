@@ -4,8 +4,8 @@
 #===========================================================================================================
 { debug,                } = console
 #-----------------------------------------------------------------------------------------------------------
-SFMODULES                 = require 'bricabrac-single-file-modules'
-# SFMODULES                 = require 'bricabrac-single-file-modules'
+SFMODULES                 = require 'bricabrac-sfmodules'
+# SFMODULES                 = require 'bricabrac-sfmodules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 { show_no_colors: rpr,  } = SFMODULES.unstable.require_show()
 { Get_random,           } = SFMODULES.unstable.require_get_random()
