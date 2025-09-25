@@ -51,8 +51,9 @@ internals =
 class Test_hollerith
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ( codec ) ->
-    @codec = types.hollerith.validate codec
+  constructor: ( codec, n = 1000 ) ->
+    @cfg    = { n, }
+    @codec  = types.hollerith.validate codec
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
